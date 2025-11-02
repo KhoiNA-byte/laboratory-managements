@@ -35,6 +35,7 @@ import MyTestResultsPage from "./modules/testorder/MyTestResultsPage";
 import TestOrderDetailsPage from "./modules/testorder/TestOrderDetailsPage";
 import UpdateTestOrderPage from "./modules/testorder/UpdateTestOrderPage";
 import NewTestOrderPage from "./modules/testorder/NewTestOrderPage";
+import CommentsPage from "./modules/testorder/CommentsPage";
 
 // Monitoring Module
 import { MonitoringPage } from "./modules/monitoring/MonitoringPage";
@@ -118,6 +119,7 @@ function AppRoutesInner() {
           <Route path="test-results/:orderNumber" element={<TestResultDetailPage />} />
 
           <Route path="my-test-results" element={<MyTestResultsPage />} />
+          {/* Comments */}
 
           {/* Monitoring */}
           <Route path="monitoring" element={<MonitoringPage />} />
