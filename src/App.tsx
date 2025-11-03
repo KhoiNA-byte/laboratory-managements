@@ -102,8 +102,14 @@ function AppRoutesInner() {
           {/* Warehouse */}
           <Route path="instruments" element={<InstrumentsPage />} />
           <Route path="instruments/new" element={<AddInstrumentPage />} />
-          <Route path="instruments/:instrumentId/edit" element={<EditInstrumentPage />} />
-          <Route path="instruments/:instrumentId" element={<InstrumentDetailsPage />} />
+          <Route
+            path="instruments/:instrumentId/edit"
+            element={<EditInstrumentPage />}
+          />
+          <Route
+            path="instruments/:instrumentId"
+            element={<InstrumentDetailsPage />}
+          />
           <Route path="warehouse" element={<WarehousePage />} />
           <Route path="reagents" element={<ReagentsPage />} />
           <Route path="flagging-rules" element={<FlaggingRulesPage />} />

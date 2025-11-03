@@ -12,11 +12,13 @@
     "dependencies": {
         "@heroicons/react": "^2.2.0",
         "@reduxjs/toolkit": "^2.0.1",
+        "@types/styled-components": "^5.1.35",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-redux": "^9.0.4",
         "react-router-dom": "^6.20.1",
         "redux-saga": "^1.4.2",
+        "styled-components": "^6.1.19",
         "zustand": "^4.4.7"
     },
     "devDependencies": {
