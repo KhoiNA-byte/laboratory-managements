@@ -7,7 +7,10 @@ export const AppLayout = () => {
     <div className="flex h-screen bg-gray-50">
       <Sidebar />
       <div className="flex flex-col flex-1">
-        <Navbar />
+        <div className="border-b border-gray-300">
+          <Navbar />
+        </div>
+
         <main className="flex-1 p-6 bg-white overflow-y-auto">
           <Outlet />
         </main>

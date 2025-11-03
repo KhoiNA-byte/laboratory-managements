@@ -135,11 +135,7 @@ export const PatientsPage = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header Section */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Patient Records</h1>
-        <p className="text-gray-600">Manage patient medical records and information</p>
-      </div>
+      
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

@@ -1,5 +1,9 @@
 // src/pages/MyTestResultsPage.tsx
-import { CheckCircleIcon, DocumentTextIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import {
+  CheckCircleIcon,
+  DocumentTextIcon,
+  ExclamationTriangleIcon,
+} from "@heroicons/react/24/outline";
 import React, { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -151,7 +155,7 @@ export const MyTestResultsPage: React.FC = () => {
     });
   }, [mockRows, activeTab, searchTerm]);
 
- const total = mockRows.length;
+  const total = mockRows.length;
   const pending = mockRows.filter((r) => r.status === "In Progress").length;
   const completed = mockRows.filter((r) => r.status === "Completed").length;
 
@@ -177,47 +181,49 @@ export const MyTestResultsPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Summary Cards */}
-       {/* Summary cards (top) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Total Tests</p>
-                <p className="text-3xl font-bold text-gray-900">{total}</p>
-                <p className="text-sm text-gray-500 mt-1">All time</p>
-              </div>
-              <div className="w-12 h-12 flex items-center justify-center rounded-lg border border-gray-100">
-                <DocumentTextIcon className="h-6 w-6 text-gray-600" />
-              </div>
+      {/* Summary cards (top) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Total Tests</p>
+              <p className="text-3xl font-bold text-gray-900">{total}</p>
+              <p className="text-sm text-gray-500 mt-1">All time</p>
             </div>
-          </div>
-
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Pending Results</p>
-                <p className="text-3xl font-bold text-gray-900">{pending}</p>
-                <p className="text-sm text-gray-500 mt-1">In progress</p>
-              </div>
-              <div className="w-12 h-12 flex items-center justify-center rounded-lg border border-gray-100">
-                <ExclamationTriangleIcon className="h-6 w-6 text-gray-600" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Completed</p>
-                <p className="text-3xl font-bold text-gray-900">{completed}</p>
-                <p className="text-sm text-gray-500 mt-1">Available to view</p>
-              </div>
-              <div className="w-12 h-12 flex items-center justify-center rounded-lg border border-gray-100">
-                <CheckCircleIcon className="h-6 w-6 text-gray-600" />
-              </div>
+            <div className="w-12 h-12 flex items-center justify-center rounded-lg border border-gray-100">
+              <DocumentTextIcon className="h-6 w-6 text-gray-600" />
             </div>
           </div>
         </div>
+
+        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">
+                Pending Results
+              </p>
+              <p className="text-3xl font-bold text-gray-900">{pending}</p>
+              <p className="text-sm text-gray-500 mt-1">In progress</p>
+            </div>
+            <div className="w-12 h-12 flex items-center justify-center rounded-lg border border-gray-100">
+              <ExclamationTriangleIcon className="h-6 w-6 text-gray-600" />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Completed</p>
+              <p className="text-3xl font-bold text-gray-900">{completed}</p>
+              <p className="text-sm text-gray-500 mt-1">Available to view</p>
+            </div>
+            <div className="w-12 h-12 flex items-center justify-center rounded-lg border border-gray-100">
+              <CheckCircleIcon className="h-6 w-6 text-gray-600" />
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Panel */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
@@ -252,7 +258,6 @@ export const MyTestResultsPage: React.FC = () => {
               New Test
             </button>
           </div>
-          
 
           {/* Tabs */}
           <div className="flex space-x-8 mb-4">
