@@ -3,14 +3,6 @@ import React from 'react'
 export const DashboardPage = () => {
     return (
         <div className="space-y-6">
-            {/* Header Section */}
-            <div className="mb-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
-                <p className="text-gray-600 mb-4">Overview of laboratory operations and statistics</p>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome back, Admin User!</h2>
-                <p className="text-gray-600">Here's what's happening in your laboratory today</p>
-            </div>
-
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 {/* Total Patients */}

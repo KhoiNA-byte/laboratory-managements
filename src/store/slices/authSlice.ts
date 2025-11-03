@@ -14,7 +14,7 @@ interface AuthState {
     token: string | null
     loading: boolean
     error: string | null
-    redirectPath: string | null
+    redirectPath: string | null    
 }
 
 const initialState: AuthState = {

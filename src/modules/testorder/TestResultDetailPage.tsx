@@ -168,7 +168,6 @@ export default function TestResultDetailPage(): JSX.Element {
   const [isReviewing, setIsReviewing] = useState(false);
   const originalRowsRef = useRef<ParamRow[] | null>(null);
 
-  // reviewed by
   const [reviewedBy, setReviewedBy] = useState<string>(
     orderData?.reviewedBy ?? "AI Auto Review"
   );
@@ -176,12 +175,9 @@ export default function TestResultDetailPage(): JSX.Element {
     orderData?.reviewedAt
   );
 
-  // comments state (kept here so preview updates immediately)
   const [comments, setComments] = useState<CommentItem[]>(
     orderData?.comments ? structuredCloneSafe(orderData.comments) : []
   );
-
-  // Comments modal open?
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
 
   useEffect(() => {
@@ -225,14 +221,12 @@ export default function TestResultDetailPage(): JSX.Element {
     originalRowsRef.current = structuredCloneSafe(rowsState);
     setIsReviewing(true);
   };
-
   const handleCancelReview = () => {
     if (originalRowsRef.current)
       setRowsState(structuredCloneSafe(originalRowsRef.current));
     originalRowsRef.current = null;
     setIsReviewing(false);
   };
-
   const handleSaveReview = () => {
     if (orderNumber) {
       MOCK_DATA[orderNumber].rows = structuredCloneSafe(rowsState);
@@ -274,23 +268,18 @@ export default function TestResultDetailPage(): JSX.Element {
     if (isReviewing) handleSaveReview();
     else handleStartReview();
   };
-
   const handleDownloadPdf = () => alert("Downloading PDF (placeholder)");
   const handleViewHL7 = () => alert("View Raw HL7 (placeholder)");
 
   /* ---------- Comments popup controls ---------- */
   const openComments = () => setIsCommentsOpen(true);
   const closeComments = () => setIsCommentsOpen(false);
-
-  // when comments change in child modal, update local state and persist to MOCK_DATA
   const onChangeComments = (newComments: CommentItem[]) => {
     setComments(newComments);
-    if (orderNumber) {
+    if (orderNumber)
       MOCK_DATA[orderNumber].comments = structuredCloneSafe(newComments);
-    }
   };
 
-  // latest comment (by createdAt)
   const latestComment =
     comments.length === 0
       ? null
@@ -301,7 +290,6 @@ export default function TestResultDetailPage(): JSX.Element {
     ? `(${latestComment.author}) ${latestComment.text}`
     : "Empty";
 
-  /* ---------- derived counts ---------- */
   const total = rowsState.length;
   const normal = rowsState.filter((r) => !r.flag || r.flag === "Normal").length;
   const high = rowsState.filter((r) => r.flag === "High").length;
@@ -309,11 +297,10 @@ export default function TestResultDetailPage(): JSX.Element {
 
   return (
     <div>
-      {/* Nếu đang mở comments -> Ẩn backdrop + modal testresult.
-          Ngược lại render modal testresult như trước. */}
+      {/* Nếu comments mở -> ẩn modal chính (render only comments) */}
       {!isCommentsOpen && (
         <>
-          {/* Backdrop */}
+          {/* backdrop (kích thước cố định) */}
           <div
             className="fixed inset-0 bg-black/50 z-40"
             aria-hidden="true"
@@ -326,217 +313,232 @@ export default function TestResultDetailPage(): JSX.Element {
             }}
           />
 
-          {/* Modal */}
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-[1100px] mx-auto overflow-hidden relative">
-              <div className="flex">
-                {/* Left */}
-                <div className="flex-1 p-8">
-                  <div className="flex items-start justify-between mb-6">
-                    <div>
-                      <h2 className="text-2xl font-bold text-gray-900">
-                        Complete Blood Count (CBC)
-                      </h2>
-                      <div className="text-sm text-gray-500 mt-1">
-                        {orderNumber} • {orderData.patientName}{" "}
-                        <span className="mx-2">•</span> Sex: {orderData.sex}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left">
-                      <thead>
-                        <tr className="text-sm text-gray-500 border-b border-gray-100">
-                          <th className="py-3 pr-6">Parameter</th>
-                          <th className="py-3 pr-6">Result</th>
-                          <th className="py-3 pr-6">Unit</th>
-                          <th className="py-3 pr-6">Reference range</th>
-                          <th className="py-3 pr-6">Deviation</th>
-                          <th className="py-3 pr-6">Flag</th>
-                          <th className="py-3 pr-6">Applied Evaluate</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {rowsState.map((r, idx) => {
-                          const isHighlighted =
-                            r.flag === "High" ||
-                            r.flag === "Critical" ||
-                            r.flag === "Low";
-                          return (
-                            <tr
-                              key={r.parameter}
-                              className="align-top border-b border-gray-100"
-                            >
-                              <td className="py-4 pr-6 font-semibold text-gray-700 w-48">
-                                {r.parameter}
-                              </td>
-                              <td className="py-4 pr-6">
-                                {isReviewing ? (
-                                  <input
-                                    type="text"
-                                    value={r.result}
-                                    onChange={(e) =>
-                                      handleFieldChange(
-                                        idx,
-                                        "result",
-                                        e.target.value
-                                      )
-                                    }
-                                    className="w-36 px-2 py-1 border rounded text-sm"
-                                  />
-                                ) : (
-                                  <div
-                                    className={`inline-block px-3 py-1 rounded ${
-                                      isHighlighted
-                                        ? "bg-red-50 text-red-700 font-semibold"
-                                        : ""
-                                    }`}
-                                  >
-                                    {r.result}
-                                  </div>
-                                )}
-                              </td>
-                              <td className="py-4 pr-6 text-sm text-gray-600">
-                                {r.unit}
-                              </td>
-                              <td className="py-4 pr-6 text-sm text-gray-600">
-                                {r.referenceRange}
-                              </td>
-                              <td className="py-4 pr-6 text-sm text-gray-600">
-                                {isReviewing ? (
-                                  <input
-                                    type="text"
-                                    value={r.deviation ?? ""}
-                                    onChange={(e) =>
-                                      handleFieldChange(
-                                        idx,
-                                        "deviation",
-                                        e.target.value
-                                      )
-                                    }
-                                    className="w-28 px-2 py-1 border rounded text-sm"
-                                    placeholder="-"
-                                  />
-                                ) : (
-                                  r.deviation ?? "-"
-                                )}
-                              </td>
-                              <td className="py-4 pr-6">
-                                <div className="flex items-center gap-2">
-                                  <FlagDot flag={r.flag} />
-                                  <span className="text-sm text-gray-600">
-                                    {r.flag ?? "Normal"}
-                                  </span>
-                                </div>
-                              </td>
-                              <td className="py-4 pr-6 text-sm text-gray-600">
-                                {isReviewing ? (
-                                  <input
-                                    type="text"
-                                    value={r.appliedEvaluate ?? ""}
-                                    onChange={(e) =>
-                                      handleFieldChange(
-                                        idx,
-                                        "appliedEvaluate",
-                                        e.target.value
-                                      )
-                                    }
-                                    className="w-40 px-2 py-1 border rounded text-sm"
-                                    placeholder="-"
-                                  />
-                                ) : (
-                                  r.appliedEvaluate ?? "-"
-                                )}
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
+          {/* Modal: responsive, column on small screens, row on md+ */}
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div
+              className="bg-white rounded-2xl shadow-2xl w-full max-w-[1100px] mx-auto overflow-hidden
+                            flex flex-col h-[calc(100vh-4rem)] md:h-auto"
+            >
+              {/* Header area (kept minimal) */}
+              <div className="px-6 py-4 border-b border-gray-100 flex items-start justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900">
+                    Complete Blood Count (CBC)
+                  </h2>
+                  <div className="text-sm text-gray-500 mt-1 py-2">
+                    {orderNumber} • {orderData.patientName}{" "}
+                    <p className="mx-2 py-1"></p> Sex: {orderData.sex}
                   </div>
                 </div>
-
-                {/* Right */}
-                <div className="w-[320px] p-6 bg-transparent border-l border-gray-100">
-                  <div className="text-right px-1 py-7">
-                    <div className="text-sm text-gray-500">
-                      Collected: {orderData.collected}
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      Instrument: {orderData.instrument}
-                    </div>
-                    <div className="mt-3 inline-flex items-center gap-2">
-                      <span className="inline-block bg-red-600 text-white text-sm font-medium px-3 py-1 rounded-full">
-                        {orderData.criticalCount} Critical Values
-                      </span>
-                    </div>
+                <div className="block  gap-3">
+                  <div className="text-sm text-gray-500">
+                    Collected: {orderData.collected}
                   </div>
-                  <div className="space-y-4">
-                    <div className="bg-white rounded-lg shadow-md p-4">
-                      <h4 className="text-sm font-semibold text-gray-700 mb-3">
-                        Summary
-                      </h4>
-                      <ul className="text-sm text-gray-600 space-y-2">
-                        <li className="flex justify-between">
-                          <span>Total tests</span>
-                          <strong>{total}</strong>
-                        </li>
-                        <li className="flex justify-between">
-                          <span>Normal</span>
-                          <strong>{normal}</strong>
-                        </li>
-                        <li className="flex justify-between">
-                          <span>High</span>
-                          <strong>{high}</strong>
-                        </li>
-                        <li className="flex justify-between">
-                          <span>Low</span>
-                          <strong>{low}</strong>
-                        </li>
-                      </ul>
-                    </div>
+                  <div className="text-sm text-gray-500">
+                    Instrument: {orderData.instrument}
+                  </div>
+                  <div className="mt-3 inline-flex items-center gap-2">
+                    <span className="inline-block bg-red-600 text-white text-sm font-medium px-3 py-1 rounded-full">
+                      {orderData.criticalCount} Critical Values
+                    </span>
+                  </div>
+                </div>
+              </div>
 
-                    <div className="bg-white rounded-lg shadow-md p-4">
-                      <h4 className="text-sm font-semibold text-gray-700 mb-3">
-                        Reviewed
-                      </h4>
-                      <div className="text-sm text-gray-600">By</div>
-                      <div className="mt-3 text-sm font-medium">
-                        {reviewedBy}
-                        {reviewedAt
-                          ? ` • ${new Date(reviewedAt).toLocaleString()}`
-                          : ""}
+              {/* Main content: make scrollable while footer fixed */}
+              <div className="flex-1 overflow-auto p-4">
+                {/* inner layout switches to column on small screens */}
+                <div className="flex flex-col md:flex-row gap-4">
+                  {/* Left: table - allow its own internal scrolling if needed */}
+                  <div className="flex-1 min-w-0">
+                    <div className="overflow-x-auto">
+                      <div className="max-h-[55vh] md:max-h-[60vh] overflow-auto">
+                        <table className="w-full text-left">
+                          <thead>
+                            <tr className="text-sm text-gray-500 border-b border-gray-100">
+                              <th className="py-3 pr-6">Parameter</th>
+                              <th className="py-3 pr-6">Result</th>
+                              <th className="py-3 pr-6">Unit</th>
+                              <th className="py-3 pr-6">Reference range</th>
+                              <th className="py-3 pr-6">Deviation</th>
+                              <th className="py-3 pr-6">Flag</th>
+                              <th className="py-3 pr-6">Applied Evaluate</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {rowsState.map((r, idx) => {
+                              const isHighlighted =
+                                r.flag === "High" ||
+                                r.flag === "Critical" ||
+                                r.flag === "Low";
+                              return (
+                                <tr
+                                  key={r.parameter}
+                                  className="align-top border-b border-gray-100"
+                                >
+                                  <td className="py-4 pr-6 font-semibold text-gray-700 w-48 truncate">
+                                    {r.parameter}
+                                  </td>
+
+                                  <td className="py-4 pr-6">
+                                    {isReviewing ? (
+                                      <input
+                                        type="text"
+                                        value={r.result}
+                                        onChange={(e) =>
+                                          handleFieldChange(
+                                            idx,
+                                            "result",
+                                            e.target.value
+                                          )
+                                        }
+                                        className="w-36 px-2 py-1 border rounded text-sm"
+                                      />
+                                    ) : (
+                                      <div
+                                        className={`inline-block px-3 py-1 rounded ${
+                                          isHighlighted
+                                            ? "bg-red-50 text-red-700 font-semibold"
+                                            : ""
+                                        }`}
+                                      >
+                                        {r.result}
+                                      </div>
+                                    )}
+                                  </td>
+
+                                  <td className="py-4 pr-6 text-sm text-gray-600">
+                                    {r.unit}
+                                  </td>
+                                  <td className="py-4 pr-6 text-sm text-gray-600">
+                                    {r.referenceRange}
+                                  </td>
+
+                                  <td className="py-4 pr-6 text-sm text-gray-600">
+                                    {isReviewing ? (
+                                      <input
+                                        type="text"
+                                        value={r.deviation ?? ""}
+                                        onChange={(e) =>
+                                          handleFieldChange(
+                                            idx,
+                                            "deviation",
+                                            e.target.value
+                                          )
+                                        }
+                                        className="w-28 px-2 py-1 border rounded text-sm"
+                                        placeholder="-"
+                                      />
+                                    ) : (
+                                      r.deviation ?? "-"
+                                    )}
+                                  </td>
+
+                                  <td className="py-4 pr-6">
+                                    <div className="flex items-center gap-2">
+                                      <FlagDot flag={r.flag} />
+                                      <span className="text-sm text-gray-600">
+                                        {r.flag ?? "Normal"}
+                                      </span>
+                                    </div>
+                                  </td>
+
+                                  <td className="py-4 pr-6 text-sm text-gray-600">
+                                    {isReviewing ? (
+                                      <input
+                                        type="text"
+                                        value={r.appliedEvaluate ?? ""}
+                                        onChange={(e) =>
+                                          handleFieldChange(
+                                            idx,
+                                            "appliedEvaluate",
+                                            e.target.value
+                                          )
+                                        }
+                                        className="w-40 px-2 py-1 border rounded text-sm"
+                                        placeholder="-"
+                                      />
+                                    ) : (
+                                      r.appliedEvaluate ?? "-"
+                                    )}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
                       </div>
                     </div>
+                  </div>
 
-                    <div className="bg-white rounded-lg shadow-md p-4">
-                      <h4 className="text-sm font-semibold text-gray-700 mb-3">
-                        Actions
-                      </h4>
-                      <div className="space-y-3">
-                        <button
-                          type="button"
-                          onClick={handleDownloadPdf}
-                          className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 border rounded-lg text-sm text-gray-700 hover:shadow"
-                        >
-                          <ArrowDownTrayIcon className="h-4 w-4" />
-                          Download PDF
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleViewHL7}
-                          className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 border rounded-lg text-sm text-gray-700 hover:shadow"
-                        >
-                          View Raw HL7
-                        </button>
+                  {/* Right: summary & actions - on small screens it goes under the table */}
+                  <div className="w-full md:w-[320px] flex-shrink-0">
+                    <div className="space-y-4">
+                      <div className="bg-white rounded-lg shadow-md p-4 border">
+                        <h4 className="text-sm font-semibold text-gray-700 mb-3">
+                          Summary
+                        </h4>
+                        <ul className="text-sm text-gray-600 space-y-2">
+                          <li className="flex justify-between">
+                            <span>Total tests</span>
+                            <strong>{total}</strong>
+                          </li>
+                          <li className="flex justify-between">
+                            <span>Normal</span>
+                            <strong>{normal}</strong>
+                          </li>
+                          <li className="flex justify-between">
+                            <span>High</span>
+                            <strong>{high}</strong>
+                          </li>
+                          <li className="flex justify-between">
+                            <span>Low</span>
+                            <strong>{low}</strong>
+                          </li>
+                        </ul>
+                      </div>
+
+                      <div className="bg-white rounded-lg shadow-md p-4 border">
+                        <h4 className="text-sm font-semibold text-gray-700 mb-3">
+                          Reviewed
+                        </h4>
+                        <div className="text-sm text-gray-600">By</div>
+                        <div className="mt-3 text-sm font-medium">
+                          {reviewedBy}
+                          {reviewedAt
+                            ? ` • ${new Date(reviewedAt).toLocaleString()}`
+                            : ""}
+                        </div>
+                      </div>
+
+                      <div className="bg-white rounded-lg shadow-md p-4 border">
+                        <h4 className="text-sm font-semibold text-gray-700 mb-3">
+                          Actions
+                        </h4>
+                        <div className="space-y-3">
+                          <button
+                            type="button"
+                            onClick={handleDownloadPdf}
+                            className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 border rounded-lg text-sm text-gray-700 hover:shadow"
+                          >
+                            <ArrowDownTrayIcon className="h-4 w-4" />
+                            Download PDF
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleViewHL7}
+                            className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 border rounded-lg text-sm text-gray-700 hover:shadow"
+                          >
+                            View Raw HL7
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Footer: comment preview left, buttons right */}
+              {/* Footer fixed at bottom of modal - responsive spacing */}
               <div className="px-8 py-6 border-t border-gray-100 flex items-center justify-between">
                 {/* Comment preview: show latest comment truncated to one line with ellipsis */}
                 <div className="text-sm text-gray-700 max-w-[60%]">
@@ -595,14 +597,14 @@ export default function TestResultDetailPage(): JSX.Element {
                 </div>
               </div>
 
-              {/* Close icon */}
+              {/* Close icon (absolute inside modal) */}
               <button
                 onClick={() => {
                   if (isReviewing) handleCancelReview();
                   else navigate(-1);
                 }}
                 aria-label="Close"
-                className="absolute top-4 right-4 bg-white rounded-full p-1 shadow hover:bg-gray-50"
+                className="absolute top-3 right-3 bg-white rounded-full p-1 shadow hover:bg-gray-50"
               >
                 <XMarkIcon className="h-5 w-5 text-gray-700" />
               </button>
@@ -611,8 +613,7 @@ export default function TestResultDetailPage(): JSX.Element {
         </>
       )}
 
-      {/* ONLY render Comments modal when open.
-          Because main modal is hidden above, Comment modal will be the only visible UI. */}
+      {/* Comments modal only rendered when open (so main modal is effectively hidden) */}
       {isCommentsOpen && orderNumber && (
         <Comments
           orderNumber={orderNumber}
