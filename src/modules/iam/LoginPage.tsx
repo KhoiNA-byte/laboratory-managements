@@ -5,8 +5,8 @@ import { loginRequest, setRedirectPath } from '../../store/slices/authSlice'
 import { RootState } from '../../store'
 
 export const LoginPage = () => {
-  const [email, setEmail] = useState('user@lab.com')
-  const [password, setPassword] = useState('LabSecure2024!')
+  const [email, setEmail] = useState('admin@lab.com')
+  const [password, setPassword] = useState('AdminSecure2024!')
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { redirectPath, isAuthenticated } = useSelector((state: RootState) => state.auth)

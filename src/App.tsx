@@ -1,4 +1,6 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+// src/App.tsx
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { AppLayout } from "./layout/AppLayout";
 import { ProtectedRoute } from "./auth/ProtectedRoute";
 
@@ -28,11 +30,12 @@ import AddInstrumentPage from "./modules/warehouse/AddInstrumentPage";
 
 // Test Order Module
 import { TestOrdersPage } from "./modules/testorder/TestOrdersPage";
-import { TestResultPage } from "./modules/testorder/TestResultPage";
+import TestResultDetailPage from "./modules/testorder/TestResultDetailPage";
 import MyTestResultsPage from "./modules/testorder/MyTestResultsPage";
 import TestOrderDetailsPage from "./modules/testorder/TestOrderDetailsPage";
 import UpdateTestOrderPage from "./modules/testorder/UpdateTestOrderPage";
 import NewTestOrderPage from "./modules/testorder/NewTestOrderPage";
+import CommentsPage from "./modules/testorder/CommentsPage";
 
 // Monitoring Module
 import { MonitoringPage } from "./modules/monitoring/MonitoringPage";
@@ -52,10 +55,17 @@ import { ReportsPage } from "./modules/audit/ReportsPage";
 // Community Module
 import { CommunityPage } from "./modules/community/CommunityPage";
 
-function App() {
+function AppRoutesInner() {
+  const location = useLocation();
+  // If a navigate call set state.background (navigate(path, { state: { background: location } })),
+  // background will hold the previous location and we can render modal on top.
+  const state = location.state as { background?: Location } | undefined;
+  const background = state && state.background;
+
   return (
-    <Router>
-      <Routes>
+    <>
+      {/* Render main routes using background (so background UI stays rendered when modal is open) */}
+      <Routes location={background || location}>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/verify-otp" element={<VerifyOTPPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
@@ -63,46 +73,6 @@ function App() {
         <Route path="/landing" element={<HomePageWrapper />} />
         <Route path="/community" element={<CommunityPage />} />
 
-        {/* Dashboard Route - Standalone - Bao Add */}
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute allowedRoles={["admin", "user"]}>
-              <AppLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route index element={<DashboardPage />} />
-        </Route>
-
-        {/* Test Orders Route - Bao Add */}
-        <Route
-          path="/admin/test-orders"
-          element={
-            <ProtectedRoute allowedRoles={["admin", "user"]}>
-              <AppLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route index element={<TestOrdersPage />} />
-        </Route>
-
-        {/* Test Orders Action Route - Bao Add */}
-        <Route
-          path="/admin/test-orders"
-          element={
-            <ProtectedRoute allowedRoles={["admin", "user"]}>
-              <AppLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route index element={<TestOrdersPage />} />
-          <Route path=":orderNumber" element={<TestOrderDetailsPage />} />
-          <Route path=":orderNumber/edit" element={<UpdateTestOrderPage />} />
-          <Route path="new" element={<NewTestOrderPage />} />
-        </Route>
-
-        {/* User Home Route - Standalone page without AppLayout */}
         <Route
           path="/home"
           element={
@@ -112,7 +82,7 @@ function App() {
           }
         />
 
-        {/* Admin Dashboard Routes - With AppLayout */}
+        {/* Admin area with layout */}
         <Route
           path="/admin"
           element={
@@ -121,16 +91,15 @@ function App() {
             </ProtectedRoute>
           }
         >
-          {/* Dashboard Route - For admins */}
           <Route index element={<DashboardPage />} />
           <Route path="dashboard" element={<DashboardPage />} />
 
-          {/* IAM Routes */}
+          {/* IAM */}
           <Route path="users" element={<UsersPage />} />
           <Route path="roles" element={<RolesPage />} />
           <Route path="user-info" element={<UserInfoPage />} />
 
-          {/* Warehouse Routes */}
+          {/* Warehouse */}
           <Route path="instruments" element={<InstrumentsPage />} />
           <Route path="instruments/new" element={<AddInstrumentPage />} />
           <Route
@@ -145,64 +114,55 @@ function App() {
           <Route path="reagents" element={<ReagentsPage />} />
           <Route path="flagging-rules" element={<FlaggingRulesPage />} />
 
-          {/* Test Order Routes */}
+          {/* Test Orders */}
           <Route path="test-orders" element={<TestOrdersPage />} />
           <Route path="test-orders/new" element={<NewTestOrderPage />} />
-          <Route
-            path="test-orders/:orderId/edit"
-            element={<UpdateTestOrderPage />}
-          />
-          <Route
-            path="test-orders/:orderId"
-            element={<TestOrderDetailsPage />}
-          />
-          <Route path="test-results" element={<TestResultPage />} />
-          <Route
-            path="test-results/:orderNumber"
-            element={<TestResultPage />}
-          />
-          <Route path="my-test-results" element={<MyTestResultsPage />} />
+          <Route path="test-orders/:orderId/edit" element={<UpdateTestOrderPage />} />
+          <Route path="test-orders/:orderId" element={<TestOrderDetailsPage />} />
 
-          {/* Monitoring Routes */}
+          {/* Test Results routes (detail route under /admin) */}
+          <Route path="test-results" element={<MyTestResultsPage />} />
+          <Route path="test-results/:orderNumber" element={<TestResultDetailPage />} />
+
+          <Route path="my-test-results" element={<MyTestResultsPage />} />
+          {/* Comments */}
+
+          {/* Monitoring */}
           <Route path="monitoring" element={<MonitoringPage />} />
           <Route path="hl7-messages" element={<HL7MessagesPage />} />
           <Route path="quarantine" element={<QuarantinePage />} />
           <Route path="instrument-logs" element={<InstrumentLogsPage />} />
 
-          {/* Patient Routes */}
+          {/* Patients */}
           <Route path="patients/:id/edit" element={<EditPatientPage />} />
           <Route path="patients/:id" element={<PatientDetailsPage />} />
           <Route path="patients" element={<PatientsPage />} />
 
-          {/* Audit Routes */}
+          {/* Audit */}
           <Route path="audit-logs" element={<AuditLogsPage />} />
           <Route path="reports" element={<ReportsPage />} />
 
-          {/* Settings Route */}
-          <Route
-            path="settings"
-            element={
-              <div className="p-6">
-                <h1 className="text-2xl font-bold">Settings</h1>
-                <p>Settings page coming soon...</p>
-              </div>
-            }
-          />
-
-          {/* My Profile Route */}
-          <Route
-            path="profile"
-            element={
-              <div className="p-6">
-                <h1 className="text-2xl font-bold">My Profile</h1>
-                <p>Profile page coming soon...</p>
-              </div>
-            }
-          />
+          {/* misc */}
+          <Route path="settings" element={<div className="p-6"><h1 className="text-2xl font-bold">Settings</h1></div>} />
+          <Route path="profile" element={<div className="p-6"><h1 className="text-2xl font-bold">My Profile</h1></div>} />
         </Route>
       </Routes>
-    </Router>
+
+      {/* If background exists, render the modal route on top (matching same path) */}
+      {background && (
+        <Routes>
+          {/* Note: this path must match the nested admin modal path exactly */}
+          <Route path="/admin/test-results/:orderNumber" element={<TestResultDetailPage />} />
+        </Routes>
+      )}
+    </>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <Router>
+      <AppRoutesInner />
+    </Router>
+  );
+}
