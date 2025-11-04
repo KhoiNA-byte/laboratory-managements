@@ -1,25 +1,16 @@
 import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
 import { PayloadAction } from "@reduxjs/toolkit";
-import { mockGetUsersAPI } from "../apis/mock/userMock";
-
-// Mock API functions
-export const mockCreateUserAPI = async (data: any) => {
-  await new Promise((r) => setTimeout(r, 300));
-  return data;
-};
-
-const mockUpdateUserAPI = async (userData: any) => {
-  await new Promise((resolve) => setTimeout(resolve, 800));
-  return {
-    ...userData,
-    updatedAt: new Date().toISOString(),
-  };
-};
+import {
+  getUsersAPI,
+  createUserAPI,
+  updateUserAPI,
+  User,
+} from "../../services/userApi";
 
 // Get Users Saga
 function* getUsersSaga() {
   try {
-    const users = yield call(mockGetUsersAPI);
+    const users: User[] = yield call(getUsersAPI);
     yield put({
       type: "users/getUsersSuccess",
       payload: users,
@@ -32,15 +23,21 @@ function* getUsersSaga() {
   }
 }
 
+// Create User Saga
 function* createUserSaga(action: PayloadAction<any>): Generator {
   try {
+    const currentDate = new Date().toISOString();
+
     const newUserData = {
       ...action.payload,
       status: "active",
-      lastLogin: new Date().toISOString().split("T")[0],
+      lastLogin: currentDate.split("T")[0],
+      createdAt: currentDate,
+      updatedAt: currentDate,
     };
 
-    const newUser = yield call(mockCreateUserAPI, newUserData);
+    // Send all data including id
+    const newUser: User = yield call(createUserAPI, newUserData);
 
     yield put({
       type: "users/createUserSuccess",
@@ -57,7 +54,7 @@ function* createUserSaga(action: PayloadAction<any>): Generator {
 // Update User Saga
 function* updateUserSaga(action: PayloadAction<any>): Generator {
   try {
-    const updatedUser = yield call(mockUpdateUserAPI, action.payload);
+    const updatedUser: User = yield call(updateUserAPI, action.payload);
     yield put({
       type: "users/updateUserSuccess",
       payload: updatedUser,

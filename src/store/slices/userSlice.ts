@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { User } from "../types";
+import { User } from "../../services/userApi";
 
 interface UserState {
   users: User[];
@@ -41,7 +41,7 @@ const userSlice = createSlice({
       state.successMessage = null;
     },
 
-    // Fetch
+    // Fetch users
     getUsersRequest: (state) => {
       state.loading = true;
       state.error = null;
@@ -55,8 +55,11 @@ const userSlice = createSlice({
       state.error = action.payload;
     },
 
-    // Create
-    createUserRequest: (state, _action: PayloadAction<User>) => {
+    // Create user
+    createUserRequest: (
+      state,
+      _action: PayloadAction<Omit<User, "id" | "createdAt" | "updatedAt">>
+    ) => {
       state.loading = true;
       state.error = null;
       state.createSuccess = false;
@@ -73,23 +76,20 @@ const userSlice = createSlice({
       state.createSuccess = false;
     },
 
-    // Update
-    updateUserRequest: (state, action: PayloadAction<User>) => {
+    // Update user
+    updateUserRequest: (state, _action: PayloadAction<User>) => {
       state.loading = true;
       state.error = null;
       state.updateSuccess = false;
     },
     updateUserSuccess: (state, action: PayloadAction<User>) => {
       state.loading = false;
-      const idx = state.users.findIndex((u) => u.id === action.payload.id);
-      if (idx !== -1) {
-        // Properly update the user with all fields including status
-        state.users[idx] = { ...state.users[idx], ...action.payload };
+      const index = state.users.findIndex((u) => u.id === action.payload.id);
+      if (index !== -1) {
+        state.users[index] = action.payload;
       }
       state.updateSuccess = true;
-      state.successMessage = `User ${
-        action.payload.status === "active" ? "activated" : "deactivated"
-      } successfully!`;
+      state.successMessage = "User updated successfully!";
     },
     updateUserFailure: (state, action: PayloadAction<string>) => {
       state.loading = false;

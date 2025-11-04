@@ -3,13 +3,15 @@ export interface User {
   name: string;
   email: string;
   phone: string;
-  gender: "Male" | "Female";
+  gender: string;
+  role: string;
   age: number;
   address: string;
-  password: string;
-  role: string;
-  status: "active" | "inactive";
+  password?: string;
+  status: string;
   lastLogin: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Patient {

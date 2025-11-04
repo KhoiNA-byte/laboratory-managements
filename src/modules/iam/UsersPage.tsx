@@ -117,9 +117,7 @@ export const UsersPage = () => {
     if (user) {
       setSelectedUser(user);
       setOpenDropdown(null);
-      setTimeout(() => {
-        setShowViewModal(true);
-      }, 100);
+      setShowViewModal(true);
     }
   };
 
@@ -139,9 +137,7 @@ export const UsersPage = () => {
         status: user.status || "active",
       });
       setOpenDropdown(null);
-      setTimeout(() => {
-        setShowUpdateModal(true);
-      }, 100);
+      setShowUpdateModal(true);
     }
   };
 
@@ -149,9 +145,7 @@ export const UsersPage = () => {
     const user = users.find((u) => u.id === userId);
     if (user) {
       const newStatus = user.status === "active" ? "inactive" : "active";
-      const action = user.status === "active" ? "deactivated" : "activated";
 
-      // Show confirmation dialog
       const confirmed = window.confirm(
         `Are you sure you want to ${
           user.status === "active" ? "deactivate" : "activate"
@@ -159,7 +153,6 @@ export const UsersPage = () => {
       );
 
       if (confirmed) {
-        // Dispatch update action to change status
         dispatch({
           type: "users/updateUserRequest",
           payload: {
@@ -187,15 +180,11 @@ export const UsersPage = () => {
       }
     };
 
-    const timeoutId = setTimeout(() => {
-      document.addEventListener("mousedown", handleClickOutside);
-    }, 100);
-
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      clearTimeout(timeoutId);
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [openDropdown]);
+  }, []);
 
   useEffect(() => {
     dispatch({ type: "users/getUsersRequest" });
@@ -302,34 +291,34 @@ export const UsersPage = () => {
         </div>
 
         {/* Users Table */}
-        <div className="overflow-x-auto overflow-y-visible">
+        <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-6">
                   User Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-6">
                   Age/Gender
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-6">
                   Contact
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-6">
                   Role
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-6">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-6">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200 overflow-visible">
+            <tbody className="bg-white divide-y divide-gray-200">
               {filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center">
+                  <td colSpan={6} className="px-4 py-8 text-center sm:px-6">
                     <div className="text-gray-500 text-sm">
                       {users.length === 0
                         ? "No users found"
@@ -342,24 +331,28 @@ export const UsersPage = () => {
                 </tr>
               ) : (
                 filteredUsers.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50 relative">
-                    <td className="px-6 py-4 whitespace-nowrap">
+                  <tr key={user.id} className="hover:bg-gray-50">
+                    <td className="px-4 py-4 whitespace-nowrap sm:px-6">
                       <div className="text-sm font-medium text-gray-900">
                         {user.name}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 py-4 whitespace-nowrap sm:px-6">
                       <div className="text-sm text-gray-900">
                         {user.age} years / {user.gender}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 py-4 whitespace-nowrap sm:px-6">
                       <div className="text-sm text-gray-900">
-                        <div>{user.phone}</div>
-                        <div className="text-gray-500">{user.email}</div>
+                        <div className="truncate max-w-[120px] sm:max-w-none">
+                          {user.phone}
+                        </div>
+                        <div className="text-gray-500 truncate max-w-[120px] sm:max-w-none">
+                          {user.email}
+                        </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 py-4 whitespace-nowrap sm:px-6">
                       <span
                         className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleBadgeColor(
                           user.role
@@ -368,7 +361,7 @@ export const UsersPage = () => {
                         {user.role}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 py-4 whitespace-nowrap sm:px-6">
                       <span
                         className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeColor(
                           user.status || "active"
@@ -377,21 +370,11 @@ export const UsersPage = () => {
                         {user.status === "active" ? "Active" : "Inactive"}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium overflow-visible">
-                      <div
-                        className="relative"
-                        ref={dropdownRef}
-                        style={{ overflow: "visible" }}
-                      >
+                    <td className="px-4 py-4 whitespace-nowrap text-sm font-medium relative sm:px-6">
+                      <div className="relative inline-block text-left">
                         <button
-                          onMouseDown={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setOpenDropdown(
-                              openDropdown === user.id ? null : user.id
-                            );
-                          }}
-                          className="text-gray-400 hover:text-gray-600 focus:outline-none"
+                          onClick={() => toggleDropdown(user.id)}
+                          className="text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 rounded-full p-1"
                         >
                           <svg
                             className="h-5 w-5"
@@ -405,20 +388,11 @@ export const UsersPage = () => {
                         {openDropdown === user.id && (
                           <div
                             className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50 border border-gray-200"
-                            style={{ zIndex: 9999 }}
-                            onMouseDown={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                            }}
+                            ref={dropdownRef}
                           >
                             <div className="py-1">
-                              {/* View Profile */}
                               <button
-                                onMouseDown={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  handleViewDetails(user.id);
-                                }}
+                                onClick={() => handleViewDetails(user.id)}
                                 className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                               >
                                 <svg
@@ -437,13 +411,8 @@ export const UsersPage = () => {
                                 View Profile
                               </button>
 
-                              {/* Edit User */}
                               <button
-                                onMouseDown={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  handleEditUser(user.id);
-                                }}
+                                onClick={() => handleEditUser(user.id)}
                                 className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                               >
                                 <svg
@@ -462,13 +431,8 @@ export const UsersPage = () => {
                                 Edit User
                               </button>
 
-                              {/* Toggle Status */}
                               <button
-                                onMouseDown={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  handleToggleStatus(user.id);
-                                }}
+                                onClick={() => handleToggleStatus(user.id)}
                                 className={`flex items-center w-full px-4 py-2 text-sm ${
                                   user.status === "active"
                                     ? "text-orange-600 hover:bg-orange-50"
@@ -514,7 +478,7 @@ export const UsersPage = () => {
         </div>
 
         {/* Results count */}
-        <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
+        <div className="px-4 py-4 border-t border-gray-200 bg-gray-50 sm:px-6">
           <div className="text-sm text-gray-600">
             Showing {filteredUsers.length} of {users.length} users
           </div>
