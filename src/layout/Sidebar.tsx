@@ -4,27 +4,32 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store";
 import { logoutRequest } from "../store/slices/authSlice";
 
-export const Sidebar: React.FC = () => {
+export const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const dispatch = useDispatch<any>();
+  const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
-
   const [showUserDropdown, setShowUserDropdown] = useState(false);
 
-  const handleUserDropdownToggle = () => setShowUserDropdown((s) => !s);
+  const handleUserDropdownToggle = () => {
+    setShowUserDropdown(!showUserDropdown);
+  };
+
   const handleProfile = () => {
     setShowUserDropdown(false);
     navigate("/admin/user-info");
   };
+
   const handleHistory = () => {
     setShowUserDropdown(false);
     navigate("/admin/audit-logs");
   };
+
   const handleDashboard = () => {
     setShowUserDropdown(false);
     navigate("/admin/dashboard");
   };
+
   const handleLogout = () => {
     setShowUserDropdown(false);
     dispatch(logoutRequest());
@@ -54,13 +59,13 @@ export const Sidebar: React.FC = () => {
       path: "/admin/patients",
       label: "Patient Records",
       icon: "document",
-      roles: ["user", "admin"],
+      roles: [, "admin"],
     },
     {
       path: "/admin/test-orders",
       label: "Test Orders",
       icon: "pencil",
-      roles: ["user", "admin"],
+      roles: ["admin"],
     },
     {
       path: "/admin/my-test-results",
@@ -106,20 +111,35 @@ export const Sidebar: React.FC = () => {
     },
   ];
 
+  // Filter menu items based on user role
   const filteredMenuItems = menuItems.filter((item) =>
-    item.roles.includes(user?.role ?? "user")
+    item.roles.includes(user?.role || "user")
   );
 
-  const getIcon = (iconName: string): JSX.Element | null => {
-    const commonProps = {
-      className: "h-5 w-5",
-      fill: "none",
-      stroke: "currentColor",
-      viewBox: "0 0 24 24",
-    };
-    const icons: Record<string, JSX.Element> = {
+  const getIcon = (iconName: string) => {
+    const icons = {
+      home: (
+        <svg
+          className="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+          />
+        </svg>
+      ),
       grid: (
-        <svg {...commonProps}>
+        <svg
+          className="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -129,7 +149,12 @@ export const Sidebar: React.FC = () => {
         </svg>
       ),
       users: (
-        <svg {...commonProps}>
+        <svg
+          className="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -139,7 +164,12 @@ export const Sidebar: React.FC = () => {
         </svg>
       ),
       user: (
-        <svg {...commonProps}>
+        <svg
+          className="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -149,7 +179,12 @@ export const Sidebar: React.FC = () => {
         </svg>
       ),
       document: (
-        <svg {...commonProps}>
+        <svg
+          className="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -159,7 +194,12 @@ export const Sidebar: React.FC = () => {
         </svg>
       ),
       pencil: (
-        <svg {...commonProps}>
+        <svg
+          className="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -169,7 +209,12 @@ export const Sidebar: React.FC = () => {
         </svg>
       ),
       flask: (
-        <svg {...commonProps}>
+        <svg
+          className="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -179,7 +224,12 @@ export const Sidebar: React.FC = () => {
         </svg>
       ),
       box: (
-        <svg {...commonProps}>
+        <svg
+          className="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -189,7 +239,12 @@ export const Sidebar: React.FC = () => {
         </svg>
       ),
       chart: (
-        <svg {...commonProps}>
+        <svg
+          className="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -199,7 +254,12 @@ export const Sidebar: React.FC = () => {
         </svg>
       ),
       "bar-chart": (
-        <svg {...commonProps}>
+        <svg
+          className="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -209,7 +269,12 @@ export const Sidebar: React.FC = () => {
         </svg>
       ),
       cog: (
-        <svg {...commonProps}>
+        <svg
+          className="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -225,92 +290,70 @@ export const Sidebar: React.FC = () => {
         </svg>
       ),
     };
-
-    return icons[iconName] ?? null;
+    return icons[iconName as keyof typeof icons] || null;
   };
 
   return (
-    // fixed full width sidebar (no collapse)
-    <aside className="w-64 bg-white h-screen transition-all duration-300 relative">
-      <div className="px-3 py-3 flex flex-col justify-between h-full overflow-y-auto">
-        {/* Header: logo + title */}
-        <div className="flex items-center mb-6 gap-2">
-          <div className="w-10 h-10 rounded flex items-center justify-center mr-3">
+    <aside className="w-64 bg-gray-800 text-white overflow-y-auto scrollbar-hide relative">
+      <div className="p-4 pb-20">
+        {/* Logo */}
+        <div className="flex items-center mb-6">
+          <div className="w-8 h-8 bg-blue-500 rounded flex items-center justify-center mr-3">
             <svg
-              width="40"
-              height="40"
-              viewBox="0 0 40 40"
+              className="h-5 w-5 text-white"
               fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="block"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              <rect width="40" height="40" rx="12" fill="#2563EB" />
               <path
-                d="M18.3329 11.667V17.9395C18.3331 18.1987 18.2729 18.4543 18.1571 18.6862L13.9329 27.1253C13.8687 27.2528 13.8382 27.3947 13.8446 27.5373C13.8509 27.6799 13.8938 27.8185 13.9691 27.9398C14.0443 28.0611 14.1495 28.161 14.2745 28.23C14.3995 28.299 14.5401 28.3347 14.6829 28.3337H25.3162C25.459 28.3347 25.5996 28.299 25.7246 28.23C25.8496 28.161 25.9548 28.0611 26.0301 27.9398C26.1054 27.8185 26.1482 27.6799 26.1546 27.5373C26.1609 27.3947 26.1305 27.2528 26.0662 27.1253L21.8421 18.6862C21.7262 18.4543 21.666 18.1987 21.6662 17.9395V11.667"
-                stroke="white"
-                strokeWidth={1.66667}
                 strokeLinecap="round"
                 strokeLinejoin="round"
-              />
-              <path
-                d="M17.083 11.667H22.9163"
-                stroke="white"
-                strokeWidth={1.66667}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M15.833 23.333H24.1663"
-                stroke="white"
-                strokeWidth={1.66667}
-                strokeLinecap="round"
-                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
               />
             </svg>
           </div>
-
-          <span className="font-semibold text-lg">Laboratory Management</span>
+          <span className="font-semibold text-lg text-white">
+            Laboratory Management
+          </span>
         </div>
 
         {/* Navigation */}
-        <nav className="space-y-1 flex-1">
-          {filteredMenuItems.map((item) => {
-            const isActive = location.pathname === item.path;
-            const baseClass = `flex items-center px-4 py-3 rounded-lg transition-colors`;
-            const activeClass = isActive
-              ? "bg-blue-100 text-blue-800 border-l-4 border-blue-600"
-              : "text-black hover:bg-gray-100";
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`${baseClass} ${activeClass}`}
-              >
-                <span className="mr-3">{getIcon(item.icon)}</span>
-                <span className="font-medium">{item.label}</span>
-              </Link>
-            );
-          })}
+        <nav className="space-y-1">
+          {filteredMenuItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`flex items-center px-4 py-3 rounded-lg transition-colors ${
+                location.pathname === item.path
+                  ? "bg-blue-100 text-blue-800 border-l-4 border-blue-600"
+                  : "text-white hover:bg-gray-700"
+              }`}
+            >
+              <span className="mr-3">{getIcon(item.icon)}</span>
+              <span className="font-medium">{item.label}</span>
+            </Link>
+          ))}
         </nav>
 
         {/* User Profile at bottom */}
-        <div>
+        <div className="absolute bottom-0 left-0 right-0">
           <div className="relative">
             <button
               onClick={handleUserDropdownToggle}
               className="w-full flex items-center p-3 bg-blue-600 text-white rounded-t-lg hover:bg-blue-700 transition-colors"
             >
               <div className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-white font-semibold mr-3">
-                {user?.name ? user.name.slice(0, 2).toUpperCase() : "AU"}
+                AU
               </div>
-
-              <div className="flex-1 text-left text-black">
-                <div className="font-medium">{user?.name ?? "Admin User"}</div>
-                <div className="text-sm text-blue-100">
-                  {user?.role ?? "Administrator"}
+              <div className="flex-1 text-left">
+                <div className="font-medium">
+                  {user?.name || user?.email || "Unknown User"}
+                </div>
+                <div className="text-sm text-blue-100 capitalize">
+                  {user?.role?.replace("_", " ") || "No Role"}
                 </div>
               </div>
-
               <svg
                 className={`h-4 w-4 transition-transform ${
                   showUserDropdown ? "rotate-180" : ""
@@ -330,59 +373,84 @@ export const Sidebar: React.FC = () => {
 
             {/* Dropdown Menu */}
             {showUserDropdown && (
-              <div className="absolute bottom-full left-0 right-0 mb-1 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden z-10">
-                {[
-                  {
-                    label: "Profile",
-                    onClick: handleProfile,
-                    iconPath:
-                      "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z",
-                  },
-                  {
-                    label: "History",
-                    onClick: handleHistory,
-                    iconPath: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z",
-                  },
-                  {
-                    label: "Dashboard",
-                    onClick: handleDashboard,
-                    iconPath: "M4 6a2 2 0 012-2h2a2 2 0 012 2v2...",
-                  },
-                  {
-                    label: "Logout",
-                    onClick: handleLogout,
-                    iconPath: "M17 16l4-4m0 0l-4-4m4 4H7m6 4v1...",
-                    className: "text-red-600",
-                  },
-                ].map(
-                  ({
-                    label,
-                    onClick,
-                    iconPath,
-                    className = "text-gray-700",
-                  }) => (
-                    <button
-                      key={label}
-                      onClick={onClick}
-                      className={`w-full flex items-center px-4 py-3 ${className} hover:bg-gray-50 transition-colors`}
-                    >
-                      <svg
-                        className="h-5 w-5 mr-3"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d={iconPath}
-                        />
-                      </svg>
-                      <span>{label}</span>
-                    </button>
-                  )
-                )}
+              <div className="absolute bottom-full left-0 right-0 mb-1 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+                <button
+                  onClick={handleProfile}
+                  className="w-full flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  <svg
+                    className="h-5 w-5 mr-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
+                  Profile
+                </button>
+                <button
+                  onClick={handleHistory}
+                  className="w-full flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  <svg
+                    className="h-5 w-5 mr-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  History
+                </button>
+                <button
+                  onClick={handleDashboard}
+                  className="w-full flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  <svg
+                    className="h-5 w-5 mr-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                    />
+                  </svg>
+                  Dashboard
+                </button>
+                <div className="border-t border-gray-200"></div>
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center px-4 py-3 text-red-600 hover:bg-gray-50 transition-colors"
+                >
+                  <svg
+                    className="h-5 w-5 mr-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                    />
+                  </svg>
+                  Logout
+                </button>
               </div>
             )}
           </div>
