@@ -26,6 +26,18 @@ const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
 }) => {
   if (!show || !user) return null;
 
+  // Function to display role names
+  const getDisplayRole = (role: string) => {
+    const roleDisplayMap: { [key: string]: string } = {
+      admin: "Administrator",
+      lab_manager: "Lab Manager",
+      lab_user: "Lab User",
+      service_user: "Service User",
+      normal_user: "Normal User",
+    };
+    return roleDisplayMap[role] || role;
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
       <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl p-6 relative max-h-[90vh] overflow-y-auto">
@@ -113,7 +125,9 @@ const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
               <label className="block text-sm font-medium text-gray-700">
                 Role
               </label>
-              <p className="mt-1 text-sm text-gray-900">{user.role}</p>
+              <p className="mt-1 text-sm text-gray-900">
+                {getDisplayRole(user.role)} {/* Use display name here */}
+              </p>
             </div>
 
             <div>
@@ -146,7 +160,7 @@ const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
                   : "bg-red-100 text-red-800"
               }`}
             >
-              {user.status || "active"}
+              {user.status === "active" ? "Active" : "Inactive"}
             </span>
           </div>
         </div>

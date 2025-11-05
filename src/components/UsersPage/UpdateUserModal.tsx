@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 interface User {
   id: string;
@@ -34,11 +34,111 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
   error,
   successMessage,
 }) => {
+  const [validationErrors, setValidationErrors] = useState<{
+    [key: string]: string;
+  }>({});
+
   if (!show || !user) return null;
+
+  // Validation function
+  const validateField = (name: string, value: string | number) => {
+    const errors: { [key: string]: string } = { ...validationErrors };
+
+    switch (name) {
+      case "name":
+        if (!value || value.toString().trim().length < 2) {
+          errors.name = "Name must be at least 2 characters long";
+        } else {
+          delete errors.name;
+        }
+        break;
+
+      case "email":
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!value || !emailRegex.test(value.toString())) {
+          errors.email = "Please enter a valid email address";
+        } else {
+          delete errors.email;
+        }
+        break;
+
+      case "phone":
+        const phoneRegex = /^[0-9+\-\s()]{10,}$/;
+        if (!value || !phoneRegex.test(value.toString().replace(/\s/g, ""))) {
+          errors.phone = "Please enter a valid phone number";
+        } else {
+          delete errors.phone;
+        }
+        break;
+
+      case "age":
+        const ageNum = Number(value);
+        if (!value || ageNum < 1 || ageNum > 120) {
+          errors.age = "Age must be between 1 and 120";
+        } else {
+          delete errors.age;
+        }
+        break;
+
+      case "address":
+        if (value && value.toString().trim().length < 5) {
+          errors.address = "Address must be at least 5 characters long";
+        } else {
+          delete errors.address;
+        }
+        break;
+    }
+
+    setValidationErrors(errors);
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+
+    // Handle number conversion for age
+    const processedValue = name === "age" ? Number(value) : value;
+
+    setFormData({ ...formData, [name]: processedValue });
+    validateField(name, processedValue);
+  };
+
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // Validate all fields before submit
+    const fieldsToValidate = {
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      age: formData.age,
+      address: formData.address,
+    };
+
+    Object.entries(fieldsToValidate).forEach(([field, value]) => {
+      validateField(field, value);
+    });
+
+    // Only submit if no validation errors
+    if (Object.keys(validationErrors).length === 0) {
+      handleSubmit(e);
+    }
+  };
+
+  const isFormValid = () => {
+    return (
+      Object.keys(validationErrors).length === 0 &&
+      formData.name &&
+      formData.email &&
+      formData.phone &&
+      formData.age
+    );
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-lg p-6 relative">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -64,7 +164,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
         </h2>
 
         <form
-          onSubmit={handleSubmit}
+          onSubmit={handleFormSubmit}
           className="grid grid-cols-1 gap-4 sm:grid-cols-2"
         >
           {/* Full Name */}
@@ -76,12 +176,17 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
               type="text"
               name="name"
               value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              className="mt-1 w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+              onChange={handleInputChange}
+              className={`mt-1 w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 ${
+                validationErrors.name ? "border-red-300" : "border-gray-300"
+              }`}
               required
             />
+            {validationErrors.name && (
+              <p className="mt-1 text-sm text-red-600">
+                {validationErrors.name}
+              </p>
+            )}
           </div>
 
           {/* Email */}
@@ -93,12 +198,17 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
               type="email"
               name="email"
               value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
-              className="mt-1 w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+              onChange={handleInputChange}
+              className={`mt-1 w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 ${
+                validationErrors.email ? "border-red-300" : "border-gray-300"
+              }`}
               required
             />
+            {validationErrors.email && (
+              <p className="mt-1 text-sm text-red-600">
+                {validationErrors.email}
+              </p>
+            )}
           </div>
 
           {/* Phone */}
@@ -110,12 +220,17 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
               type="text"
               name="phone"
               value={formData.phone}
-              onChange={(e) =>
-                setFormData({ ...formData, phone: e.target.value })
-              }
-              className="mt-1 w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+              onChange={handleInputChange}
+              className={`mt-1 w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 ${
+                validationErrors.phone ? "border-red-300" : "border-gray-300"
+              }`}
               required
             />
+            {validationErrors.phone && (
+              <p className="mt-1 text-sm text-red-600">
+                {validationErrors.phone}
+              </p>
+            )}
           </div>
 
           {/* Identity Number (Read Only) */}
@@ -142,17 +257,15 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
             <select
               name="gender"
               value={formData.gender}
-              onChange={(e) =>
-                setFormData({ ...formData, gender: e.target.value })
-              }
-              className="mt-1 w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+              onChange={handleInputChange}
+              className="mt-1 w-full border border-gray-300 bg-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="Male">Male</option>
               <option value="Female">Female</option>
             </select>
           </div>
 
-          {/* Role */}
+          {/* Role - RED BOX */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Role *
@@ -160,17 +273,14 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
             <select
               name="role"
               value={formData.role}
-              onChange={(e) =>
-                setFormData({ ...formData, role: e.target.value })
-              }
-              className="mt-1 w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+              onChange={handleInputChange}
+              className="mt-1 w-full border border-gray-300 bg-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="Administrator">Administrator</option>
-              <option value="Lab Manager">Lab Manager</option>
-              <option value="Lab User">Lab User</option>
-              <option value="Service User">Service User</option>
-              <option value="Normal User">Normal User</option>
-              <option value="Technician">Technician</option>
+              <option value="admin">Administrator</option>
+              <option value="lab_manager">Lab Manager</option>
+              <option value="lab_user">Lab User</option>
+              <option value="service_user">Service User</option>
+              <option value="normal_user">Normal User</option>
             </select>
           </div>
 
@@ -183,13 +293,19 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
               type="number"
               name="age"
               value={formData.age}
-              onChange={(e) =>
-                setFormData({ ...formData, age: Number(e.target.value) })
-              }
-              className="mt-1 w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+              onChange={handleInputChange}
               min="1"
+              max="120"
+              className={`mt-1 w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 ${
+                validationErrors.age ? "border-red-300" : "border-gray-300"
+              }`}
               required
             />
+            {validationErrors.age && (
+              <p className="mt-1 text-sm text-red-600">
+                {validationErrors.age}
+              </p>
+            )}
           </div>
 
           {/* Status */}
@@ -200,14 +316,11 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
             <select
               name="status"
               value={formData.status}
-              onChange={(e) =>
-                setFormData({ ...formData, status: e.target.value })
-              }
-              className="mt-1 w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+              onChange={handleInputChange}
+              className="mt-1 w-full border border-gray-300 bg-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
-              <option value="suspended">Suspended</option>
             </select>
           </div>
 
@@ -220,11 +333,16 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
               type="text"
               name="address"
               value={formData.address || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, address: e.target.value })
-              }
-              className="mt-1 w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+              onChange={handleInputChange}
+              className={`mt-1 w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 ${
+                validationErrors.address ? "border-red-300" : "border-gray-300"
+              }`}
             />
+            {validationErrors.address && (
+              <p className="mt-1 text-sm text-red-600">
+                {validationErrors.address}
+              </p>
+            )}
           </div>
 
           {/* Messages Section */}
@@ -253,7 +371,12 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+              disabled={!isFormValid()}
+              className={`px-4 py-2 rounded-lg text-white ${
+                isFormValid()
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : "bg-gray-400 cursor-not-allowed"
+              }`}
             >
               Update User
             </button>

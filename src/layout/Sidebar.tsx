@@ -41,13 +41,13 @@ export const Sidebar = () => {
       path: "/admin/dashboard",
       label: "Dashboard",
       icon: "grid",
-      roles: ["admin"],
+      roles: ["admin", "lab_manager"],
     },
     {
       path: "/admin/users",
       label: "Users Management",
       icon: "users",
-      roles: ["admin"],
+      roles: ["admin", "lab_manager"],
     },
     {
       path: "/admin/roles",

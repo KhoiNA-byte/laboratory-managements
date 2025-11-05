@@ -5,8 +5,8 @@ import { loginRequest, setRedirectPath } from "../../store/slices/authSlice";
 import { RootState } from "../../store";
 
 export const LoginPage = () => {
-  const [email, setEmail] = useState("user@lab.com");
-  const [password, setPassword] = useState("LabSecure2024!");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { redirectPath, isAuthenticated, loading, error } = useSelector(
@@ -16,14 +16,10 @@ export const LoginPage = () => {
   // Redirect when login succeeds
   useEffect(() => {
     if (isAuthenticated) {
-      if (redirectPath) {
-        navigate(redirectPath);
-        dispatch(setRedirectPath(null));
-      } else {
-        navigate("/");
-      }
+      // If there's a redirectPath, use it, else default to '/'
+      navigate(redirectPath || "/");
     }
-  }, [isAuthenticated, redirectPath, navigate, dispatch]);
+  }, [isAuthenticated, redirectPath, navigate]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
