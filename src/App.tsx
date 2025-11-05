@@ -79,7 +79,13 @@ function App() {
           path="/admin"
           element={
             <ProtectedRoute
-              allowedRoles={["admin", "manager", "lab_user", "service", "user"]}
+              allowedRoles={[
+                "admin",
+                "lab_manager",
+                "lab_user",
+                "service",
+                "user",
+              ]}
             >
               <AppLayout />
             </ProtectedRoute>
@@ -90,7 +96,7 @@ function App() {
             index
             element={
               <ProtectedRoute
-                allowedRoles={["admin", "manager", "lab_user", "service"]}
+                allowedRoles={["admin", "lab_manager", "lab_user", "service"]}
               >
                 <DashboardPage />
               </ProtectedRoute>
@@ -100,7 +106,7 @@ function App() {
             path="dashboard"
             element={
               <ProtectedRoute
-                allowedRoles={["admin", "manager", "lab_user", "service"]}
+                allowedRoles={["admin", "lab_manager", "lab_user", "service"]}
               >
                 <DashboardPage />
               </ProtectedRoute>
@@ -111,7 +117,7 @@ function App() {
           <Route
             path="users"
             element={
-              <ProtectedRoute allowedRoles={["admin", "manager"]}>
+              <ProtectedRoute allowedRoles={["admin", "lab_manager"]}>
                 <UsersPage />
               </ProtectedRoute>
             }
@@ -128,7 +134,7 @@ function App() {
             path="user-info"
             element={
               <ProtectedRoute
-                allowedRoles={["admin", "manager", "lab_user", "service"]}
+                allowedRoles={["admin", "lab_manager", "lab_user", "service"]}
               >
                 <UserInfoPage />
               </ProtectedRoute>
@@ -197,7 +203,9 @@ function App() {
           <Route
             path="test-orders"
             element={
-              <ProtectedRoute allowedRoles={["admin", "manager", "lab_user"]}>
+              <ProtectedRoute
+                allowedRoles={["admin", "lab_manager", "lab_user"]}
+              >
                 <TestOrdersPage />
               </ProtectedRoute>
             }
@@ -221,7 +229,9 @@ function App() {
           <Route
             path="test-orders/:orderId"
             element={
-              <ProtectedRoute allowedRoles={["admin", "manager", "lab_user"]}>
+              <ProtectedRoute
+                allowedRoles={["admin", "lab_manager", "lab_user"]}
+              >
                 <TestOrderDetailsPage />
               </ProtectedRoute>
             }
@@ -230,7 +240,7 @@ function App() {
             path="test-results"
             element={
               <ProtectedRoute
-                allowedRoles={["admin", "manager", "lab_user", "service"]}
+                allowedRoles={["admin", "lab_manager", "lab_user", "service"]}
               >
                 <TestResultPage />
               </ProtectedRoute>
@@ -283,7 +293,9 @@ function App() {
           <Route
             path="patients"
             element={
-              <ProtectedRoute allowedRoles={["admin", "manager", "lab_user"]}>
+              <ProtectedRoute
+                allowedRoles={["admin", "lab_manager", "lab_user"]}
+              >
                 <PatientsPage />
               </ProtectedRoute>
             }
@@ -291,7 +303,9 @@ function App() {
           <Route
             path="patients/:id"
             element={
-              <ProtectedRoute allowedRoles={["admin", "manager", "lab_user"]}>
+              <ProtectedRoute
+                allowedRoles={["admin", "lab_manager", "lab_user"]}
+              >
                 <PatientDetailsPage />
               </ProtectedRoute>
             }
@@ -309,7 +323,7 @@ function App() {
           <Route
             path="audit-logs"
             element={
-              <ProtectedRoute allowedRoles={["admin", "manager"]}>
+              <ProtectedRoute allowedRoles={["admin", "lab_manager"]}>
                 <AuditLogsPage />
               </ProtectedRoute>
             }
@@ -317,7 +331,7 @@ function App() {
           <Route
             path="reports"
             element={
-              <ProtectedRoute allowedRoles={["admin", "manager"]}>
+              <ProtectedRoute allowedRoles={["admin", "lab_manager"]}>
                 <ReportsPage />
               </ProtectedRoute>
             }
@@ -328,7 +342,7 @@ function App() {
             path="settings"
             element={
               <ProtectedRoute
-                allowedRoles={["admin", "manager", "lab_user", "service"]}
+                allowedRoles={["admin", "lab_manager", "lab_user", "service"]}
               >
                 <div className="p-6">
                   <h1 className="text-2xl font-bold">Settings</h1>
@@ -345,7 +359,7 @@ function App() {
               <ProtectedRoute
                 allowedRoles={[
                   "admin",
-                  "manager",
+                  "lab_manager",
                   "lab_user",
                   "service",
                   "user",

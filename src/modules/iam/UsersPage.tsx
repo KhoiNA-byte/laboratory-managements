@@ -42,7 +42,7 @@ export const UsersPage = () => {
     email: "",
     phone: "",
     gender: "Male",
-    role: "Administrator",
+    role: "admin",
     age: 0,
     address: "",
     password: "",
@@ -51,11 +51,12 @@ export const UsersPage = () => {
 
   const [updateFormData, setUpdateFormData] = useState({
     id: "",
+    userId: "",
     name: "",
     email: "",
     phone: "",
     gender: "Male",
-    role: "Administrator",
+    role: "admin",
     age: 0,
     address: "",
     status: "active",
@@ -73,8 +74,22 @@ export const UsersPage = () => {
       const matchesGender =
         genderFilter === "All Genders" || user.gender === genderFilter;
 
-      const matchesRole =
-        roleFilter === "All Roles" || user.role === roleFilter;
+      // Fix role filter - map "Administrator" filter to "admin" in data
+      const matchesRole = (() => {
+        if (roleFilter === "All Roles") return true;
+
+        // Map UI role names to database role names
+        const roleMapping: { [key: string]: string } = {
+          Administrator: "admin",
+          "Lab Manager": "lab_manager",
+          "Lab User": "lab_user",
+          "Service User": "service_user",
+          "Normal User": "normal_user",
+        };
+
+        const dbRole = roleMapping[roleFilter] || roleFilter;
+        return user.role === dbRole;
+      })();
 
       const matchesAge = (() => {
         if (ageFilter === "All Ages") return true;
@@ -102,6 +117,37 @@ export const UsersPage = () => {
     });
   }, [users, searchTerm, genderFilter, roleFilter, ageFilter]);
 
+  // Function to display role names
+  const getDisplayRole = (role: string) => {
+    const roleDisplayMap: { [key: string]: string } = {
+      admin: "Administrator",
+      lab_manager: "Lab Manager",
+      lab_user: "Lab User",
+      service_user: "Service User",
+      normal_user: "Normal User",
+    };
+    return roleDisplayMap[role] || role;
+  };
+
+  const getRoleBadgeColor = (role: string) => {
+    // Use the display role for styling
+    const displayRole = getDisplayRole(role);
+    switch (displayRole) {
+      case "Administrator":
+        return "bg-green-100 text-green-800";
+      case "Lab Manager":
+        return "bg-teal-100 text-teal-800";
+      case "Lab User":
+        return "bg-green-100 text-green-600";
+      case "Service User":
+        return "bg-blue-100 text-blue-600";
+      case "Normal User":
+        return "bg-blue-100 text-blue-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     dispatch({ type: "users/createUserRequest", payload: formData });
@@ -127,6 +173,7 @@ export const UsersPage = () => {
       setSelectedUser(user);
       setUpdateFormData({
         id: user.id,
+        userId: user.userId,
         name: user.name,
         email: user.email,
         phone: user.phone,
@@ -225,23 +272,6 @@ export const UsersPage = () => {
     }
   }, [updateSuccess, showUpdateModal, dispatch]);
 
-  const getRoleBadgeColor = (role: string) => {
-    switch (role) {
-      case "Administrator":
-        return "bg-green-100 text-green-800";
-      case "Lab Manager":
-        return "bg-teal-100 text-teal-800";
-      case "Lab User":
-        return "bg-green-100 text-green-600";
-      case "Service User":
-        return "bg-blue-100 text-blue-600";
-      case "Normal User":
-        return "bg-blue-100 text-blue-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
       case "active":
@@ -291,7 +321,7 @@ export const UsersPage = () => {
         </div>
 
         {/* Users Table */}
-        <div className="overflow-x-auto">
+        <div className="">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -358,7 +388,7 @@ export const UsersPage = () => {
                           user.role
                         )}`}
                       >
-                        {user.role}
+                        {getDisplayRole(user.role)}
                       </span>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap sm:px-6">

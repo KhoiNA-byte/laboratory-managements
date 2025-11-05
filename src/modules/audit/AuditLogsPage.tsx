@@ -1,10 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
 
 export const AuditLogsPage = () => {
   const [auditLogs] = useState([
-    { id: 1, user: 'admin', action: 'Login', timestamp: '2024-01-15 10:30:00' },
-    { id: 2, user: 'user1', action: 'Create Patient', timestamp: '2024-01-15 10:25:00' },
-  ])
+    { id: 1, user: "admin", action: "Login", timestamp: "2024-01-15 10:30:00" },
+    {
+      id: 2,
+      user: "user1",
+      action: "Create Patient",
+      timestamp: "2024-01-15 10:25:00",
+    },
+  ]);
 
   return (
     <div className="page">
@@ -39,5 +44,5 @@ export const AuditLogsPage = () => {
         </table>
       </div>
     </div>
-  )
-}
+  );
+};

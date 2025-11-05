@@ -9,44 +9,40 @@ import {
   logoutFailure,
   setRedirectPath,
 } from "../slices/authSlice";
-import { mockLoginAPI, mockLogoutAPI } from "../apis/mock/authMock";
+import { loginAPI, logoutAPI } from "../../services/authApi";
+
+// Define USERS_ENDPOINT here for the checkAuthStatusSaga
+const API_BASE_URL = import.meta.env.VITE_MOCKAPI_BASE_URL;
+const USERS_ENDPOINT = `${API_BASE_URL}${
+  import.meta.env.VITE_MOCKAPI_USERS_ENDPOINT
+}`;
 
 /**
- * LOGIN SAGA
+ * LOGIN SAGA - Using MockAPI.io
  */
-function* loginSaga(action) {
+function* loginSaga(
+  action: PayloadAction<{ email: string; password: string }>
+): Generator<any, void, any> {
   try {
     const { email, password } = action.payload;
-    const response = yield call(mockLoginAPI, { email, password });
 
-    // Store token + user in localStorage
+    // Call MockAPI.io for authentication
+    const response = yield call(loginAPI, { email, password });
+
+    console.log("Login response from MockAPI:", response);
+
     localStorage.setItem("token", response.token);
     localStorage.setItem("user", JSON.stringify(response.user));
 
-    // Dispatch success action
+    yield put(setRedirectPath(response.redirectPath));
+
     yield put(
       loginSuccess({
         user: response.user,
         token: response.token,
       })
     );
-
-    // Handle redirect based on role
-    switch (response.user.role) {
-      case "admin":
-      case "manager":
-      case "lab_user":
-      case "service":
-        yield put(setRedirectPath("/admin/dashboard"));
-        break;
-      case "user":
-        yield put(setRedirectPath("/admin/profile"));
-        break;
-      default:
-        yield put(setRedirectPath("/home"));
-        break;
-    }
-  } catch (error) {
+  } catch (error: any) {
     yield put(loginFailure(error.message || "Login failed"));
   }
 }
@@ -54,34 +50,51 @@ function* loginSaga(action) {
 /**
  * LOGOUT SAGA
  */
-function* logoutSaga() {
+function* logoutSaga(): Generator<any, void, any> {
   try {
-    yield call(mockLogoutAPI);
+    yield call(logoutAPI);
 
     // Clear localStorage
     localStorage.removeItem("token");
     localStorage.removeItem("user");
 
     yield put(logoutSuccess());
-  } catch (error) {
+  } catch (error: any) {
     yield put(logoutFailure(error.message || "Logout failed"));
   }
 }
 
 /**
  * CHECK AUTH STATUS SAGA
- * (Called on app init to restore session)
  */
-function* checkAuthStatusSaga() {
+function* checkAuthStatusSaga(): Generator<any, void, any> {
   try {
     const token = localStorage.getItem("token");
     const userStr = localStorage.getItem("user");
 
     if (token && userStr) {
       const user = JSON.parse(userStr);
-      yield put(loginSuccess({ user, token }));
+
+      // Simple existence check
+      try {
+        const response: Response = yield call(
+          fetch,
+          `${USERS_ENDPOINT}/${user.id}`
+        );
+
+        if (response.ok) {
+          yield put(loginSuccess({ user, token }));
+        } else {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+        }
+      } catch (error) {
+        // If check fails, still restore session for better UX
+        yield put(loginSuccess({ user, token }));
+      }
     }
   } catch (error) {
+    console.error("Auth status check failed:", error);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
   }

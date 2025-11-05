@@ -1,12 +1,5 @@
-// src/services/userApi.ts
-
 // Use environment variables
-const API_BASE_URL = import.meta.env.VITE_MOCKAPI_BASE_URL;
-const USERS_ENDPOINT = `${API_BASE_URL}${
-  import.meta.env.VITE_MOCKAPI_USERS_ENDPOINT
-}`;
-
-export { API_BASE_URL, USERS_ENDPOINT };
+import { USERS_ENDPOINT } from "./apiConfig";
 
 export interface User {
   id: string;
@@ -70,14 +63,25 @@ export const createUserAPI = async (
 export const updateUserAPI = async (userData: User): Promise<User> => {
   try {
     console.log("Updating user with data:", userData);
-    console.log("Using endpoint:", `${USERS_ENDPOINT}/${userData.id}`);
-    const response = await fetch(`${USERS_ENDPOINT}/${userData.id}`, {
+    console.log("Retrieved userId:", userData.userId);
+    const userId = userData.userId;
+    // // Get the userId from the id using your function
+    // const userId = await getUserIdFromId(userData.id);
+    // if (!userId) {
+    //   throw new Error(`Cannot find userId for user with id: ${userData.id}`);
+    // }
+
+    console.log("Found userId:", userId);
+    console.log("Using endpoint:", `${USERS_ENDPOINT}/${userData.userId}`);
+
+    const response = await fetch(`${USERS_ENDPOINT}/${userData.userId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         ...userData,
+        userId: userId, // Ensure userId is included in the update
         updatedAt: new Date().toISOString(),
       }),
     });
@@ -88,6 +92,32 @@ export const updateUserAPI = async (userData: User): Promise<User> => {
     return await response.json();
   } catch (error) {
     console.error("Error updating user:", error);
+    throw error;
+  }
+};
+
+// Get userId from id
+export const getUserIdFromId = async (id: string): Promise<string | null> => {
+  try {
+    const user = await getUserById(id);
+    return user.userId || null;
+  } catch (error) {
+    console.error("Error getting userId:", error);
+    return null;
+  }
+};
+
+// Get user by ID and extract userId
+export const getUserById = async (id: string): Promise<any> => {
+  try {
+    const response = await fetch(`${USERS_ENDPOINT}/${id}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch user: ${response.status}`);
+    }
+    const user = await response.json();
+    return user;
+  } catch (error) {
+    console.error("Error fetching user:", error);
     throw error;
   }
 };
