@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AppLayout } from "./layout/AppLayout";
 import { ProtectedRoute } from "./auth/ProtectedRoute";
+import { PERMISSIONS } from "./constants/permissions";
 
 // Dashboard Module
 import { DashboardPage } from "./modules/dashboard/DashboardPage";
@@ -16,6 +17,7 @@ import { ResetPasswordPage } from "./modules/iam/ResetPasswordPage";
 import { UsersPage } from "./modules/iam/UsersPage";
 import { RolesPage } from "./modules/iam/RolesPage";
 import UserInfoPage from "./modules/iam/UserInfoPage";
+import { UnauthorizedPage } from "./modules/iam/UnauthorizedPage";
 
 // Warehouse Module
 import InstrumentsPage from "./modules/warehouse/InstrumentsPage";
@@ -63,40 +65,37 @@ function App() {
         <Route path="/" element={<HomePageWrapper />} />
         <Route path="/landing" element={<HomePageWrapper />} />
         <Route path="/community" element={<CommunityPage />} />
+        <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
         {/* User Home Route */}
         <Route
           path="/home"
           element={
-            <ProtectedRoute allowedRoles={["user"]}>
+            <ProtectedRoute
+              allowedPermissions={[PERMISSIONS.HOME_ACCESS]}
+              fallbackPath="/unauthorized"
+            >
               <HomePageLoggedIn />
             </ProtectedRoute>
           }
         />
 
-        {/* Shared Admin Dashboard Layout (all roles can enter) */}
+        {/* Shared Admin Dashboard Layout */}
         <Route
           path="/admin"
           element={
-            <ProtectedRoute
-              allowedRoles={[
-                "admin",
-                "lab_manager",
-                "lab_user",
-                "service",
-                "user",
-              ]}
-            >
+            <ProtectedRoute fallbackPath="/unauthorized">
               <AppLayout />
             </ProtectedRoute>
           }
         >
-          {/* Dashboard Routes (restricted to higher roles) */}
+          {/* Dashboard Routes */}
           <Route
             index
             element={
               <ProtectedRoute
-                allowedRoles={["admin", "lab_manager", "lab_user", "service"]}
+                allowedPermissions={[PERMISSIONS.DASHBOARD_READ]}
+                fallbackPath="/unauthorized"
               >
                 <DashboardPage />
               </ProtectedRoute>
@@ -106,7 +105,8 @@ function App() {
             path="dashboard"
             element={
               <ProtectedRoute
-                allowedRoles={["admin", "lab_manager", "lab_user", "service"]}
+                allowedPermissions={[PERMISSIONS.DASHBOARD_READ]}
+                fallbackPath="/unauthorized"
               >
                 <DashboardPage />
               </ProtectedRoute>
@@ -117,7 +117,10 @@ function App() {
           <Route
             path="users"
             element={
-              <ProtectedRoute allowedRoles={["admin", "lab_manager"]}>
+              <ProtectedRoute
+                allowedPermissions={[PERMISSIONS.USERS_READ]}
+                fallbackPath="/unauthorized"
+              >
                 <UsersPage />
               </ProtectedRoute>
             }
@@ -125,7 +128,10 @@ function App() {
           <Route
             path="roles"
             element={
-              <ProtectedRoute allowedRoles={["admin"]}>
+              <ProtectedRoute
+                allowedPermissions={[PERMISSIONS.ROLES_READ]}
+                fallbackPath="/unauthorized"
+              >
                 <RolesPage />
               </ProtectedRoute>
             }
@@ -133,9 +139,7 @@ function App() {
           <Route
             path="user-info"
             element={
-              <ProtectedRoute
-                allowedRoles={["admin", "lab_manager", "lab_user", "service"]}
-              >
+              <ProtectedRoute fallbackPath="/unauthorized">
                 <UserInfoPage />
               </ProtectedRoute>
             }
@@ -145,7 +149,10 @@ function App() {
           <Route
             path="instruments"
             element={
-              <ProtectedRoute allowedRoles={["admin", "lab_user", "service"]}>
+              <ProtectedRoute
+                allowedPermissions={[PERMISSIONS.INSTRUMENTS_READ]}
+                fallbackPath="/unauthorized"
+              >
                 <InstrumentsPage />
               </ProtectedRoute>
             }
@@ -153,7 +160,10 @@ function App() {
           <Route
             path="instruments/new"
             element={
-              <ProtectedRoute allowedRoles={["admin", "lab_user"]}>
+              <ProtectedRoute
+                allowedPermissions={[PERMISSIONS.INSTRUMENTS_WRITE]}
+                fallbackPath="/unauthorized"
+              >
                 <AddInstrumentPage />
               </ProtectedRoute>
             }
@@ -161,7 +171,10 @@ function App() {
           <Route
             path="instruments/:instrumentId/edit"
             element={
-              <ProtectedRoute allowedRoles={["admin", "lab_user"]}>
+              <ProtectedRoute
+                allowedPermissions={[PERMISSIONS.INSTRUMENTS_WRITE]}
+                fallbackPath="/unauthorized"
+              >
                 <EditInstrumentPage />
               </ProtectedRoute>
             }
@@ -169,7 +182,10 @@ function App() {
           <Route
             path="instruments/:instrumentId"
             element={
-              <ProtectedRoute allowedRoles={["admin", "lab_user", "service"]}>
+              <ProtectedRoute
+                allowedPermissions={[PERMISSIONS.INSTRUMENTS_READ]}
+                fallbackPath="/unauthorized"
+              >
                 <InstrumentDetailsPage />
               </ProtectedRoute>
             }
@@ -177,7 +193,10 @@ function App() {
           <Route
             path="warehouse"
             element={
-              <ProtectedRoute allowedRoles={["admin", "lab_user"]}>
+              <ProtectedRoute
+                allowedPermissions={[PERMISSIONS.WAREHOUSE_READ]}
+                fallbackPath="/unauthorized"
+              >
                 <WarehousePage />
               </ProtectedRoute>
             }
@@ -185,7 +204,10 @@ function App() {
           <Route
             path="reagents"
             element={
-              <ProtectedRoute allowedRoles={["admin", "lab_user"]}>
+              <ProtectedRoute
+                allowedPermissions={[PERMISSIONS.WAREHOUSE_READ]}
+                fallbackPath="/unauthorized"
+              >
                 <ReagentsPage />
               </ProtectedRoute>
             }
@@ -193,7 +215,10 @@ function App() {
           <Route
             path="flagging-rules"
             element={
-              <ProtectedRoute allowedRoles={["admin", "lab_user"]}>
+              <ProtectedRoute
+                allowedPermissions={[PERMISSIONS.WAREHOUSE_WRITE]}
+                fallbackPath="/unauthorized"
+              >
                 <FlaggingRulesPage />
               </ProtectedRoute>
             }
@@ -204,7 +229,8 @@ function App() {
             path="test-orders"
             element={
               <ProtectedRoute
-                allowedRoles={["admin", "lab_manager", "lab_user"]}
+                allowedPermissions={[PERMISSIONS.TEST_ORDERS_READ]}
+                fallbackPath="/unauthorized"
               >
                 <TestOrdersPage />
               </ProtectedRoute>
@@ -213,7 +239,10 @@ function App() {
           <Route
             path="test-orders/new"
             element={
-              <ProtectedRoute allowedRoles={["lab_user"]}>
+              <ProtectedRoute
+                allowedPermissions={[PERMISSIONS.TEST_ORDERS_WRITE]}
+                fallbackPath="/unauthorized"
+              >
                 <NewTestOrderPage />
               </ProtectedRoute>
             }
@@ -221,7 +250,10 @@ function App() {
           <Route
             path="test-orders/:orderId/edit"
             element={
-              <ProtectedRoute allowedRoles={["lab_user"]}>
+              <ProtectedRoute
+                allowedPermissions={[PERMISSIONS.TEST_ORDERS_WRITE]}
+                fallbackPath="/unauthorized"
+              >
                 <UpdateTestOrderPage />
               </ProtectedRoute>
             }
@@ -230,7 +262,8 @@ function App() {
             path="test-orders/:orderId"
             element={
               <ProtectedRoute
-                allowedRoles={["admin", "lab_manager", "lab_user"]}
+                allowedPermissions={[PERMISSIONS.TEST_ORDERS_READ]}
+                fallbackPath="/unauthorized"
               >
                 <TestOrderDetailsPage />
               </ProtectedRoute>
@@ -240,7 +273,8 @@ function App() {
             path="test-results"
             element={
               <ProtectedRoute
-                allowedRoles={["admin", "lab_manager", "lab_user", "service"]}
+                allowedPermissions={[PERMISSIONS.TEST_ORDERS_READ]}
+                fallbackPath="/unauthorized"
               >
                 <TestResultPage />
               </ProtectedRoute>
@@ -249,7 +283,10 @@ function App() {
           <Route
             path="my-test-results"
             element={
-              <ProtectedRoute allowedRoles={["user"]}>
+              <ProtectedRoute
+                allowedPermissions={[PERMISSIONS.MY_TEST_RESULTS_READ]}
+                fallbackPath="/unauthorized"
+              >
                 <MyTestResultsPage />
               </ProtectedRoute>
             }
@@ -259,7 +296,10 @@ function App() {
           <Route
             path="monitoring"
             element={
-              <ProtectedRoute allowedRoles={["admin", "service"]}>
+              <ProtectedRoute
+                allowedPermissions={[PERMISSIONS.MONITORING_READ]}
+                fallbackPath="/unauthorized"
+              >
                 <MonitoringPage />
               </ProtectedRoute>
             }
@@ -267,7 +307,10 @@ function App() {
           <Route
             path="hl7-messages"
             element={
-              <ProtectedRoute allowedRoles={["admin", "lab_user"]}>
+              <ProtectedRoute
+                allowedPermissions={[PERMISSIONS.MONITORING_READ]}
+                fallbackPath="/unauthorized"
+              >
                 <HL7MessagesPage />
               </ProtectedRoute>
             }
@@ -275,7 +318,10 @@ function App() {
           <Route
             path="quarantine"
             element={
-              <ProtectedRoute allowedRoles={["admin", "lab_user"]}>
+              <ProtectedRoute
+                allowedPermissions={[PERMISSIONS.MONITORING_READ]}
+                fallbackPath="/unauthorized"
+              >
                 <QuarantinePage />
               </ProtectedRoute>
             }
@@ -283,7 +329,10 @@ function App() {
           <Route
             path="instrument-logs"
             element={
-              <ProtectedRoute allowedRoles={["admin", "service"]}>
+              <ProtectedRoute
+                allowedPermissions={[PERMISSIONS.MONITORING_READ]}
+                fallbackPath="/unauthorized"
+              >
                 <InstrumentLogsPage />
               </ProtectedRoute>
             }
@@ -294,7 +343,8 @@ function App() {
             path="patients"
             element={
               <ProtectedRoute
-                allowedRoles={["admin", "lab_manager", "lab_user"]}
+                allowedPermissions={[PERMISSIONS.PATIENTS_READ]}
+                fallbackPath="/unauthorized"
               >
                 <PatientsPage />
               </ProtectedRoute>
@@ -304,7 +354,8 @@ function App() {
             path="patients/:id"
             element={
               <ProtectedRoute
-                allowedRoles={["admin", "lab_manager", "lab_user"]}
+                allowedPermissions={[PERMISSIONS.PATIENTS_READ]}
+                fallbackPath="/unauthorized"
               >
                 <PatientDetailsPage />
               </ProtectedRoute>
@@ -313,7 +364,10 @@ function App() {
           <Route
             path="patients/:id/edit"
             element={
-              <ProtectedRoute allowedRoles={["admin", "lab_user"]}>
+              <ProtectedRoute
+                allowedPermissions={[PERMISSIONS.PATIENTS_WRITE]}
+                fallbackPath="/unauthorized"
+              >
                 <EditPatientPage />
               </ProtectedRoute>
             }
@@ -323,7 +377,10 @@ function App() {
           <Route
             path="audit-logs"
             element={
-              <ProtectedRoute allowedRoles={["admin", "lab_manager"]}>
+              <ProtectedRoute
+                allowedPermissions={[PERMISSIONS.AUDIT_READ]}
+                fallbackPath="/unauthorized"
+              >
                 <AuditLogsPage />
               </ProtectedRoute>
             }
@@ -331,19 +388,20 @@ function App() {
           <Route
             path="reports"
             element={
-              <ProtectedRoute allowedRoles={["admin", "lab_manager"]}>
+              <ProtectedRoute
+                allowedPermissions={[PERMISSIONS.REPORTS_READ]}
+                fallbackPath="/unauthorized"
+              >
                 <ReportsPage />
               </ProtectedRoute>
             }
           />
 
-          {/* Settings Route */}
+          {/* Settings Route - Any authenticated user in admin layout */}
           <Route
             path="settings"
             element={
-              <ProtectedRoute
-                allowedRoles={["admin", "lab_manager", "lab_user", "service"]}
-              >
+              <ProtectedRoute fallbackPath="/unauthorized">
                 <div className="p-6">
                   <h1 className="text-2xl font-bold">Settings</h1>
                   <p>Settings page coming soon...</p>
@@ -352,19 +410,11 @@ function App() {
             }
           />
 
-          {/* My Profile Route — all roles can access */}
+          {/* My Profile Route - Any authenticated user in admin layout */}
           <Route
             path="profile"
             element={
-              <ProtectedRoute
-                allowedRoles={[
-                  "admin",
-                  "lab_manager",
-                  "lab_user",
-                  "service",
-                  "user",
-                ]}
-              >
+              <ProtectedRoute fallbackPath="/unauthorized">
                 <div className="p-6">
                   <h1 className="text-2xl font-bold">My Profile</h1>
                   <p>Profile page coming soon...</p>

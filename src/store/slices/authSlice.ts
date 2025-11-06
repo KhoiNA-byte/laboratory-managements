@@ -1,3 +1,4 @@
+// slices/authSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface User {
@@ -11,6 +12,7 @@ interface User {
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
+  permissions: string[];
   token: string | null;
   loading: boolean;
   error: string | null;
@@ -20,6 +22,7 @@ interface AuthState {
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
+  permissions: [],
   token: null,
   loading: false,
   error: null,
@@ -33,19 +36,27 @@ const authSlice = createSlice({
     // Saga action creators
     loginRequest: (
       state,
-      action: PayloadAction<{ email: string; password: string }>
+      action: PayloadAction<{
+        email: string;
+        password: string;
+      }>
     ) => {
       state.loading = true;
       state.error = null;
     },
     loginSuccess: (
       state,
-      action: PayloadAction<{ user: User; token: string }>
+      action: PayloadAction<{
+        user: User;
+        token: string;
+        permissions: string[]; // Add permissions here
+      }>
     ) => {
       state.loading = false;
       state.isAuthenticated = true;
       state.user = action.payload.user;
       state.token = action.payload.token;
+      state.permissions = action.payload.permissions; // Set permissions
       state.error = null;
     },
     loginFailure: (state, action: PayloadAction<string>) => {
@@ -53,6 +64,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.user = null;
       state.token = null;
+      state.permissions = []; // Clear permissions on failure
       state.error = action.payload;
     },
     logoutRequest: (state) => {
@@ -64,7 +76,9 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.user = null;
       state.token = null;
+      state.permissions = []; // Clear permissions on logout
       state.error = null;
+      state.redirectPath = null;
     },
     logoutFailure: (state, action: PayloadAction<string>) => {
       state.loading = false;
@@ -75,6 +89,10 @@ const authSlice = createSlice({
     },
     setRedirectPath: (state, action: PayloadAction<string>) => {
       state.redirectPath = action.payload;
+    },
+    // Add this to update permissions if needed elsewhere
+    updatePermissions: (state, action: PayloadAction<string[]>) => {
+      state.permissions = action.payload;
     },
   },
 });
@@ -88,5 +106,6 @@ export const {
   logoutFailure,
   clearError,
   setRedirectPath,
+  updatePermissions,
 } = authSlice.actions;
 export default authSlice.reducer;

@@ -8,6 +8,9 @@ import {
   clearUpdateSuccess,
   clearDeleteSuccess,
 } from "../../store/slices/roleSlice";
+import CreateRoleModal from "../../components/RolesPage/CreateRoleModal";
+import UpdateRoleModal from "../../components/RolesPage/UpdateRoleModal";
+import RolesHeader from "../../components/RolesPage/RolesHeader";
 
 export const RolesPage = () => {
   const {
@@ -116,14 +119,6 @@ export const RolesPage = () => {
     const role = roles.find((r) => r.roleCode === roleCode);
     if (role) {
       setSelectedRole(role);
-      setUpdateFormData({
-        roleId: role.roleId,
-        roleName: role.roleName,
-        description: role.description,
-        permission: role.permission || [],
-        roleCode: role.roleCode,
-        status: role.status || "active",
-      });
       setOpenDropdown(null);
       setShowUpdateModal(true);
     }
@@ -323,79 +318,17 @@ export const RolesPage = () => {
 
       {/* All Roles Section */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900">
-                System Roles
-              </h3>
-              <p className="text-sm text-gray-600">
-                Define roles and their associated permissions
-              </p>
-            </div>
+        {/* Header Component */}
+        <RolesHeader
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          statusFilter={statusFilter}
+          onStatusFilterChange={setStatusFilter}
+          onClearMessages={() => dispatch(clearMessages())}
+          onShowCreateModal={() => setShowCreateModal(true)}
+        />
 
-            {/* Search and Filters */}
-            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-              <div className="relative">
-                <svg
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-                <input
-                  type="text"
-                  placeholder="Search roles..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full sm:w-64"
-                />
-              </div>
-
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="All Status">All Status</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-
-              <button
-                onClick={() => {
-                  dispatch(clearMessages());
-                  setShowCreateModal(true);
-                }}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap"
-              >
-                <svg
-                  className="h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-                Create Role
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Roles Table */}
+        {/* Roles Table - Users column removed */}
         <div className="">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -410,9 +343,6 @@ export const RolesPage = () => {
                   Description
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-6">
-                  Users
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-6">
                   Status
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-6">
@@ -423,7 +353,7 @@ export const RolesPage = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredRoles.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center sm:px-6">
+                  <td colSpan={5} className="px-4 py-8 text-center sm:px-6">
                     <div className="text-gray-500 text-sm">
                       {roles.length === 0
                         ? "No roles found"
@@ -450,11 +380,6 @@ export const RolesPage = () => {
                     <td className="px-4 py-4 sm:px-6">
                       <div className="text-sm text-gray-900 max-w-xs truncate">
                         {role.description}
-                      </div>
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap sm:px-6">
-                      <div className="text-sm text-gray-900">
-                        {role.userCount || 0}
                       </div>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap sm:px-6">
@@ -584,185 +509,41 @@ export const RolesPage = () => {
       </div>
 
       {/* Create Role Modal */}
-      {showCreateModal && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
-            <div className="mt-3">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Create New Role
-              </h3>
-
-              <form onSubmit={handleCreateSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Role Name
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.roleName}
-                    onChange={(e) =>
-                      setFormData({ ...formData, roleName: e.target.value })
-                    }
-                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Role Code
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.roleCode}
-                    onChange={(e) =>
-                      setFormData({ ...formData, roleCode: e.target.value })
-                    }
-                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="e.g., admin, lab_manager"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Description
-                  </label>
-                  <textarea
-                    required
-                    value={formData.description}
-                    onChange={(e) =>
-                      setFormData({ ...formData, description: e.target.value })
-                    }
-                    rows={3}
-                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="flex justify-end gap-3 pt-4">
-                  <button
-                    type="button"
-                    onClick={() => setShowCreateModal(false)}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700"
-                  >
-                    Create Role
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
+      <CreateRoleModal
+        show={showCreateModal}
+        onClose={() => {
+          setShowCreateModal(false);
+          setFormData({
+            roleName: "",
+            description: "",
+            permission: [],
+            roleCode: "",
+            status: "active",
+          });
+          dispatch(clearMessages());
+        }}
+        formData={formData}
+        setFormData={setFormData}
+        handleSubmit={handleCreateSubmit}
+        error={error}
+        successMessage={createSuccess ? successMessage : null}
+      />
 
       {/* Update Role Modal */}
-      {showUpdateModal && selectedRole && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
-            <div className="mt-3">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Update Role
-              </h3>
-
-              <form onSubmit={handleUpdateSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Role Name
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={updateFormData.roleName}
-                    onChange={(e) =>
-                      setUpdateFormData({
-                        ...updateFormData,
-                        roleName: e.target.value,
-                      })
-                    }
-                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Role Code
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={updateFormData.roleCode}
-                    onChange={(e) =>
-                      setUpdateFormData({
-                        ...updateFormData,
-                        roleCode: e.target.value,
-                      })
-                    }
-                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Description
-                  </label>
-                  <textarea
-                    required
-                    value={updateFormData.description}
-                    onChange={(e) =>
-                      setUpdateFormData({
-                        ...updateFormData,
-                        description: e.target.value,
-                      })
-                    }
-                    rows={3}
-                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Status
-                  </label>
-                  <select
-                    value={updateFormData.status}
-                    onChange={(e) =>
-                      setUpdateFormData({
-                        ...updateFormData,
-                        status: e.target.value,
-                      })
-                    }
-                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                  </select>
-                </div>
-
-                <div className="flex justify-end gap-3 pt-4">
-                  <button
-                    type="button"
-                    onClick={() => setShowUpdateModal(false)}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700"
-                  >
-                    Update Role
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
+      <UpdateRoleModal
+        show={showUpdateModal}
+        onClose={() => {
+          setShowUpdateModal(false);
+          setSelectedRole(null);
+          dispatch(clearMessages());
+        }}
+        role={selectedRole}
+        formData={updateFormData}
+        setFormData={setUpdateFormData}
+        handleSubmit={handleUpdateSubmit}
+        error={error}
+        successMessage={updateSuccess ? successMessage : null}
+      />
     </div>
   );
 };
