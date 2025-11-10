@@ -1,6 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import {
+  getListTestOrder,
+  TestOrderWithUser,
+} from "../../services/testOrderApi";
 
 // Styled Components
 const Container = styled.div`
@@ -367,6 +371,19 @@ const FiltersContainer = styled.div`
   align-items: center;
 `;
 
+const LoadingText = styled.div`
+  color: #6b7280;
+  font-style: italic;
+`;
+
+const ErrorText = styled.div`
+  color: #dc2626;
+`;
+
+const EmptyText = styled.div`
+  color: #6b7280;
+`;
+
 export const TestOrdersPage = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
@@ -374,64 +391,35 @@ export const TestOrdersPage = () => {
   const [showActionsDropdown, setShowActionsDropdown] = useState<string | null>(
     null
   );
+  const [testOrders, setTestOrders] = useState<TestOrderWithUser[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock data exactly as shown in the figma
-  const mockTestOrders = [
-    {
-      orderNumber: "TO-2025-001",
-      patient: "John Doe",
-      doctor: "Dr. Sarah Johnson",
-      testType: "Complete Blood Count (CBC)",
-      priority: "Routine",
-      status: "Completed",
-      ordered: "10/1/2025",
-    },
-    {
-      orderNumber: "TO-2025-002",
-      patient: "Jane Smith",
-      doctor: "Dr. Michael Brown",
-      testType: "Lipid Panel",
-      priority: "Routine",
-      status: "Completed",
-      ordered: "8/1/2025",
-    },
-    {
-      orderNumber: "TO-2025-003",
-      patient: "Robert Johnson",
-      doctor: "Dr. Emily Davis",
-      testType: "Thyroid Function Test",
-      priority: "Urgent",
-      status: "In Progress",
-      ordered: "12/1/2025",
-    },
-    {
-      orderNumber: "TO-2025-004",
-      patient: "Emily Williams",
-      doctor: "Dr. Robert Wilson",
-      testType: "Liver Function Test",
-      priority: "Routine",
-      status: "Pending",
-      ordered: "13/1/2025",
-    },
-    {
-      orderNumber: "TO-2025-005",
-      patient: "Michael Brown",
-      doctor: "Dr. Sarah Johnson",
-      testType: "Kidney Function Test",
-      priority: "Urgent",
-      status: "In Progress",
-      ordered: "13/1/2025",
-    },
-    {
-      orderNumber: "TO-2025-006",
-      patient: "John Doe",
-      doctor: "Dr. Michael Brown",
-      testType: "Glucose Test",
-      priority: "Stat",
-      status: "Reviewed",
-      ordered: "11/1/2025",
-    },
-  ];
+  // Fetch test orders from API
+  useEffect(() => {
+    const fetchTestOrders = async () => {
+      try {
+        setLoading(true);
+        const response = await getListTestOrder();
+
+        if (response.success) {
+          setTestOrders(response.data);
+          setError(null);
+        } else {
+          setError(response.message || "Không thể tải danh sách test orders");
+          setTestOrders([]);
+        }
+      } catch (err) {
+        console.error("Error fetching test orders:", err);
+        setError("Có lỗi xảy ra khi tải danh sách test orders");
+        setTestOrders([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTestOrders();
+  }, []);
 
   const handleViewDetails = (orderNumber: string) => {
     console.log("View Details clicked for:", orderNumber);
@@ -453,10 +441,29 @@ export const TestOrdersPage = () => {
     navigate("/admin/test-orders/new");
   };
 
-  const filteredOrders = mockTestOrders.filter((order) => {
-    if (activeTab === "All Orders") return true;
-    return order.status === activeTab;
+  // Filter orders based on active tab and search term
+  const filteredOrders = testOrders.filter((order) => {
+    const matchesTab = activeTab === "All Orders" || order.status === activeTab;
+    const matchesSearch =
+      searchTerm === "" ||
+      order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.patient.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.doctor.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.tester.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.testType.toLowerCase().includes(searchTerm.toLowerCase());
+
+    return matchesTab && matchesSearch;
   });
+
+  // Calculate summary counts
+  const summaryData = {
+    pending: testOrders.filter((order) => order.status === "Pending").length,
+    inProgress: testOrders.filter((order) => order.status === "In Progress")
+      .length,
+    completed: testOrders.filter((order) => order.status === "Completed")
+      .length,
+    reviewed: testOrders.filter((order) => order.status === "Reviewed").length,
+  };
 
   return (
     <Container>
@@ -467,7 +474,7 @@ export const TestOrdersPage = () => {
           <CardContent>
             <CardInfo>
               <CardTitle>Pending</CardTitle>
-              <CardNumber>1</CardNumber>
+              <CardNumber>{loading ? "..." : summaryData.pending}</CardNumber>
               <CardSubtitle>Awaiting processing</CardSubtitle>
             </CardInfo>
             <CardIcon>
@@ -488,7 +495,9 @@ export const TestOrdersPage = () => {
           <CardContent>
             <CardInfo>
               <CardTitle>In Progress</CardTitle>
-              <CardNumber>2</CardNumber>
+              <CardNumber>
+                {loading ? "..." : summaryData.inProgress}
+              </CardNumber>
               <CardSubtitle>Being processed</CardSubtitle>
             </CardInfo>
             <CardIcon>
@@ -509,7 +518,7 @@ export const TestOrdersPage = () => {
           <CardContent>
             <CardInfo>
               <CardTitle>Completed</CardTitle>
-              <CardNumber>2</CardNumber>
+              <CardNumber>{loading ? "..." : summaryData.completed}</CardNumber>
               <CardSubtitle>Ready for review</CardSubtitle>
             </CardInfo>
             <CardIcon>
@@ -530,7 +539,7 @@ export const TestOrdersPage = () => {
           <CardContent>
             <CardInfo>
               <CardTitle>Reviewed</CardTitle>
-              <CardNumber>1</CardNumber>
+              <CardNumber>{loading ? "..." : summaryData.reviewed}</CardNumber>
               <CardSubtitle>Finalized</CardSubtitle>
             </CardInfo>
             <CardIcon>
@@ -619,7 +628,9 @@ export const TestOrdersPage = () => {
           <Table>
             <TableHead>
               <TableHeadRow>
-                <TableHeadCell>Order Number</TableHeadCell>
+                <TableHeadCell style={{ textAlign: "center" }}>
+                  Order Number
+                </TableHeadCell>
                 <TableHeadCell>Patient</TableHeadCell>
                 <TableHeadCell>Test Type</TableHeadCell>
                 <TableHeadCell>Priority</TableHeadCell>
@@ -629,121 +640,154 @@ export const TestOrdersPage = () => {
               </TableHeadRow>
             </TableHead>
             <TableBody>
-              {filteredOrders.map((order) => (
-                <TableRow key={order.orderNumber}>
-                  <TableCell>
-                    <OrderNumber>{order.orderNumber}</OrderNumber>
-                  </TableCell>
-                  <TableCell>
-                    <PatientName>{order.patient}</PatientName>
-                    <DoctorName>{order.doctor}</DoctorName>
-                  </TableCell>
-                  <TableCell>
-                    <TestType>{order.testType}</TestType>
-                  </TableCell>
-                  <TableCell>
-                    <Badge $type="priority" $variant={order.priority}>
-                      {order.priority}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge $type="status" $variant={order.status}>
-                      {order.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <OrderDate>{order.ordered}</OrderDate>
-                  </TableCell>
-                  <TableCell>
-                    <ActionsContainer>
-                      <ActionsButton
-                        onClick={() =>
-                          setShowActionsDropdown(
-                            showActionsDropdown === order.orderNumber
-                              ? null
-                              : order.orderNumber
-                          )
-                        }
-                      >
-                        <svg fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-                        </svg>
-                      </ActionsButton>
-
-                      {showActionsDropdown === order.orderNumber && (
-                        <DropdownMenu>
-                          <DropdownContent>
-                            <DropdownItem
-                              onClick={() =>
-                                handleViewDetails(order.orderNumber)
-                              }
-                            >
-                              <svg
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                                />
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                                />
-                              </svg>
-                              View Details
-                            </DropdownItem>
-                            <DropdownItem
-                              onClick={() =>
-                                handleUpdateOrder(order.orderNumber)
-                              }
-                            >
-                              <svg
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                />
-                              </svg>
-                              Update Test Order
-                            </DropdownItem>
-                            <DropdownItem
-                              $danger
-                              onClick={() =>
-                                handleDeleteOrder(order.orderNumber)
-                              }
-                            >
-                              <svg
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                />
-                              </svg>
-                              Delete Test Order
-                            </DropdownItem>
-                          </DropdownContent>
-                        </DropdownMenu>
-                      )}
-                    </ActionsContainer>
+              {loading ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={7}
+                    style={{ textAlign: "center", padding: "2rem" }}
+                  >
+                    <LoadingText>Đang tải danh sách test orders...</LoadingText>
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : error ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={7}
+                    style={{ textAlign: "center", padding: "2rem" }}
+                  >
+                    <ErrorText>{error}</ErrorText>
+                  </TableCell>
+                </TableRow>
+              ) : filteredOrders.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={7}
+                    style={{ textAlign: "center", padding: "2rem" }}
+                  >
+                    <EmptyText>
+                      {searchTerm
+                        ? "Không tìm thấy test order nào phù hợp với tìm kiếm."
+                        : "Không có test order nào."}
+                    </EmptyText>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredOrders.map((order) => (
+                  <TableRow key={order.orderNumber}>
+                    <TableCell style={{ textAlign: "center" }}>
+                      <OrderNumber>{order.orderNumber}</OrderNumber>
+                    </TableCell>
+                    <TableCell>
+                      <PatientName>{order.patient}</PatientName>
+                      <DoctorName>{order.tester}</DoctorName>
+                    </TableCell>
+                    <TableCell>
+                      <TestType>{order.testType}</TestType>
+                    </TableCell>
+                    <TableCell>
+                      <Badge $type="priority" $variant={order.priority}>
+                        {order.priority}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge $type="status" $variant={order.status}>
+                        {order.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <OrderDate>{order.ordered}</OrderDate>
+                    </TableCell>
+                    <TableCell>
+                      <ActionsContainer>
+                        <ActionsButton
+                          onClick={() =>
+                            setShowActionsDropdown(
+                              showActionsDropdown === order.orderNumber
+                                ? null
+                                : order.orderNumber
+                            )
+                          }
+                        >
+                          <svg fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                          </svg>
+                        </ActionsButton>
+
+                        {showActionsDropdown === order.orderNumber && (
+                          <DropdownMenu>
+                            <DropdownContent>
+                              <DropdownItem
+                                onClick={() =>
+                                  handleViewDetails(order.orderNumber)
+                                }
+                              >
+                                <svg
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                  />
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                  />
+                                </svg>
+                                View Details
+                              </DropdownItem>
+                              <DropdownItem
+                                onClick={() =>
+                                  handleUpdateOrder(order.orderNumber)
+                                }
+                              >
+                                <svg
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                  />
+                                </svg>
+                                Update Test Order
+                              </DropdownItem>
+                              <DropdownItem
+                                $danger
+                                onClick={() =>
+                                  handleDeleteOrder(order.orderNumber)
+                                }
+                              >
+                                <svg
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                  />
+                                </svg>
+                                Delete Test Order
+                              </DropdownItem>
+                            </DropdownContent>
+                          </DropdownMenu>
+                        )}
+                      </ActionsContainer>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </TableWrapper>

@@ -213,7 +213,7 @@ function App() {
           <Route
             path="test-orders/new"
             element={
-              <ProtectedRoute allowedRoles={["lab_user"]}>
+              <ProtectedRoute allowedRoles={["lab_user", "admin"]}>
                 <NewTestOrderPage />
               </ProtectedRoute>
             }
