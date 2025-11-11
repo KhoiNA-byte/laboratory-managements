@@ -1,117 +1,98 @@
 import { call, put, takeEvery, takeLatest } from 'redux-saga/effects'
 import { PayloadAction } from '@reduxjs/toolkit'
 
-// Mock API functions
-const mockGetInstrumentsAPI = async () => {
-    await new Promise(resolve => setTimeout(resolve, 800))
-    return [
-        {
-            id: '1',
-            name: 'Hematology Analyzer',
-            model: 'Sysmex XN-1000',
-            serialNumber: 'HMA001',
-            status: 'active',
-            location: 'Lab Room 1',
-            lastMaintenance: '2024-01-10',
-            nextMaintenance: '2024-02-10',
-            calibrationStatus: 'valid',
-            testsPerHour: 120
-        },
-        {
-            id: '2',
-            name: 'Chemistry Analyzer',
-            model: 'Roche Cobas 6000',
-            serialNumber: 'CHA002',
-            status: 'maintenance',
-            location: 'Lab Room 2',
-            lastMaintenance: '2024-01-15',
-            nextMaintenance: '2024-01-20',
-            calibrationStatus: 'expired',
-            testsPerHour: 200
-        },
-        {
-            id: '3',
-            name: 'Microbiology Analyzer',
-            model: 'BD Phoenix M50',
-            serialNumber: 'MBA003',
-            status: 'active',
-            location: 'Lab Room 3',
-            lastMaintenance: '2024-01-12',
-            nextMaintenance: '2024-02-12',
-            calibrationStatus: 'valid',
-            testsPerHour: 80
-        }
-    ]
+// Lấy URL từ biến môi trường
+const BASE_URL = import.meta.env.VITE_MOCKAPI_BASE_URL
+const INSTRUMENTS_ENDPOINT = import.meta.env.VITE_MOCKAPI_INSTRUMENTS_ENDPOINT
+const FULL_URL = `${BASE_URL}${INSTRUMENTS_ENDPOINT}`
+
+// -------------------------
+// 🧩 API thực (MockAPI.io)
+// -------------------------
+
+const getInstrumentsAPI = async () => {
+  const response = await fetch(FULL_URL)
+  if (!response.ok) throw new Error('Không thể tải danh sách thiết bị')
+  return await response.json()
 }
 
-const mockCreateInstrumentAPI = async (instrumentData: any) => {
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    return {
-        id: Date.now().toString(),
-        ...instrumentData,
-        status: 'active',
-        calibrationStatus: 'pending',
-        createdAt: new Date().toISOString()
-    }
+const createInstrumentAPI = async (instrumentData: any) => {
+  const response = await fetch(FULL_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(instrumentData)
+  })
+  if (!response.ok) throw new Error('Không thể tạo thiết bị mới')
+  return await response.json()
 }
 
-const mockUpdateInstrumentAPI = async ({ id, ...instrumentData }: any) => {
-    await new Promise(resolve => setTimeout(resolve, 800))
-    return {
-        id,
-        ...instrumentData,
-        updatedAt: new Date().toISOString()
-    }
+const updateInstrumentAPI = async ({ id, ...instrumentData }: any) => {
+  const response = await fetch(`${FULL_URL}/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(instrumentData)
+  })
+  if (!response.ok) throw new Error('Không thể cập nhật thiết bị')
+  return await response.json()
 }
 
-const mockDeleteInstrumentAPI = async (id: string) => {
-    await new Promise(resolve => setTimeout(resolve, 600))
-    return { success: true, id }
+const deleteInstrumentAPI = async (id: string) => {
+  const response = await fetch(`${FULL_URL}/${id}`, {
+    method: 'DELETE'
+  })
+  if (!response.ok) throw new Error('Không thể xóa thiết bị')
+  return await response.json()
 }
 
+// -------------------------
+// ⚙️ Saga Functions
+// -------------------------
+
+// Get Instruments Saga
 // Get Instruments Saga
 function* getInstrumentsSaga() {
     try {
-        const instruments = yield call(mockGetInstrumentsAPI)
-        yield put({ type: 'instruments/getInstrumentsSuccess', payload: instruments })
+      const instruments = yield call(getInstrumentsAPI)
+      yield put({ type: 'instruments/fetchInstrumentsSuccess', payload: instruments })
     } catch (error: any) {
-        yield put({ type: 'instruments/getInstrumentsFailure', payload: error.message })
+      yield put({ type: 'instruments/fetchInstrumentsFailure', payload: error.message })
     }
-}
-
-// Create Instrument Saga
-function* createInstrumentSaga(action: PayloadAction<any>) {
+  }
+  
+  // Create Instrument Saga
+  function* createInstrumentSaga(action: PayloadAction<any>) {
     try {
-        const newInstrument = yield call(mockCreateInstrumentAPI, action.payload)
-        yield put({ type: 'instruments/createInstrumentSuccess', payload: newInstrument })
+      const newInstrument = yield call(createInstrumentAPI, action.payload)
+      yield put({ type: 'instruments/addInstrument', payload: newInstrument })
     } catch (error: any) {
-        yield put({ type: 'instruments/createInstrumentFailure', payload: error.message })
+      yield put({ type: 'instruments/fetchInstrumentsFailure', payload: error.message })
     }
-}
-
-// Update Instrument Saga
-function* updateInstrumentSaga(action: PayloadAction<any>) {
+  }
+  
+  // Update Instrument Saga
+  function* updateInstrumentSaga(action: PayloadAction<any>) {
     try {
-        const updatedInstrument = yield call(mockUpdateInstrumentAPI, action.payload)
-        yield put({ type: 'instruments/updateInstrumentSuccess', payload: updatedInstrument })
+      const updatedInstrument = yield call(updateInstrumentAPI, action.payload)
+      yield put({ type: 'instruments/updateInstrument', payload: updatedInstrument })
     } catch (error: any) {
-        yield put({ type: 'instruments/updateInstrumentFailure', payload: error.message })
+      yield put({ type: 'instruments/fetchInstrumentsFailure', payload: error.message })
     }
-}
-
-// Delete Instrument Saga
-function* deleteInstrumentSaga(action: PayloadAction<string>) {
+  }
+  
+  // Delete Instrument Saga
+  function* deleteInstrumentSaga(action: PayloadAction<string>) {
     try {
-        const result = yield call(mockDeleteInstrumentAPI, action.payload)
-        yield put({ type: 'instruments/deleteInstrumentSuccess', payload: result.id })
+      yield call(deleteInstrumentAPI, action.payload)
+      yield put({ type: 'instruments/deleteInstrument', payload: action.payload })
     } catch (error: any) {
-        yield put({ type: 'instruments/deleteInstrumentFailure', payload: error.message })
+      yield put({ type: 'instruments/fetchInstrumentsFailure', payload: error.message })
     }
-}
-
-export function* instrumentSaga() {
-    yield takeEvery('instruments/getInstrumentsRequest', getInstrumentsSaga)
-    yield takeLatest('instruments/createInstrumentRequest', createInstrumentSaga)
+  }
+  
+  export function* instrumentSaga() {
+    yield takeEvery('instruments/fetchInstrumentsStart', getInstrumentsSaga)
+    yield takeLatest('instruments/addInstrumentRequest', createInstrumentSaga)
     yield takeLatest('instruments/updateInstrumentRequest', updateInstrumentSaga)
     yield takeLatest('instruments/deleteInstrumentRequest', deleteInstrumentSaga)
-}
+  }
+  
