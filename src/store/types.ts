@@ -44,14 +44,19 @@ export interface TestResult {
   updatedAt: string;
 }
 
+// src/types/Instrument.ts
 export interface Instrument {
   id: string;
   name: string;
   model: string;
-  status: "Active" | "Inactive" | "Maintenance";
-  createdAt: string;
-  updatedAt: string;
+  status: 'Active' | 'Maintenance' | 'Inactive';
+  serialNumber: string;
+  location: string;
+  manufacturer: string;
+  nextCalibration: string;
+  calibrationDue: boolean;
 }
+
 
 export interface Reagent {
   id: string;
