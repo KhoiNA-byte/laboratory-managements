@@ -21,6 +21,7 @@ export interface User {
 export const getUsersAPI = async (): Promise<User[]> => {
   try {
     const response = await fetch(USERS_ENDPOINT);
+    console.log("Fetching users from:", USERS_ENDPOINT);
     if (!response.ok) {
       throw new Error(`Failed to fetch users: ${response.status}`);
     }
@@ -65,12 +66,6 @@ export const updateUserAPI = async (userData: User): Promise<User> => {
     console.log("Updating user with data:", userData);
     console.log("Retrieved userId:", userData.userId);
     const userId = userData.userId;
-    // // Get the userId from the id using your function
-    // const userId = await getUserIdFromId(userData.id);
-    // if (!userId) {
-    //   throw new Error(`Cannot find userId for user with id: ${userData.id}`);
-    // }
-
     console.log("Found userId:", userId);
     console.log("Using endpoint:", `${USERS_ENDPOINT}/${userData.userId}`);
 
