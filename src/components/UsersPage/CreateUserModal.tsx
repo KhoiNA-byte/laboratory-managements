@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 
 interface CreateUserModalProps {
   show: boolean;
@@ -22,6 +24,30 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   const [validationErrors, setValidationErrors] = useState<{
     [key: string]: string;
   }>({});
+
+  // Get roles from Redux store
+  const { roles } = useSelector((state: RootState) => state.roles);
+
+  // Get active roles only and sort them
+  const activeRoles = roles
+    .filter((role) => role.status === "active")
+    .sort((a, b) => a.roleName.localeCompare(b.roleName));
+
+  // Function to get display name for role
+  const getDisplayRoleName = (roleCode: string) => {
+    const role = roles.find((r) => r.roleCode === roleCode);
+    return role ? role.roleName : roleCode;
+  };
+
+  useEffect(() => {
+    // Set default role if none is selected and there are active roles
+    if (activeRoles.length > 0 && !formData.role) {
+      setFormData({
+        ...formData,
+        role: activeRoles[0].roleCode,
+      });
+    }
+  }, [activeRoles, formData.role]);
 
   if (!show) return null;
 
@@ -134,7 +160,8 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
       formData.id &&
       formData.age &&
       formData.address &&
-      formData.password
+      formData.password &&
+      formData.role
     );
   };
 
@@ -268,12 +295,14 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
               onChange={handleInputChange}
               className="mt-1 w-full border border-gray-300 bg-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option>Male</option>
-              <option>Female</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+              <option value="prefer_not_to_say">Prefer not to say</option>
             </select>
           </div>
 
-          {/* Role - RED BOX */}
+          {/* Role - Now Dynamic */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Role *
@@ -283,13 +312,25 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
               value={formData.role}
               onChange={handleInputChange}
               className="mt-1 w-full border border-gray-300 bg-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              required
             >
-              <option value="admin">Administrator</option>
-              <option value="lab_manager">Lab Manager</option>
-              <option value="lab_user">Lab User</option>
-              <option value="service_user">Service User</option>
-              <option value="normal_user">Normal User</option>
+              <option value="">Select a role</option>
+              {activeRoles.map((role) => (
+                <option key={role.roleCode} value={role.roleCode}>
+                  {role.roleName}
+                </option>
+              ))}
             </select>
+            {activeRoles.length === 0 && (
+              <p className="mt-1 text-xs text-red-500">
+                No active roles available. Please create roles first.
+              </p>
+            )}
+            {activeRoles.length > 0 && (
+              <p className="mt-1 text-xs text-gray-500">
+                {activeRoles.length} active role(s) available
+              </p>
+            )}
           </div>
 
           {/* Age */}

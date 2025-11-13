@@ -3,12 +3,14 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store";
 import { logoutRequest } from "../store/slices/authSlice";
+import { PERMISSIONS } from "../constants/permissions";
 
 export const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
+  const permissions = useSelector((state: RootState) => state.auth.permissions);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
 
   const handleUserDropdownToggle = () => {
@@ -41,80 +43,88 @@ export const Sidebar = () => {
       path: "/admin/dashboard",
       label: "Dashboard",
       icon: "grid",
-      roles: ["admin", "lab_manager"],
+      requiredPermissions: [PERMISSIONS.DASHBOARD_READ],
     },
     {
       path: "/admin/users",
       label: "Users Management",
       icon: "users",
-      roles: ["admin", "lab_manager"],
+      requiredPermissions: [PERMISSIONS.USERS_READ],
     },
     {
       path: "/admin/roles",
       label: "Roles Management",
       icon: "user",
-      roles: ["admin"],
+      requiredPermissions: [PERMISSIONS.ROLES_READ],
     },
     {
       path: "/admin/patients",
       label: "Patient Records",
       icon: "document",
-      roles: [, "admin"],
+      requiredPermissions: [PERMISSIONS.PATIENTS_READ],
     },
     {
       path: "/admin/test-orders",
       label: "Test Orders",
       icon: "pencil",
-      roles: ["admin"],
+      requiredPermissions: [PERMISSIONS.TEST_ORDERS_READ],
     },
     {
       path: "/admin/my-test-results",
       label: "My Test Results",
       icon: "document",
-      roles: ["user", "admin"],
+      requiredPermissions: [PERMISSIONS.MY_TEST_RESULTS_READ],
     },
     {
       path: "/admin/instruments",
       label: "Instruments",
       icon: "flask",
-      roles: ["admin"],
+      requiredPermissions: [PERMISSIONS.INSTRUMENTS_READ],
     },
     {
       path: "/admin/warehouse",
       label: "Warehouse",
       icon: "box",
-      roles: ["admin"],
+      requiredPermissions: [PERMISSIONS.WAREHOUSE_READ],
     },
     {
       path: "/admin/monitoring",
       label: "Monitoring",
       icon: "chart",
-      roles: ["admin"],
+      requiredPermissions: [PERMISSIONS.MONITORING_READ],
     },
     {
       path: "/admin/reports",
       label: "Reports",
       icon: "bar-chart",
-      roles: ["admin"],
+      requiredPermissions: [PERMISSIONS.REPORTS_READ],
     },
     {
       path: "/admin/profile",
       label: "My Profile",
       icon: "user",
-      roles: ["user", "admin"],
+      requiredPermissions: [], // No specific permission required - available to all authenticated users
     },
     {
       path: "/admin/settings",
       label: "Settings",
       icon: "cog",
-      roles: ["user", "admin"],
+      requiredPermissions: [], // No specific permission required - available to all authenticated users
     },
   ];
 
-  // Filter menu items based on user role
-  const filteredMenuItems = menuItems.filter((item) =>
-    item.roles.includes(user?.role || "user")
-  );
+  // Filter menu items based on user permissions
+  const filteredMenuItems = menuItems.filter((item) => {
+    // If no permissions required, show to all authenticated users
+    if (item.requiredPermissions.length === 0) {
+      return true;
+    }
+    
+    // Check if user has at least one of the required permissions
+    return item.requiredPermissions.some(permission => 
+      permissions.includes(permission)
+    );
+  });
 
   const getIcon = (iconName: string) => {
     const icons = {
@@ -344,7 +354,7 @@ export const Sidebar = () => {
               className="w-full flex items-center p-3 bg-blue-600 text-white rounded-t-lg hover:bg-blue-700 transition-colors"
             >
               <div className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-white font-semibold mr-3">
-                AU
+                {user?.name?.charAt(0) || user?.email?.charAt(0) || "U"}
               </div>
               <div className="flex-1 text-left">
                 <div className="font-medium">
@@ -393,44 +403,48 @@ export const Sidebar = () => {
                   </svg>
                   Profile
                 </button>
-                <button
-                  onClick={handleHistory}
-                  className="w-full flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors"
-                >
-                  <svg
-                    className="h-5 w-5 mr-3"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                {permissions.includes(PERMISSIONS.AUDIT_READ) && (
+                  <button
+                    onClick={handleHistory}
+                    className="w-full flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  History
-                </button>
-                <button
-                  onClick={handleDashboard}
-                  className="w-full flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors"
-                >
-                  <svg
-                    className="h-5 w-5 mr-3"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                    <svg
+                      className="h-5 w-5 mr-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    History
+                  </button>
+                )}
+                {permissions.includes(PERMISSIONS.DASHBOARD_READ) && (
+                  <button
+                    onClick={handleDashboard}
+                    className="w-full flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-                    />
-                  </svg>
-                  Dashboard
-                </button>
+                    <svg
+                      className="h-5 w-5 mr-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                      />
+                    </svg>
+                    Dashboard
+                  </button>
+                )}
                 <div className="border-t border-gray-200"></div>
                 <button
                   onClick={handleLogout}

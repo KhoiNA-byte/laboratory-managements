@@ -1,3 +1,4 @@
+// store.ts
 import { configureStore } from "@reduxjs/toolkit";
 import createSagaMiddleware from "redux-saga";
 import authReducer from "./slices/authSlice";
@@ -5,6 +6,7 @@ import userReducer from "./slices/userSlice";
 import patientReducer from "./slices/patientSlice";
 import testOrderReducer from "./slices/testOrderSlice";
 import instrumentReducer from "./slices/instrumentSlice";
+import roleReducer from "./slices/roleSlice";
 import { rootSaga } from "./sagas";
 
 const sagaMiddleware = createSagaMiddleware();
@@ -16,6 +18,7 @@ export const store = configureStore({
     patients: patientReducer,
     testOrders: testOrderReducer,
     instruments: instrumentReducer,
+    roles: roleReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

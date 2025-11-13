@@ -1,0 +1,16 @@
+// src/data/instrumentData.ts
+import { Instrument } from '../../types';
+
+export const mockInstruments: Instrument[] = [
+  {
+    id: '1',
+    name: 'name 1',
+    model: 'model 1',
+    serialNumber: 'serialNumber 1',
+    manufacturer: test,
+    status: 'status 1' as any,
+    nextCalibration: '1762880353',
+    calibrationDue: true,
+    location: 'Lab Room A'
+  }
+];

@@ -24,57 +24,27 @@ interface CreateResponse {
 export type { TestOrder, TestOrderWithUser, TestOrderDetail, TestOrderDetailResponse };
 
 /**
- * Get the highest testOrderId from the API
- * @returns Promise containing the highest testOrderId number
+ * Generate testOrderId with format: YYYYMMDDNNNNNN (date + 6 random numbers)
+ * Example: 20251113456789
+ * @returns String with format YYYYMMDDNNNNNN
  */
-export const getCurrentTestOrderId = async (): Promise<number> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/test_orders?sortBy=testOrderId&order=desc&limit=1`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        // Add authorization header if needed
-        // 'Authorization': `Bearer ${token}`
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const testOrders: TestOrder[] = await response.json();
-    
-    // Return the testOrderId of the first (highest) item in the array
-    if (testOrders.length > 0) {
-      return parseInt(testOrders[0].testOrderId) || 0;
-    }
-    
-    return 0;
-  } catch (error) {
-    console.error('Error fetching current test order ID:', error);
-    return 0;
-  }
-};
-
-/**
- * Create new testOrderId based on current highest ID
- * @returns Promise containing new testOrderId number as string
- */
-export const createTestOrderId = async (): Promise<string> => {
-  try {
-    // Get current highest test order ID
-    const currentId = await getCurrentTestOrderId();
-    
-    // Simply increment by 1
-    const nextId = currentId + 1;
-    
-    return nextId.toString();
-    
-  } catch (error) {
-    console.error('Error creating test order ID:', error);
-    // Fallback: return "1"
-    return "1";
-  }
+export const generateTestOrderId = (): string => {
+  // Get today's date in YYYYMMDD format
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  const datePrefix = `${year}${month}${day}`; // e.g., "20251113"
+  
+  // Generate 6 random digits
+  const randomSixDigits = Math.floor(100000 + Math.random() * 900000); // Generates number between 100000-999999
+  
+  // Combine date prefix with random number
+  const testOrderId = `${datePrefix}${randomSixDigits}`;
+  
+  console.log('Generated testOrderId:', testOrderId);
+  
+  return testOrderId;
 };
 
 /**
@@ -87,8 +57,6 @@ export const getCurrentUserId = async (): Promise<number> => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        // Add authorization header if needed
-        // 'Authorization': `Bearer ${token}`
       },
     });
 
@@ -142,8 +110,6 @@ export const getUserById = async (userId: string): Promise<User | null> => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        // Add authorization header if needed
-        // 'Authorization': `Bearer ${token}`
       },
     });
 
@@ -169,8 +135,6 @@ export const getTestOrders = async (): Promise<TestOrdersResponse> => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        // Add authorization header if needed
-        // 'Authorization': `Bearer ${token}`
       },
     });
 
@@ -211,9 +175,14 @@ export const getListTestOrder = async (): Promise<TestOrderListResponse> => {
       };
     }
 
-    // Fetch user data for each test order
+    // Filter out deleted test orders (isDeleted: false only)
+    const activeTestOrders = testOrdersResponse.data.filter(
+      (order) => order.isDeleted === false
+    );
+
+    // Fetch user data for each active test order
     const testOrdersWithUsers = await Promise.all(
-      testOrdersResponse.data.map(async (order) => {
+      activeTestOrders.map(async (order) => {
         // Get user data by userId
         const user = await getUserById(order.userId);
         
@@ -250,10 +219,6 @@ export const getListTestOrder = async (): Promise<TestOrderListResponse> => {
     };
   }
 };
-
-// Test Order detail with populated user data removed - now using types from ../types/testOrder.ts
-
-// Response type for getTestOrderDetailById removed - now using types from ../types/testOrder.ts
 
 /**
  * Fetch single test order detail by ID
@@ -329,70 +294,89 @@ export const getTestOrderDetailById = async (testOrderId: string): Promise<TestO
 /**
  * Create new test order and user if needed
  * @param formData Form data from NewTestOrderPage
+ * @param existingUserId Optional existing user ID from phone search
  * @returns CreateResponse with success status and IDs
  */
-export const addTestOrder = async (formData: TestOrderFormData): Promise<CreateResponse> => {
+export const addTestOrder = async (
+  formData: TestOrderFormData, 
+  existingUserId?: string | null
+): Promise<CreateResponse> => {
   try {
     // Generate new IDs
-    const nextTestOrderId = await createTestOrderId();
-    const nextUserId = await createUserId();
+    const nextTestOrderId = generateTestOrderId(); // Use new format: YYYYMMDDNNNNNN
     
     console.log('Generated nextTestOrderId:', nextTestOrderId);
-    console.log('Generated nextUserId:', nextUserId);
     
-    const nowIso = new Date().toISOString();
+    let userIdToUse: string;
     
-    // BUILD USER FIRST
-    const userObj = {
-      // Do NOT set 'id' field - let MockAPI auto-generate
-      userId: nextUserId, // Use the generated userId
-      name: formData.patientName || "",
-      email: "",
-      phone: formData.phoneNumber || "",
-      gender: formData.gender || "",
-      role: "user",
-      age: formData.age ? Number(formData.age) : 0,
-      address: "",
-      status: "waiting",
-      lastLogin: nowIso,
-      createdAt: nowIso,
-      updatedAt: nowIso,
-      password: "AdminSecure2024!"
-    };
+    // Only create new user if no existing userId provided
+    if (!existingUserId) {
+      console.log('No existing user found, creating new user...');
+      
+      const nextUserId = await createUserId();
+      console.log('Generated nextUserId:', nextUserId);
+      
+      const nowIso = new Date().toISOString();
+      
+      // BUILD USER
+      const userObj = {
+        // Do NOT set 'id' field - let MockAPI auto-generate
+        userId: nextUserId, // Use the generated userId
+        name: formData.patientName || "",
+        email: "",
+        phone: formData.phoneNumber || "",
+        gender: formData.gender || "",
+        role: "user",
+        age: formData.age ? Number(formData.age) : 0,
+        address: "",
+        status: "waiting",
+        lastLogin: nowIso,
+        createdAt: nowIso,
+        updatedAt: nowIso,
+        password: "AdminSecure2024!"
+      };
 
-    console.log('Creating user with userId:', nextUserId);
+      console.log('Creating user with userId:', nextUserId);
 
-    // Create user first
-    try {
-      const createUserRes = await fetch(`${USERS_ENDPOINT}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userObj)
-      });
+      // Create user
+      try {
+        const createUserRes = await fetch(`${USERS_ENDPOINT}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(userObj)
+        });
 
-      if (!createUserRes.ok && createUserRes.status !== 409) {
-        const errText = await createUserRes.text();
-        throw new Error(`Failed to create user: ${createUserRes.status} ${errText}`);
+        if (!createUserRes.ok && createUserRes.status !== 409) {
+          const errText = await createUserRes.text();
+          throw new Error(`Failed to create user: ${createUserRes.status} ${errText}`);
+        }
+        
+        if (createUserRes.ok) {
+          const createdUser = await createUserRes.json();
+          console.log('Created user response:', createdUser);
+          console.log('User auto-generated ID:', createdUser.id);
+          console.log('User userId field:', createdUser.userId);
+        }
+      } catch (error) {
+        console.error("Error creating user:", error);
       }
       
-      if (createUserRes.ok) {
-        const createdUser = await createUserRes.json();
-        console.log('Created user response:', createdUser);
-        console.log('User auto-generated ID:', createdUser.id);
-        console.log('User userId field:', createdUser.userId);
-      }
-    } catch (error) {
-      console.error("Error creating user:", error);
+      userIdToUse = nextUserId;
+    } else {
+      console.log('Using existing userId:', existingUserId);
+      userIdToUse = existingUserId;
     }
 
+    const nowIso = new Date().toISOString();
+    
     // BUILD TEST ORDER
     const testOrderObj = {
       // Do NOT set 'id' field - let MockAPI auto-generate
       run_id: "1", // Default run_id
       testOrderId: nextTestOrderId, // Use the generated testOrderId
-      userId: nextUserId, // Use the same generated userId
+      userId: userIdToUse, // Use existing or newly created userId
       testType: formData.testType || "", // Use testType from form
-      status: "In Progress",
+      status: formData.status || "Pending", // Use status from form, default to "Pending"
       priority: "Routine",
       createdAt: nowIso,
       createdByUserId: 1,
@@ -403,7 +387,7 @@ export const addTestOrder = async (formData: TestOrderFormData): Promise<CreateR
       tester: formData.tester || ""
     };
 
-    console.log('Creating test order with testOrderId:', nextTestOrderId, 'and userId:', nextUserId);
+    console.log('Creating test order with testOrderId:', nextTestOrderId, 'and userId:', userIdToUse);
 
     // Create test order
     const createOrderRes = await fetch(`${API_BASE_URL}/test_orders`, {
@@ -426,7 +410,7 @@ export const addTestOrder = async (formData: TestOrderFormData): Promise<CreateR
     return {
       success: true,
       testOrderId: nextTestOrderId, // Return the generated testOrderId
-      userId: nextUserId // Return the generated userId
+      userId: userIdToUse // Return the userId used
     };
 
   } catch (error) {
@@ -434,6 +418,169 @@ export const addTestOrder = async (formData: TestOrderFormData): Promise<CreateR
     return {
       success: false,
       error
+    };
+  }
+};
+
+/**
+ * Fetch user by phone number from the API
+ * @param phoneNumber - Phone number to search for
+ * @returns Promise containing user data or null if not found
+ */
+export const getUserByPhoneNumber = async (phoneNumber: string): Promise<User | null> => {
+  try {
+    const response = await fetch(`${USERS_ENDPOINT}?phone=${phoneNumber}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const users: User[] = await response.json();
+    
+    // Return the first user found with matching phone number
+    if (users.length > 0) {
+      return users[0];
+    }
+    
+    return null;
+  } catch (error) {
+    console.error(`Error fetching user by phone ${phoneNumber}:`, error);
+    return null;
+  }
+};
+
+/**
+ * Update test order by ID
+ * @param testOrderId - Test order ID to update
+ * @param updateData - Data to update (testType, status, priority, note, tester)
+ * @returns Promise with success status
+ */
+export const updateTestOrderById = async (
+  testOrderId: string,
+  updateData: {
+    testType: string;
+    status: string;
+    priority: string;
+    note: string;
+    tester: string;
+  }
+): Promise<{ success: boolean; error?: any }> => {
+  try {
+    // First, get the existing test order to preserve other fields
+    const response = await fetch(`${API_BASE_URL}/test_orders/${testOrderId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const existingOrder: TestOrder = await response.json();
+
+    // Build updated test order object with current timestamp
+    const updatedTestOrder = {
+      ...existingOrder,
+      testType: updateData.testType,
+      status: updateData.status,
+      priority: updateData.priority,
+      note: updateData.note,
+      tester: updateData.tester,
+      updatedAt: new Date().toISOString(), // Update timestamp
+    };
+
+    // Update the test order
+    const updateResponse = await fetch(`${API_BASE_URL}/test_orders/${testOrderId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedTestOrder),
+    });
+
+    if (!updateResponse.ok) {
+      const errText = await updateResponse.text();
+      throw new Error(`Failed to update test order: ${updateResponse.status} ${errText}`);
+    }
+
+    const updatedOrder = await updateResponse.json();
+    console.log('Updated test order:', updatedOrder);
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.error(`Error updating test order ${testOrderId}:`, error);
+    return {
+      success: false,
+      error,
+    };
+  }
+};
+
+/**
+ * Delete a test order by ID (soft delete - sets isDeleted to true)
+ * @param testOrderId - The ID of the test order to delete
+ * @returns Object with success status
+ */
+export const deleteTestOrder = async (testOrderId: string): Promise<{ success: boolean; message?: string; error?: any }> => {
+  try {
+    console.log('Soft deleting test order:', testOrderId);
+
+    // First, fetch the existing test order
+    const response = await fetch(`${API_BASE_URL}/test_orders/${testOrderId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const existingOrder: TestOrder = await response.json();
+
+    // Update the test order with isDeleted set to true
+    const updatedTestOrder = {
+      ...existingOrder,
+      isDeleted: true,
+      updatedAt: new Date().toISOString(),
+    };
+
+    // Update the test order
+    const updateResponse = await fetch(`${API_BASE_URL}/test_orders/${testOrderId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedTestOrder),
+    });
+
+    if (!updateResponse.ok) {
+      const errText = await updateResponse.text();
+      throw new Error(`Failed to delete test order: ${updateResponse.status} ${errText}`);
+    }
+
+    console.log('Test order soft deleted successfully');
+
+    return {
+      success: true,
+      message: 'Test order deleted successfully',
+    };
+  } catch (error) {
+    console.error(`Error deleting test order ${testOrderId}:`, error);
+    return {
+      success: false,
+      message: 'Failed to delete test order',
+      error,
     };
   }
 };

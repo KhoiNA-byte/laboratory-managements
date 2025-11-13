@@ -4,6 +4,7 @@ import styled from "styled-components";
 import {
   getListTestOrder,
   TestOrderWithUser,
+  deleteTestOrder,
 } from "../../services/testOrderApi";
 
 // Styled Components
@@ -254,11 +255,6 @@ const PatientName = styled.div`
   color: #111827;
 `;
 
-const DoctorName = styled.div`
-  font-size: 0.875rem;
-  color: #6b7280;
-`;
-
 const TestType = styled.div`
   font-size: 0.875rem;
   color: #111827;
@@ -371,19 +367,6 @@ const FiltersContainer = styled.div`
   align-items: center;
 `;
 
-const LoadingText = styled.div`
-  color: #6b7280;
-  font-style: italic;
-`;
-
-const ErrorText = styled.div`
-  color: #dc2626;
-`;
-
-const EmptyText = styled.div`
-  color: #6b7280;
-`;
-
 export const TestOrdersPage = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
@@ -400,19 +383,17 @@ export const TestOrdersPage = () => {
     const fetchTestOrders = async () => {
       try {
         setLoading(true);
-        const response = await getListTestOrder();
+        setError(null);
+        const result = await getListTestOrder();
 
-        if (response.success) {
-          setTestOrders(response.data);
-          setError(null);
+        if (result.success) {
+          setTestOrders(result.data);
         } else {
-          setError(response.message || "Không thể tải danh sách test orders");
-          setTestOrders([]);
+          setError(result.message || "Failed to fetch test orders");
         }
       } catch (err) {
+        setError("An unexpected error occurred");
         console.error("Error fetching test orders:", err);
-        setError("Có lỗi xảy ra khi tải danh sách test orders");
-        setTestOrders([]);
       } finally {
         setLoading(false);
       }
@@ -432,31 +413,59 @@ export const TestOrdersPage = () => {
     navigate(`/admin/test-orders/${orderNumber}/edit`);
   };
 
-  const handleDeleteOrder = (orderNumber: string) => {
-    console.log("Delete order:", orderNumber);
-    setShowActionsDropdown(null);
+  const handleDeleteOrder = async (orderNumber: string) => {
+    // Confirm deletion
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete test order ${orderNumber}? This action cannot be undone.`
+    );
+
+    if (!confirmDelete) {
+      setShowActionsDropdown(null);
+      return;
+    }
+
+    try {
+      console.log("Delete order:", orderNumber);
+      const result = await deleteTestOrder(orderNumber);
+
+      if (result.success) {
+        // Remove the deleted order from state
+        setTestOrders((prevOrders) =>
+          prevOrders.filter((order) => order.orderNumber !== orderNumber)
+        );
+        alert("Test order deleted successfully");
+      } else {
+        alert(`Failed to delete test order: ${result.message || "Unknown error"}`);
+      }
+    } catch (err) {
+      console.error("Error deleting test order:", err);
+      alert("An error occurred while deleting the test order");
+    } finally {
+      setShowActionsDropdown(null);
+    }
   };
 
   const handleNewOrder = () => {
     navigate("/admin/test-orders/new");
   };
 
-  // Filter orders based on active tab and search term
   const filteredOrders = testOrders.filter((order) => {
+    // Filter by active tab
     const matchesTab = activeTab === "All Orders" || order.status === activeTab;
+
+    // Filter by search term
     const matchesSearch =
       searchTerm === "" ||
       order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.patient.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.doctor.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.tester.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.testType.toLowerCase().includes(searchTerm.toLowerCase());
 
     return matchesTab && matchesSearch;
   });
 
-  // Calculate summary counts
-  const summaryData = {
+  // Calculate counts for summary cards
+  const statusCounts = {
     pending: testOrders.filter((order) => order.status === "Pending").length,
     inProgress: testOrders.filter((order) => order.status === "In Progress")
       .length,
@@ -474,7 +483,7 @@ export const TestOrdersPage = () => {
           <CardContent>
             <CardInfo>
               <CardTitle>Pending</CardTitle>
-              <CardNumber>{loading ? "..." : summaryData.pending}</CardNumber>
+              <CardNumber>{statusCounts.pending}</CardNumber>
               <CardSubtitle>Awaiting processing</CardSubtitle>
             </CardInfo>
             <CardIcon>
@@ -495,9 +504,7 @@ export const TestOrdersPage = () => {
           <CardContent>
             <CardInfo>
               <CardTitle>In Progress</CardTitle>
-              <CardNumber>
-                {loading ? "..." : summaryData.inProgress}
-              </CardNumber>
+              <CardNumber>{statusCounts.inProgress}</CardNumber>
               <CardSubtitle>Being processed</CardSubtitle>
             </CardInfo>
             <CardIcon>
@@ -518,7 +525,7 @@ export const TestOrdersPage = () => {
           <CardContent>
             <CardInfo>
               <CardTitle>Completed</CardTitle>
-              <CardNumber>{loading ? "..." : summaryData.completed}</CardNumber>
+              <CardNumber>{statusCounts.completed}</CardNumber>
               <CardSubtitle>Ready for review</CardSubtitle>
             </CardInfo>
             <CardIcon>
@@ -539,7 +546,7 @@ export const TestOrdersPage = () => {
           <CardContent>
             <CardInfo>
               <CardTitle>Reviewed</CardTitle>
-              <CardNumber>{loading ? "..." : summaryData.reviewed}</CardNumber>
+              <CardNumber>{statusCounts.reviewed}</CardNumber>
               <CardSubtitle>Finalized</CardSubtitle>
             </CardInfo>
             <CardIcon>
@@ -628,9 +635,7 @@ export const TestOrdersPage = () => {
           <Table>
             <TableHead>
               <TableHeadRow>
-                <TableHeadCell style={{ textAlign: "center" }}>
-                  Order Number
-                </TableHeadCell>
+                <TableHeadCell>Order Number</TableHeadCell>
                 <TableHeadCell>Patient</TableHeadCell>
                 <TableHeadCell>Test Type</TableHeadCell>
                 <TableHeadCell>Priority</TableHeadCell>
@@ -646,16 +651,20 @@ export const TestOrdersPage = () => {
                     colSpan={7}
                     style={{ textAlign: "center", padding: "2rem" }}
                   >
-                    <LoadingText>Đang tải danh sách test orders...</LoadingText>
+                    Loading test orders...
                   </TableCell>
                 </TableRow>
               ) : error ? (
                 <TableRow>
                   <TableCell
                     colSpan={7}
-                    style={{ textAlign: "center", padding: "2rem" }}
+                    style={{
+                      textAlign: "center",
+                      padding: "2rem",
+                      color: "#dc2626",
+                    }}
                   >
-                    <ErrorText>{error}</ErrorText>
+                    Error: {error}
                   </TableCell>
                 </TableRow>
               ) : filteredOrders.length === 0 ? (
@@ -664,22 +673,17 @@ export const TestOrdersPage = () => {
                     colSpan={7}
                     style={{ textAlign: "center", padding: "2rem" }}
                   >
-                    <EmptyText>
-                      {searchTerm
-                        ? "Không tìm thấy test order nào phù hợp với tìm kiếm."
-                        : "Không có test order nào."}
-                    </EmptyText>
+                    No test orders found
                   </TableCell>
                 </TableRow>
               ) : (
                 filteredOrders.map((order) => (
                   <TableRow key={order.orderNumber}>
-                    <TableCell style={{ textAlign: "center" }}>
+                    <TableCell>
                       <OrderNumber>{order.orderNumber}</OrderNumber>
                     </TableCell>
                     <TableCell>
                       <PatientName>{order.patient}</PatientName>
-                      <DoctorName>{order.tester}</DoctorName>
                     </TableCell>
                     <TableCell>
                       <TestType>{order.testType}</TestType>

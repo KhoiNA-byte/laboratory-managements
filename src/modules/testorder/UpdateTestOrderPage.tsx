@@ -1,181 +1,400 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  getTestOrderDetailById,
+  updateTestOrderById,
+} from "../../services/testOrderApi";
+import { validateTester, validateTestType } from "../../utils/validation";
+
+interface UpdateFormData {
+  testType: string;
+  status: string;
+  priority: string;
+  note: string;
+  tester: string;
+}
+
+interface PatientInfo {
+  name: string;
+  email: string;
+  phone: string;
+  gender: string;
+  age: string;
+  address: string;
+}
 
 const UpdateTestOrderPage: React.FC = () => {
-    const { orderId } = useParams<{ orderId: string }>();
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const { orderId } = useParams<{ orderId: string }>();
 
-    // Mock data - in real app, this would come from API
-    const [formData, setFormData] = useState({
-        patient: "John Doe IMRN-2024-0011",
-        priority: "Routine",
-        orderedBy: "Dr. Sarah Johnson",
-        testType: "Complete Blood Count (CBC)",
-        status: "Completed",
-        notes: "Annual checkup"
-    });
+  const [loading, setLoading] = useState(true);
+  const [formData, setFormData] = useState<UpdateFormData>({
+    testType: "",
+    status: "Pending",
+    priority: "Routine",
+    note: "",
+    tester: "",
+  });
 
-    const handleInputChange = (field: string, value: string) => {
-        setFormData(prev => ({
-            ...prev,
-            [field]: value
-        }));
+  const [patientInfo, setPatientInfo] = useState<PatientInfo>({
+    name: "",
+    email: "",
+    phone: "",
+    gender: "",
+    age: "",
+    address: "",
+  });
+
+  const [errors, setErrors] = useState({
+    testType: "",
+    tester: "",
+  });
+
+  const [createdAt, setCreatedAt] = useState("");
+  const [orderedAt, setOrderedAt] = useState("");
+
+  // Fetch test order data
+  useEffect(() => {
+    const fetchTestOrder = async () => {
+      if (!orderId) return;
+
+      try {
+        setLoading(true);
+        const result = await getTestOrderDetailById(orderId);
+
+        if (result.success && result.data) {
+          const data = result.data;
+
+          // Set form data
+          setFormData({
+            testType: data.testType || "",
+            status: data.status || "Pending",
+            priority: data.priority || "Routine",
+            note: data.note || "",
+            tester: data.testerName || "",
+          });
+
+          // Set patient info
+          setPatientInfo({
+            name: data.patientName,
+            email: data.patientEmail,
+            phone: data.patientPhone,
+            gender: data.patientGender,
+            age: data.patientAge,
+            address: data.patientAddress,
+          });
+
+          // Set timestamps
+          setCreatedAt(data.createdAt);
+          setOrderedAt(data.ordered);
+        } else {
+          alert("Failed to fetch test order details");
+          navigate("/admin/test-orders");
+        }
+      } catch (error) {
+        console.error("Error fetching test order:", error);
+        alert("An error occurred while fetching test order");
+        navigate("/admin/test-orders");
+      } finally {
+        setLoading(false);
+      }
     };
 
-    const handleSave = () => {
-        console.log('Saving test order:', formData);
-        // Here you would typically make an API call to update the test order
-        navigate('/admin/test-orders');
-    };
+    fetchTestOrder();
+  }, [orderId, navigate]);
 
-    const handleCancel = () => {
-        navigate('/admin/test-orders');
-    };
+  // Handle input changes with validation
+  const handleInputChange = (field: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
 
+    // Validate the field
+    let error = "";
+    switch (field) {
+      case "tester":
+        error = validateTester(value);
+        break;
+      case "testType":
+        error = validateTestType(value);
+        break;
+    }
+
+    setErrors((prev) => ({
+      ...prev,
+      [field]: error,
+    }));
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
-            <div className="max-w-4xl mx-auto px-4">
-                <div className="bg-white rounded-lg shadow-sm border">
-                    {/* Header */}
-                    <div className="px-6 py-4 border-b border-gray-200">
-                        <h1 className="text-2xl font-bold text-gray-900">Test Order Information</h1>
-                        <p className="text-gray-600 mt-1">Update the test order details</p>
-                    </div>
-
-                    {/* Form Content */}
-                    <div className="p-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* Left Column */}
-                            <div className="space-y-6">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Patient</label>
-                                    <div className="relative">
-                                        <select
-                                            value={formData.patient}
-                                            onChange={(e) => handleInputChange('patient', e.target.value)}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
-                                        >
-                                            <option value="John Doe IMRN-2024-0011">John Doe IMRN-2024-0011</option>
-                                            <option value="Jane Smith IMRN-2024-0012">Jane Smith IMRN-2024-0012</option>
-                                            <option value="Robert Johnson IMRN-2024-0013">Robert Johnson IMRN-2024-0013</option>
-                                        </select>
-                                        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                            <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                            </svg>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Priority</label>
-                                    <div className="relative">
-                                        <select
-                                            value={formData.priority}
-                                            onChange={(e) => handleInputChange('priority', e.target.value)}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
-                                        >
-                                            <option value="Routine">Routine</option>
-                                            <option value="Urgent">Urgent</option>
-                                            <option value="Stat">Stat</option>
-                                        </select>
-                                        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                            <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                            </svg>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Ordered By</label>
-                                    <input
-                                        type="text"
-                                        value={formData.orderedBy}
-                                        onChange={(e) => handleInputChange('orderedBy', e.target.value)}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Notes</label>
-                                    <textarea
-                                        value={formData.notes}
-                                        onChange={(e) => handleInputChange('notes', e.target.value)}
-                                        rows={4}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Right Column */}
-                            <div className="space-y-6">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Test Type</label>
-                                    <div className="relative">
-                                        <select
-                                            value={formData.testType}
-                                            onChange={(e) => handleInputChange('testType', e.target.value)}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
-                                        >
-                                            <option value="Complete Blood Count (CBC)">Complete Blood Count (CBC)</option>
-                                            <option value="Lipid Panel">Lipid Panel</option>
-                                            <option value="Thyroid Function Test">Thyroid Function Test</option>
-                                            <option value="Liver Function Test">Liver Function Test</option>
-                                            <option value="Kidney Function Test">Kidney Function Test</option>
-                                            <option value="Glucose Test">Glucose Test</option>
-                                        </select>
-                                        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                            <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                            </svg>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                                    <div className="relative">
-                                        <select
-                                            value={formData.status}
-                                            onChange={(e) => handleInputChange('status', e.target.value)}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
-                                        >
-                                            <option value="Pending">Pending</option>
-                                            <option value="In Progress">In Progress</option>
-                                            <option value="Completed">Completed</option>
-                                            <option value="Reviewed">Reviewed</option>
-                                        </select>
-                                        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                            <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                            </svg>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Action Buttons */}
-                        <div className="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-200">
-                            <button
-                                onClick={handleCancel}
-                                className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors font-medium"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleSave}
-                                className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium"
-                            >
-                                Save Changes
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+      !errors.tester &&
+      !errors.testType &&
+      formData.tester.trim() &&
+      formData.testType.trim()
     );
+  };
+
+  const handleUpdate = async () => {
+    if (!orderId) return;
+
+    try {
+      const result = await updateTestOrderById(orderId, formData);
+
+      if (result.success) {
+        alert("Test order updated successfully");
+        navigate("/admin/test-orders");
+      } else {
+        alert("Failed to update test order. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error updating test order:", error);
+      alert("An error occurred while updating. Please try again.");
+    }
+  };
+
+  const handleCancel = () => {
+    navigate("/admin/test-orders");
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="bg-white rounded-lg shadow-sm border p-8 text-center">
+            <p className="text-gray-600">Loading test order...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-4xl mx-auto px-4">
+        <div className="bg-white rounded-lg shadow-sm border">
+          {/* Header */}
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h1 className="text-2xl font-bold text-gray-900">
+              Update Test Order
+            </h1>
+            <p className="text-gray-600 mt-1">
+              Update the test order details - Order #{orderId}
+            </p>
+          </div>
+
+          {/* Form Content */}
+          <div className="p-6">
+            {/* Patient Information (Read-only) */}
+            <div className="mb-8">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Patient Information (Read-only)
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 p-4 rounded-lg">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Patient Name
+                  </label>
+                  <input
+                    type="text"
+                    value={patientInfo.name}
+                    disabled
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Phone Number
+                  </label>
+                  <input
+                    type="text"
+                    value={patientInfo.phone}
+                    disabled
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Age
+                  </label>
+                  <input
+                    type="text"
+                    value={patientInfo.age}
+                    disabled
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Gender
+                  </label>
+                  <input
+                    type="text"
+                    value={patientInfo.gender}
+                    disabled
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Created At
+                  </label>
+                  <input
+                    type="text"
+                    value={createdAt}
+                    disabled
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Ordered At
+                  </label>
+                  <input
+                    type="text"
+                    value={orderedAt}
+                    disabled
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Editable Test Order Fields */}
+            <div className="mb-8">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Test Order Details (Editable)
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Test Type */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Test Type <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.testType}
+                    onChange={(e) =>
+                      handleInputChange("testType", e.target.value)
+                    }
+                    placeholder="Enter test type"
+                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      errors.testType ? "border-red-500" : "border-gray-300"
+                    }`}
+                  />
+                  {errors.testType && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.testType}
+                    </p>
+                  )}
+                </div>
+
+                {/* Tester */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Tester <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.tester}
+                    onChange={(e) =>
+                      handleInputChange("tester", e.target.value)
+                    }
+                    placeholder="Enter tester name"
+                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      errors.tester ? "border-red-500" : "border-gray-300"
+                    }`}
+                  />
+                  {errors.tester && (
+                    <p className="text-red-500 text-sm mt-1">{errors.tester}</p>
+                  )}
+                </div>
+
+                {/* Status */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Status <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={formData.status}
+                    onChange={(e) =>
+                      handleInputChange("status", e.target.value)
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Reviewed">Reviewed</option>
+                  </select>
+                </div>
+
+                {/* Priority */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Priority <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={formData.priority}
+                    onChange={(e) =>
+                      handleInputChange("priority", e.target.value)
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="Routine">Routine</option>
+                    <option value="Urgent">Urgent</option>
+                    <option value="Stat">Stat</option>
+                  </select>
+                </div>
+
+                {/* Note - Full width */}
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Note
+                  </label>
+                  <textarea
+                    value={formData.note}
+                    onChange={(e) => handleInputChange("note", e.target.value)}
+                    placeholder="Enter any notes or observations"
+                    rows={4}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+              <button
+                onClick={handleCancel}
+                className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleUpdate}
+                disabled={!isFormValid()}
+                className={`px-6 py-2 rounded-md font-medium transition-colors ${
+                  isFormValid()
+                    ? "bg-blue-600 text-white hover:bg-blue-700"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+              >
+                Update Test Order
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default UpdateTestOrderPage;

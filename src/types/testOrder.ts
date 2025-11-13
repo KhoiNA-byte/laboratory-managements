@@ -17,6 +17,7 @@ export interface TestOrder {
   note: string;
   orderedAt: string;
   tester: string;
+  customTestOrderId?: string; // Custom test order ID with format TO-YYYYMMDDNNNNN
 }
 
 /**

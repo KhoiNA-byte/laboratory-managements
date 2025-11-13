@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 
 interface User {
   id: string;
@@ -37,6 +39,30 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
   const [validationErrors, setValidationErrors] = useState<{
     [key: string]: string;
   }>({});
+
+  // Get roles from Redux store
+  const { roles } = useSelector((state: RootState) => state.roles);
+
+  // Get active roles only and sort them
+  const activeRoles = roles
+    .filter((role) => role.status === "active")
+    .sort((a, b) => a.roleName.localeCompare(b.roleName));
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        gender: user.gender,
+        role: user.role,
+        age: user.age,
+        address: user.address,
+        status: user.status || "active",
+      });
+    }
+  }, [user, setFormData]);
 
   if (!show || !user) return null;
 
@@ -132,7 +158,8 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
       formData.name &&
       formData.email &&
       formData.phone &&
-      formData.age
+      formData.age &&
+      formData.role
     );
   };
 
@@ -260,12 +287,14 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
               onChange={handleInputChange}
               className="mt-1 w-full border border-gray-300 bg-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+              <option value="prefer_not_to_say">Prefer not to say</option>
             </select>
           </div>
 
-          {/* Role - RED BOX */}
+          {/* Role - Now Dynamic */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Role *
@@ -275,13 +304,25 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
               value={formData.role}
               onChange={handleInputChange}
               className="mt-1 w-full border border-gray-300 bg-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              required
             >
-              <option value="admin">Administrator</option>
-              <option value="lab_manager">Lab Manager</option>
-              <option value="lab_user">Lab User</option>
-              <option value="service_user">Service User</option>
-              <option value="normal_user">Normal User</option>
+              <option value="">Select a role</option>
+              {activeRoles.map((role) => (
+                <option key={role.roleCode} value={role.roleCode}>
+                  {role.roleName}
+                </option>
+              ))}
             </select>
+            {activeRoles.length === 0 && (
+              <p className="mt-1 text-xs text-red-500">
+                No active roles available
+              </p>
+            )}
+            {activeRoles.length > 0 && (
+              <p className="mt-1 text-xs text-gray-500">
+                {activeRoles.length} active role(s) available
+              </p>
+            )}
           </div>
 
           {/* Age */}
