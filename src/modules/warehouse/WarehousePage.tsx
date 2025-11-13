@@ -1,42 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState, AppDispatch } from "../../store/index";
+import {
+  fetchReagentsRequest,
+  deleteReagentRequest,
+  ReagentServer,
+} from "../../store/slices/reagentSlice";
 import AddReagent from "./AddReagent";
-
-const API_BASE = "https://69085724b49bea95fbf32f71.mockapi.io";
-const RESOURCE = "reagents";
-// src/types.ts
-export type ReagentServer = {
-  id?: number; // mock-api thường trả number as string
-  name: string;
-  lot_number: string;
-  manufacturer: string;
-  quantity: number;
-  unit: string;
-  usage_per_run?: number;
-  expiry_date?: string; // ISO date string
-  location?: string;
-  min_stock?: number;
-  max_stock?: number;
-  cost?: number;
-  created_at?: string;
-  updated_at?: string;
-  typeCbcs?: string[]; // array of strings, e.g. ["WBC","RBC"]
-};
-
-export type ReagentForm = {
-  name: string;
-  lotNumber: string;
-  manufacturer: string;
-  quantity: number;
-  unit: string;
-  usagePerRun?: number;
-  expiryDate?: string; // yyyy-mm-dd
-  location?: string;
-  minStock?: number;
-  maxStock?: number;
-  cost?: number;
-  typeCbcs?: string[]; // client representation
-};
 
 const prettyDate = (iso?: string) => {
   if (!iso) return "-";
@@ -61,27 +31,17 @@ const QtyDisplay: React.FC<{ q?: number | string; unit?: string }> = ({
   return <>{q}</>;
 };
 
-const toServerPayload = (f: ReagentForm): Partial<ReagentServer> => ({
-  name: f.name,
-  lot_number: f.lotNumber,
-  manufacturer: f.manufacturer,
-  quantity: Number(f.quantity ?? 0),
-  unit: f.unit ?? "Tests",
-  usage_per_run: f.usagePerRun ?? 0,
-  expiry_date: f.expiryDate ?? "",
-  location: f.location ?? "",
-  min_stock: f.minStock ?? 0,
-  max_stock: f.maxStock ?? 0,
-  cost: f.cost ?? 0,
-  typeCbcs: f.typeCbcs ?? [],
-});
-
 const WarehousePage: React.FC = () => {
-  const [reagents, setReagents] = useState<ReagentServer[]>([]);
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const { list: reagents, loading } = useSelector(
+    (state: RootState) => state.reagents
+  );
+
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] = useState("All Items");
+  const [openDropdownId, setOpenDropdownId] = useState<number | null>(null); // dropdown hiện tại
+
   const filterTabs = [
     "All Items",
     "In Stock",
@@ -91,32 +51,8 @@ const WarehousePage: React.FC = () => {
   ];
 
   useEffect(() => {
-    fetchReagents();
-  }, []);
-
-  async function fetchReagents() {
-    setLoading(true);
-    try {
-      const res = await axios.get(`${API_BASE}/${RESOURCE}`);
-      setReagents(Array.isArray(res.data) ? res.data : []);
-    } catch (err) {
-      console.error("fetch reagents failed", err);
-      setReagents([]);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  const handleAdd = async (data: ReagentForm) => {
-    try {
-      const payload = toServerPayload(data);
-      const res = await axios.post(`${API_BASE}/${RESOURCE}`, payload);
-      setReagents((prev) => [res.data, ...prev]);
-    } catch (err) {
-      console.error("add reagent failed", err);
-      throw err;
-    }
-  };
+    dispatch(fetchReagentsRequest());
+  }, [dispatch]);
 
   const filtered = reagents.filter((r) => {
     const q = search.trim().toLowerCase();
@@ -124,32 +60,44 @@ const WarehousePage: React.FC = () => {
       activeFilter === "All Items" ? true : (r as any).status === activeFilter;
     const matchesSearch =
       !q ||
-      (r.name && r.name.toLowerCase().includes(q)) ||
-      (r.lot_number && r.lot_number.toLowerCase().includes(q));
+      r.name.toLowerCase().includes(q) ||
+      r.lot_number.toLowerCase().includes(q);
     return matchesFilter && matchesSearch;
   });
 
+  const handleDelete = (id?: number) => {
+    if (!id) return;
+    if (window.confirm("Are you sure you want to delete this reagent?")) {
+      dispatch(deleteReagentRequest(id));
+    }
+  };
+
+  const handleView = (r: ReagentServer) => {
+    alert(`View detail of ${r.name}\nLot: ${r.lot_number}\nQty: ${r.quantity}`);
+  };
+
+  const toggleDropdown = (id: number) => {
+    setOpenDropdownId(openDropdownId === id ? null : id);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
+      {/* Header & Stats */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Warehouse</h1>
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <div className="bg-white p-6 rounded-2xl border">
-          {" "}
           <p className="text-sm text-gray-500">Total</p>
           <p className="text-3xl font-bold">{reagents.length}</p>
         </div>
         <div className="bg-white p-6 rounded-2xl border">
-          {" "}
           <p className="text-sm text-gray-500">Low stock</p>
           <p className="text-3xl font-bold">
             {reagents.filter((r) => (r as any).status === "Low Stock").length}
           </p>
         </div>
         <div className="bg-white p-6 rounded-2xl border">
-          {" "}
           <p className="text-sm text-gray-500">Expiring soon</p>
           <p className="text-3xl font-bold">
             {
@@ -167,7 +115,6 @@ const WarehousePage: React.FC = () => {
           </p>
         </div>
         <div className="bg-white p-6 rounded-2xl border">
-          {" "}
           <p className="text-sm text-gray-500">Expired/Out</p>
           <p className="text-3xl font-bold">
             {
@@ -181,6 +128,7 @@ const WarehousePage: React.FC = () => {
         </div>
       </div>
 
+      {/* Inventory Table */}
       <div className="bg-white rounded-2xl border p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -189,7 +137,6 @@ const WarehousePage: React.FC = () => {
               Manage laboratory reagents and supplies
             </p>
           </div>
-
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-2">
               {filterTabs.map((tab) => (
@@ -206,7 +153,6 @@ const WarehousePage: React.FC = () => {
                 </button>
               ))}
             </div>
-
             <button
               onClick={() => setIsAddOpen(true)}
               className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow"
@@ -216,6 +162,7 @@ const WarehousePage: React.FC = () => {
           </div>
         </div>
 
+        {/* Search */}
         <div className="mb-4">
           <input
             placeholder="Search..."
@@ -225,6 +172,7 @@ const WarehousePage: React.FC = () => {
           />
         </div>
 
+        {/* Table */}
         <div className="overflow-x-auto">
           {loading ? (
             <div className="p-6 text-center text-gray-500">Loading...</div>
@@ -250,11 +198,14 @@ const WarehousePage: React.FC = () => {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Location
                   </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-100">
                 {filtered.map((r) => (
-                  <tr key={String(r.id)} className="hover:bg-gray-50">
+                  <tr key={String(r.id)} className="hover:bg-gray-50 relative">
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">
                       {r.name}
                     </td>
@@ -275,11 +226,37 @@ const WarehousePage: React.FC = () => {
                     <td className="px-6 py-4 text-sm text-gray-700">
                       {r.location}
                     </td>
+                    <td className="px-6 py-4 text-sm text-gray-700">
+                      <div className="relative">
+                        <button
+                          className="px-2 py-1 rounded hover:bg-gray-100"
+                          onClick={() => toggleDropdown(r.id!)}
+                        >
+                          ⋮
+                        </button>
+                        {openDropdownId === r.id && (
+                          <div className="absolute right-0 mt-2 w-32 bg-white border rounded shadow-md z-50">
+                            <button
+                              className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
+                              onClick={() => handleView(r)}
+                            >
+                              View Detail
+                            </button>
+                            <button
+                              className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-gray-100"
+                              onClick={() => handleDelete(r.id)}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </td>
                   </tr>
                 ))}
                 {filtered.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="text-center py-8 text-gray-400">
+                    <td colSpan={7} className="text-center py-8 text-gray-400">
                       No reagent found.
                     </td>
                   </tr>
@@ -290,11 +267,7 @@ const WarehousePage: React.FC = () => {
         </div>
       </div>
 
-      <AddReagent
-        isOpen={isAddOpen}
-        onClose={() => setIsAddOpen(false)}
-        onSubmit={handleAdd}
-      />
+      <AddReagent isOpen={isAddOpen} onClose={() => setIsAddOpen(false)} />
     </div>
   );
 };

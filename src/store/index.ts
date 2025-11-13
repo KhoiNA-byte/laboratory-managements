@@ -1,10 +1,14 @@
+// store/index.ts
 import { configureStore } from "@reduxjs/toolkit";
 import createSagaMiddleware from "redux-saga";
+
 import authReducer from "./slices/authSlice";
 import userReducer from "./slices/userSlice";
 import patientReducer from "./slices/patientSlice";
 import testOrderReducer from "./slices/testOrderSlice";
-import instrumentReducer from "./slices/instrumentSlice";
+import instrumentsReducer from "./slices/instrumentsSlice";
+import testResultsReducer from "./slices/testResultsSlice"; 
+import reagentReducer from "./slices/reagentSlice"; 
 import { rootSaga } from "./sagas";
 
 const sagaMiddleware = createSagaMiddleware();
@@ -15,7 +19,9 @@ export const store = configureStore({
     users: userReducer,
     patients: patientReducer,
     testOrders: testOrderReducer,
-    instruments: instrumentReducer,
+    instruments: instrumentsReducer,
+    reagents: reagentReducer,
+    testResults: testResultsReducer, // <-- THÊM DÒNG NÀY
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -26,6 +32,7 @@ export const store = configureStore({
     }).concat(sagaMiddleware),
 });
 
+// run saga
 sagaMiddleware.run(rootSaga);
 
 export type RootState = ReturnType<typeof store.getState>;
