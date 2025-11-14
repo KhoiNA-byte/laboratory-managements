@@ -1,8 +1,8 @@
-// services/roleApi.ts
+import { apiClient } from "./apiClient";
 import { ROLES_ENDPOINT } from "./apiConfig";
 
 export interface Role {
-  roleId: string; // Changed from 'id' to 'roleId'
+  roleId: string;
   roleName: string;
   description: string;
   permission: string[];
@@ -16,12 +16,8 @@ export interface Role {
 // Get all roles
 export const getRolesAPI = async (): Promise<Role[]> => {
   try {
-    const response = await fetch(ROLES_ENDPOINT);
     console.log("Fetching roles from:", ROLES_ENDPOINT);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch roles: ${response.status}`);
-    }
-    const roles = await response.json();
+    const roles = await apiClient.get<Role[]>(ROLES_ENDPOINT);
     return roles;
   } catch (error) {
     console.error("Error fetching roles:", error);
@@ -34,22 +30,12 @@ export const createRoleAPI = async (
   roleData: Omit<Role, "roleId" | "createdAt" | "updatedAt">
 ): Promise<Role> => {
   try {
-    const response = await fetch(ROLES_ENDPOINT, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ...roleData,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      }),
+    const newRole = await apiClient.post<Role>(ROLES_ENDPOINT, {
+      ...roleData,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     });
-
-    if (!response.ok) {
-      throw new Error(`Failed to create role: ${response.status}`);
-    }
-    return await response.json();
+    return newRole;
   } catch (error) {
     console.error("Error creating role:", error);
     throw error;
@@ -69,21 +55,15 @@ export const updateRoleAPI = async (roleData: Role): Promise<Role> => {
       throw new Error(`Role with code ${roleData.roleCode} not found`);
     }
 
-    const response = await fetch(`${ROLES_ENDPOINT}/${existingRole.roleId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const updatedRole = await apiClient.put<Role>(
+      `${ROLES_ENDPOINT}/${existingRole.roleId}`,
+      {
         ...roleData,
         updatedAt: new Date().toISOString(),
-      }),
-    });
+      }
+    );
 
-    if (!response.ok) {
-      throw new Error(`Failed to update role: ${response.status}`);
-    }
-    return await response.json();
+    return updatedRole;
   } catch (error) {
     console.error("Error updating role:", error);
     throw error;
@@ -101,13 +81,7 @@ export const deleteRoleAPI = async (roleCode: string): Promise<void> => {
       throw new Error(`Role with code ${roleCode} not found`);
     }
 
-    const response = await fetch(`${ROLES_ENDPOINT}/${existingRole.roleId}`, {
-      method: "DELETE",
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to delete role: ${response.status}`);
-    }
+    await apiClient.delete<void>(`${ROLES_ENDPOINT}/${existingRole.roleId}`);
   } catch (error) {
     console.error("Error deleting role:", error);
     throw error;

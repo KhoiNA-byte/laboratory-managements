@@ -1,5 +1,6 @@
 // Use environment variables
 import { USERS_ENDPOINT } from "./apiConfig";
+import { apiClient } from "./apiClient";
 
 export interface User {
   id: string;
@@ -20,12 +21,8 @@ export interface User {
 // Get all users
 export const getUsersAPI = async (): Promise<User[]> => {
   try {
-    const response = await fetch(USERS_ENDPOINT);
     console.log("Fetching users from:", USERS_ENDPOINT);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch users: ${response.status}`);
-    }
-    const users = await response.json();
+    const users = await apiClient.get<User[]>(USERS_ENDPOINT);
     return users;
   } catch (error) {
     console.error("Error fetching users:", error);
@@ -38,22 +35,12 @@ export const createUserAPI = async (
   userData: Omit<User, "createdAt" | "updatedAt">
 ): Promise<User> => {
   try {
-    const response = await fetch(USERS_ENDPOINT, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ...userData,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      }),
+    const user = await apiClient.post<User>(USERS_ENDPOINT, {
+      ...userData,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     });
-
-    if (!response.ok) {
-      throw new Error(`Failed to create user: ${response.status}`);
-    }
-    return await response.json();
+    return user;
   } catch (error) {
     console.error("Error creating user:", error);
     throw error;
@@ -69,24 +56,28 @@ export const updateUserAPI = async (userData: User): Promise<User> => {
     console.log("Found userId:", userId);
     console.log("Using endpoint:", `${USERS_ENDPOINT}/${userData.userId}`);
 
-    const response = await fetch(`${USERS_ENDPOINT}/${userData.userId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const user = await apiClient.put<User>(
+      `${USERS_ENDPOINT}/${userData.userId}`,
+      {
         ...userData,
         userId: userId, // Ensure userId is included in the update
         updatedAt: new Date().toISOString(),
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to update user: ${response.status}`);
-    }
-    return await response.json();
+      }
+    );
+    return user;
   } catch (error) {
     console.error("Error updating user:", error);
+    throw error;
+  }
+};
+
+// Get user by ID and extract userId
+export const getUserById = async (id: string): Promise<any> => {
+  try {
+    const user = await apiClient.get<any>(`${USERS_ENDPOINT}/${id}`);
+    return user;
+  } catch (error) {
+    console.error("Error fetching user:", error);
     throw error;
   }
 };
@@ -99,20 +90,5 @@ export const getUserIdFromId = async (id: string): Promise<string | null> => {
   } catch (error) {
     console.error("Error getting userId:", error);
     return null;
-  }
-};
-
-// Get user by ID and extract userId
-export const getUserById = async (id: string): Promise<any> => {
-  try {
-    const response = await fetch(`${USERS_ENDPOINT}/${id}`);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch user: ${response.status}`);
-    }
-    const user = await response.json();
-    return user;
-  } catch (error) {
-    console.error("Error fetching user:", error);
-    throw error;
   }
 };
