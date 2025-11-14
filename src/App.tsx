@@ -21,8 +21,8 @@ import { UnauthorizedPage } from "./modules/iam/UnauthorizedPage";
 
 // Warehouse Module
 import InstrumentsPage from "./modules/warehouse/InstrumentsPage";
-import { ReagentsPage } from "./modules/warehouse/ReagentsPage";
-import { WarehousePage } from "./modules/warehouse/WarehousePage";
+import ReagentsPage  from "./modules/warehouse/WarehousePage";
+import  WarehousePage  from "./modules/warehouse/WarehousePage";
 import { FlaggingRulesPage } from "./modules/warehouse/FlaggingRulesPage";
 import InstrumentDetailsPage from "./modules/warehouse/InstrumentDetailPopup";
 import EditInstrumentPage from "./modules/warehouse/EditInstrumentPage";
@@ -31,7 +31,7 @@ import AddInstrumentPage from "./modules/warehouse/AddInstrumentPage";
 // Test Order Module
 import { TestOrdersPage } from "./modules/testorder/TestOrdersPage";
 import { TestResultPage } from "./modules/testorder/TestResultPage";
-import MyTestResultsPage from "./modules/testorder/MyTestResultsPage";
+import MyTestResultsPage from "./modules/testorder/NewTestOrderPage";
 import TestOrderDetailsPage from "./modules/testorder/TestOrderDetailsPage";
 import UpdateTestOrderPage from "./modules/testorder/UpdateTestOrderPage";
 import NewTestOrderPage from "./modules/testorder/NewTestOrderPage";
