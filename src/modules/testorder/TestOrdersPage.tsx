@@ -435,7 +435,9 @@ export const TestOrdersPage = () => {
         );
         alert("Test order deleted successfully");
       } else {
-        alert(`Failed to delete test order: ${result.message || "Unknown error"}`);
+        alert(
+          `Failed to delete test order: ${result.message || "Unknown error"}`
+        );
       }
     } catch (err) {
       console.error("Error deleting test order:", err);

@@ -180,31 +180,49 @@ export const getListTestOrder = async (): Promise<TestOrderListResponse> => {
       (order) => order.isDeleted === false
     );
 
-    // Fetch user data for each active test order
-    const testOrdersWithUsers = await Promise.all(
-      activeTestOrders.map(async (order) => {
-        // Get user data by userId
-        const user = await getUserById(order.userId);
-        
-        // Get doctor data by createdByUserId (assuming doctor is the creator)
-        const doctor = await getUserById(order.createdByUserId.toString());
-        
-        // Format date
-        const orderedDate = new Date(order.orderedAt).toLocaleDateString('en-US');
-        
-        return {
-          run_id: order.run_id,
-          orderNumber: order.testOrderId,
-          patient: user?.name || 'Unknown Patient',
-          doctor: doctor?.name || 'Unknown Doctor',
-          tester: order.tester || 'Unknown Tester',
-          testType: order.testType,
-          priority: order.priority,
-          status: order.status,
-          ordered: orderedDate,
-        } as TestOrderWithUser;
-      })
-    );
+    // Fetch ALL users once to avoid 429 rate limit errors
+    const usersResponse = await fetch(`${USERS_ENDPOINT}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!usersResponse.ok) {
+      throw new Error(`Failed to fetch users: ${usersResponse.status}`);
+    }
+
+    const allUsers: User[] = await usersResponse.json();
+    
+    // Create a Map for fast user lookup by userId
+    const usersMap = new Map<string, User>();
+    allUsers.forEach(user => {
+      usersMap.set(user.userId, user);
+    });
+
+    // Map test orders with user data from the Map (no additional API calls)
+    const testOrdersWithUsers = activeTestOrders.map((order) => {
+      // Get user data from Map
+      const user = usersMap.get(order.userId);
+      
+      // Get doctor data from Map
+      const doctor = usersMap.get(order.createdByUserId.toString());
+      
+      // Format date
+      const orderedDate = new Date(order.orderedAt).toLocaleDateString('en-US');
+      
+      return {
+        run_id: order.run_id,
+        orderNumber: order.testOrderId,
+        patient: user?.name || 'Unknown Patient',
+        doctor: doctor?.name || 'Unknown Doctor',
+        tester: order.tester || 'Unknown Tester',
+        testType: order.testType,
+        priority: order.priority,
+        status: order.status,
+        ordered: orderedDate,
+      } as TestOrderWithUser;
+    });
 
     return {
       data: testOrdersWithUsers,
@@ -227,25 +245,42 @@ export const getListTestOrder = async (): Promise<TestOrderListResponse> => {
  */
 export const getTestOrderDetailById = async (testOrderId: string): Promise<TestOrderDetailResponse> => {
   try {
-    // Get single test order from API
-    const response = await fetch(`${API_BASE_URL}/test_orders/${testOrderId}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    // Fetch test order and all users in parallel
+    const [testOrderResponse, usersResponse] = await Promise.all([
+      fetch(`${API_BASE_URL}/test_orders/${testOrderId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }),
+      fetch(`${USERS_ENDPOINT}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+    ]);
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    if (!testOrderResponse.ok) {
+      throw new Error(`HTTP error! status: ${testOrderResponse.status}`);
     }
 
-    const testOrder: TestOrder = await response.json();
+    if (!usersResponse.ok) {
+      throw new Error(`Failed to fetch users: ${usersResponse.status}`);
+    }
+
+    const testOrder: TestOrder = await testOrderResponse.json();
+    const allUsers: User[] = await usersResponse.json();
     
-    // Get user data by userId (patient)
-    const patient = await getUserById(testOrder.userId);
+    // Create a Map for fast user lookup
+    const usersMap = new Map<string, User>();
+    allUsers.forEach(user => {
+      usersMap.set(user.userId, user);
+    });
     
-    // Get doctor data by createdByUserId
-    const doctor = await getUserById(testOrder.createdByUserId.toString());
+    // Get user data from Map
+    const patient = usersMap.get(testOrder.userId);
+    const doctor = usersMap.get(testOrder.createdByUserId.toString());
 
     // Format dates
     const orderedDate = new Date(testOrder.orderedAt).toLocaleDateString('en-US');
@@ -444,7 +479,14 @@ export const getUserByPhoneNumber = async (phoneNumber: string): Promise<User | 
     
     // Return the first user found with matching phone number
     if (users.length > 0) {
-      return users[0];
+      const user = users[0];
+      
+      // Normalize gender to capitalize first letter (male -> Male, female -> Female)
+      if (user.gender) {
+        user.gender = user.gender.charAt(0).toUpperCase() + user.gender.slice(1).toLowerCase();
+      }
+      
+      return user;
     }
     
     return null;
