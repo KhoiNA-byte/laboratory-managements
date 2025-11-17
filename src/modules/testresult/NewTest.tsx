@@ -66,7 +66,7 @@ export default function NewTest({
     (async () => {
       try {
         const [ordersRes, paramsRes, instRes, reagentsRes] = await Promise.all([
-          axios.get(`${API_BASE}/test_order`),
+          axios.get(`${API_BASE}/test_orders`),
           axios.get(`${API_BASE}/cbc_parameters`),
           axios.get(`${API_BASE}/instruments`),
           axios.get(`${API_BASE}/reagents`),
@@ -116,7 +116,7 @@ export default function NewTest({
     (async () => {
       try {
         const oRes = await axios.get(
-          `${API_BASE}/test_order/${selectedOrderId}`
+          `${API_BASE}/test_orders/${selectedOrderId}`
         );
         const order: TestOrder = oRes.data;
         const instAll = (await axios.get(`${API_BASE}/instruments`)).data || [];

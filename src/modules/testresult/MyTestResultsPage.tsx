@@ -31,7 +31,9 @@ const MyTestResultsPage: React.FC = () => {
   useEffect(() => {
     dispatch(fetchListRequest());
   }, [dispatch]);
-
+  useEffect(() => {
+    console.log("DEBUG testResults.list:", list);
+  }, [list]);
   const filteredRows = useMemo(() => {
     const q = searchTerm.trim().toLowerCase();
     return list.filter((r) => {

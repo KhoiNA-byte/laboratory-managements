@@ -1,3 +1,4 @@
+// --- File: src/store/slices/testResultsSlice.ts (UPDATED: add userId on TestOrder type & keep open index signatures)
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 export type UsedReagentLocal = {
   id: string | number;
@@ -9,6 +10,7 @@ export type UsedReagentLocal = {
 
 export type TestOrder = {
   id: string | number;
+  userId?: string | number; // NEW: reference to /user table
   patient_id?: string | number;
   patientName?: string;
   priority?: string;
@@ -105,7 +107,6 @@ export type TestResultDetail = {
   reviewedAt?: string;
   comments?: CommentItem[];
   run_id?: string;
-  // new: raw HL7 payload (string)
   hl7_raw?: string;
 };
 export type CbcParam = {
@@ -136,19 +137,16 @@ interface TestResultsState {
   loadingList: boolean;
   listError: string | null;
 
-  // run test
   running: boolean;
   runError: string | null;
   lastRunId?: string | number | null;
   lastResultId?: string | number | null;
   lastRunRows: TestResultRow[];
 
-  // detail view
   detail?: TestResultDetail | null;
   loadingDetail: boolean;
   detailError: string | null;
 
-  // comment updating
   updatingComments: boolean;
   updateCommentsError: string | null;
 
@@ -182,7 +180,6 @@ const slice = createSlice({
   name: "testResults",
   initialState,
   reducers: {
-    // list
     fetchListRequest(state) {
       state.loadingList = true;
       state.listError = null;
@@ -196,7 +193,6 @@ const slice = createSlice({
       state.listError = action.payload;
     },
 
-    // run test
     runTestRequest(state, action: PayloadAction<RunTestPayload>) {
       state.running = true;
       state.runError = null;
@@ -222,7 +218,6 @@ const slice = createSlice({
       state.runError = action.payload;
     },
 
-    // detail
     fetchDetailRequest(state, action: PayloadAction<string>) {
       state.loadingDetail = true;
       state.detailError = null;
@@ -237,27 +232,23 @@ const slice = createSlice({
       state.detailError = action.payload;
     },
 
-    // update comments
     updateCommentsRequest(state, action: PayloadAction<UpdateCommentsPayload>) {
-      // Không bật global loading khi cập nhật comment.
       state.updateCommentsError = null;
     },
     updateCommentsSuccess(
       state,
       action: PayloadAction<{ runId: string; comments: CommentItem[] }>
     ) {
-      // cập nhật local detail nếu phù hợp
       if (state.detail && state.detail.run_id === action.payload.runId) {
         state.detail.comments = action.payload.comments;
       }
-      state.updatingComments = false; // optional: giữ false
+      state.updatingComments = false;
     },
     updateCommentsFailure(state, action: PayloadAction<string>) {
       state.updatingComments = false;
       state.updateCommentsError = action.payload;
     },
 
-    // delete
     deleteResultRequest(state, action: PayloadAction<string | number>) {
       state.deleting = true;
       state.deleteError = null;

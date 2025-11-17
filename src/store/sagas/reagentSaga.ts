@@ -23,7 +23,9 @@ const RESOURCE = "reagents";
 
 const sid = (v: any) => (v === null || v === undefined ? "" : String(v));
 
-function toServerPayload(f: ReagentForm | Partial<ReagentServer>): Partial<ReagentServer> {
+function toServerPayload(
+  f: ReagentForm | Partial<ReagentServer>
+): Partial<ReagentServer> {
   // Accept either ReagentForm or partial server object
   return {
     name: (f as any).name,
@@ -42,7 +44,10 @@ function toServerPayload(f: ReagentForm | Partial<ReagentServer>): Partial<Reage
 
 function* fetchReagentsSaga() {
   try {
-    const res: { data: ReagentServer[] } = yield call(axios.get, `${API_BASE}/${RESOURCE}`);
+    const res: { data: ReagentServer[] } = yield call(
+      axios.get,
+      `${API_BASE}/${RESOURCE}`
+    );
     yield put(fetchReagentsSuccess(res.data));
   } catch (err: any) {
     yield put(fetchReagentsFailure(err.message || "Fetch failed"));
@@ -52,7 +57,11 @@ function* fetchReagentsSaga() {
 function* addReagentSaga(action: ReturnType<typeof addReagentRequest>) {
   try {
     const payload = toServerPayload(action.payload as ReagentForm);
-    const res: { data: ReagentServer } = yield call(axios.post, `${API_BASE}/${RESOURCE}`, payload);
+    const res: { data: ReagentServer } = yield call(
+      axios.post,
+      `${API_BASE}/${RESOURCE}`,
+      payload
+    );
     yield put(addReagentSuccess(res.data));
     yield put(fetchReagentsRequest());
   } catch (err: any) {
@@ -63,7 +72,10 @@ function* addReagentSaga(action: ReturnType<typeof addReagentRequest>) {
 function* deleteReagentSaga(action: ReturnType<typeof deleteReagentRequest>) {
   try {
     const id = action.payload;
-    yield call(axios.delete, `${API_BASE}/${RESOURCE}/${encodeURIComponent(sid(id))}`);
+    yield call(
+      axios.delete,
+      `${API_BASE}/${RESOURCE}/${encodeURIComponent(sid(id))}`
+    );
     yield put(deleteReagentSuccess(id));
     yield put(fetchReagentsRequest());
   } catch (err: any) {
@@ -74,7 +86,8 @@ function* deleteReagentSaga(action: ReturnType<typeof deleteReagentRequest>) {
 // --- update reagent ---
 function* updateReagentSaga(action: ReturnType<typeof updateReagentRequest>) {
   try {
-    const payload: UpdateReagentPayload = action.payload as UpdateReagentPayload;
+    const payload: UpdateReagentPayload =
+      action.payload as UpdateReagentPayload;
     const id = payload.id;
     const dataPayload = toServerPayload(payload.data as any);
 
