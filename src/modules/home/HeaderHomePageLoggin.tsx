@@ -165,7 +165,7 @@ const HeaderHomePageLoggin = () => {
 
         {/* CTA Buttons */}
         <ButtonContainer>
-          <CTAButton onClick={() => navigate("/dashboard")}>
+          <CTAButton onClick={() => navigate("/admin/dashboard")}>
             Vào Dashboard
           </CTAButton>
           <CTAButtonSeccond onClick={() => navigate("/community")}>

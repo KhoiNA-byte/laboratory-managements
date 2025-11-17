@@ -1,4 +1,5 @@
-// Use environment variables
+// services/authApi.ts
+import { apiClient } from "./apiClient";
 import { USERS_ENDPOINT } from "./apiConfig";
 
 export interface Credentials {
@@ -15,21 +16,16 @@ export interface AuthResponse {
     username?: string;
   };
   token: string;
-  redirectPath: string; // Add redirectPath to the response
+  redirectPath: string;
 }
 
-// Login using MockAPI.io
+// Login using MockAPI.io - now using apiClient
 export const loginAPI = async (
   credentials: Credentials
 ): Promise<AuthResponse> => {
   try {
-    // Fetch all users from MockAPI
-    const response = await fetch(USERS_ENDPOINT);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch users: ${response.status}`);
-    }
-
-    const users = await response.json();
+    // Fetch all users from MockAPI using apiClient
+    const users = await apiClient.get<any[]>(USERS_ENDPOINT);
 
     // Find user by email and password
     const foundUser = users.find(
@@ -38,12 +34,12 @@ export const loginAPI = async (
         user.password === credentials.password
     );
 
-    if (foundUser.status === "inactive") {
-      throw new Error("User account has been deactivated");
-    }
-
     if (!foundUser) {
       throw new Error("Invalid email or password");
+    }
+
+    if (foundUser.status === "inactive") {
+      throw new Error("User account has been deactivated");
     }
 
     // Determine redirect path based on role
@@ -88,25 +84,21 @@ export const logoutAPI = async (): Promise<{ success: boolean }> => {
   return { success: true };
 };
 
-// Check if user exists in MockAPI
+// Check if user exists in MockAPI - now using apiClient
 export const checkUserExists = async (userId: string): Promise<boolean> => {
   try {
-    const response = await fetch(`${USERS_ENDPOINT}/${userId}`);
-    return response.ok;
+    await apiClient.get(`${USERS_ENDPOINT}/${userId}`);
+    return true;
   } catch (error) {
     console.error("Error checking user:", error);
     return false;
   }
 };
 
-// Get user by ID and extract userId
+// Get user by ID - now using apiClient
 export const getUserById = async (id: string): Promise<any> => {
   try {
-    const response = await fetch(`${USERS_ENDPOINT}/${id}`);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch user: ${response.status}`);
-    }
-    const user = await response.json();
+    const user = await apiClient.get(`${USERS_ENDPOINT}/${id}`);
     return user;
   } catch (error) {
     console.error("Error fetching user:", error);
@@ -114,7 +106,7 @@ export const getUserById = async (id: string): Promise<any> => {
   }
 };
 
-// Get userId from id
+// Get userId from id - now using apiClient
 export const getUserIdFromId = async (id: string): Promise<string | null> => {
   try {
     const user = await getUserById(id);
