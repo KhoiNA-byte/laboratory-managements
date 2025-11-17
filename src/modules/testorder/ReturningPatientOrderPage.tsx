@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { TestOrderFormData } from "../../types/testOrder";
+import { getTestTypes, TestType } from "../../services/testOrderApi";
 
 interface ReturningPatientOrderPageProps {
   formData: TestOrderFormData;
@@ -32,6 +33,30 @@ export const ReturningPatientOrderPage: React.FC<
   handleRunDateTextChange,
   getDateInputValue,
 }) => {
+  const [testTypes, setTestTypes] = useState<TestType[]>([]);
+  const [loadingTestTypes, setLoadingTestTypes] = useState(true);
+
+  // Fetch test types on component mount
+  useEffect(() => {
+    const fetchTestTypes = async () => {
+      try {
+        setLoadingTestTypes(true);
+        const result = await getTestTypes();
+        if (result.success) {
+          setTestTypes(result.data);
+        } else {
+          console.error('Failed to fetch test types:', result.message);
+        }
+      } catch (error) {
+        console.error('Error fetching test types:', error);
+      } finally {
+        setLoadingTestTypes(false);
+      }
+    };
+
+    fetchTestTypes();
+  }, []);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* Left Column */}
@@ -173,17 +198,21 @@ export const ReturningPatientOrderPage: React.FC<
             <select
               value={formData.testType}
               onChange={(e) => handleInputChange("testType", e.target.value)}
+              disabled={loadingTestTypes}
+              size={1}
+              style={{ maxHeight: '200px', overflowY: 'auto' }}
               className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white ${
                 errors.testType ? "border-red-500" : "border-gray-300"
-              }`}
+              } ${loadingTestTypes ? "opacity-50 cursor-not-allowed" : ""}`}
             >
-              <option value="">Select test type</option>
-              <option value="Blood Test">Blood Test</option>
-              <option value="Urine Test">Urine Test</option>
-              <option value="X-Ray">X-Ray</option>
-              <option value="MRI">MRI</option>
-              <option value="CT Scan">CT Scan</option>
-              <option value="Ultrasound">Ultrasound</option>
+              <option value="">
+                {loadingTestTypes ? "Loading test types..." : "Select test type"}
+              </option>
+              {testTypes.map((type) => (
+                <option key={type.id} value={type.id}>
+                  {type.name}
+                </option>
+              ))}
             </select>
             <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
               <svg
