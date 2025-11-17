@@ -16,7 +16,6 @@ export interface TestOrder {
   updatedAt: string;
   note: string;
   orderedAt: string;
-  tester: string;
 }
 
 /**
@@ -27,7 +26,6 @@ export interface TestOrderWithUser {
   orderNumber: string;
   patient: string;
   doctor: string;
-  tester: string;
   testType: string;
   priority: "Routine" | "Urgent" | "Stat";
   status: "Pending" | "In Progress" | "Completed" | "Reviewed";
@@ -72,7 +70,7 @@ export interface TestOrderFormData {
   phoneNumber: string;
   status: string;
   createDate: string;
-  tester: string;
+  note: string;
   runDate: string;
   testType: string;
 }

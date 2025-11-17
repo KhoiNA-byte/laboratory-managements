@@ -9,7 +9,7 @@ interface ReturningPatientOrderPageProps {
     age: string;
     gender: string;
     phoneNumber: string;
-    tester: string;
+    note: string;
     runDate: string;
     testType: string;
   };
@@ -235,22 +235,22 @@ export const ReturningPatientOrderPage: React.FC<
           )}
         </div>
 
-        {/* Tester */}
+        {/* Note */}
         <div className="h-20">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Tester <span className="text-red-500">*</span>
+            Note
           </label>
           <input
             type="text"
-            value={formData.tester}
-            onChange={(e) => handleInputChange("tester", e.target.value)}
-            placeholder="Enter tester name"
+            value={formData.note}
+            onChange={(e) => handleInputChange("note", e.target.value)}
+            placeholder="Enter note (optional)"
             className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-              errors.tester ? "border-red-500" : "border-gray-300"
+              errors.note ? "border-red-500" : "border-gray-300"
             }`}
           />
-          {errors.tester && (
-            <p className="text-red-500 text-sm mt-1">{errors.tester}</p>
+          {errors.note && (
+            <p className="text-red-500 text-sm mt-1">{errors.note}</p>
           )}
         </div>
 

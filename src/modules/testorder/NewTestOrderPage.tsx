@@ -8,7 +8,6 @@ import {
 import { ReturningPatientOrderPage } from "./ReturningPatientOrderPage";
 import {
   validatePhoneNumber,
-  validateTester,
   validateTestType,
   validateRunDate,
 } from "../../utils/validation";
@@ -34,7 +33,7 @@ const NewTestOrderPage: React.FC = () => {
     phoneNumber: "",
     status: "Pending",
     createDate: getTodayFormatted(),
-    tester: "",
+    note: "",
     runDate: "",
     testType: "",
   });
@@ -45,7 +44,7 @@ const NewTestOrderPage: React.FC = () => {
     age: "",
     gender: "",
     phoneNumber: "",
-    tester: "",
+    note: "",
     runDate: "",
     testType: "",
   });
@@ -62,9 +61,6 @@ const NewTestOrderPage: React.FC = () => {
     switch (field) {
       case "phoneNumber":
         error = validatePhoneNumber(value);
-        break;
-      case "tester":
-        error = validateTester(value);
         break;
       case "testType":
         error = validateTestType(value);
@@ -184,13 +180,11 @@ const NewTestOrderPage: React.FC = () => {
   const isFormValid = () => {
     return (
       !errors.phoneNumber &&
-      !errors.tester &&
       !errors.testType &&
       !errors.runDate &&
       formData.phoneNumber.trim() &&
-      formData.tester.trim() &&
       formData.testType.trim() &&
-      formData.runDate
+      formData.runDate.trim()
     );
   };
 

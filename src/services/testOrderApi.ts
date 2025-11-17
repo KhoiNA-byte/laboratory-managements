@@ -233,7 +233,6 @@ export const getListTestOrder = async (): Promise<TestOrderListResponse> => {
         orderNumber: order.id,
         patient: user?.name || 'Unknown Patient',
         doctor: doctor?.name || 'Unknown Doctor',
-        tester: order.tester || 'Unknown Tester',
         testType: order.testType,
         priority: order.priority,
         status: order.status,
@@ -322,9 +321,9 @@ export const getTestOrderDetailById = async (testOrderId: string): Promise<TestO
       patientAge: patient?.age ? patient.age.toString() : '-----',
       patientGender: patient?.gender || '-----',
       patientDateOfBirth: patient?.createdAt ? new Date(patient.createdAt).toLocaleDateString('en-US') : '-----',
-      // Tester info từ test order
+      // Doctor info
       doctorName: doctor?.name || '-----',
-      testerName: testOrder.tester || '-----',
+      testerName: '-----', // Removed tester field
       runDay: orderedDate, // Sử dụng ordered date làm run day
       testResult: '-----', // Không có trong API
     };
@@ -430,9 +429,8 @@ export const addTestOrder = async (
       createdByUserId: 1,
       isDeleted: false,
       updatedAt: nowIso,
-      note: "",
-      orderedAt: nowIso,
-      tester: formData.tester || ""
+      note: formData.note || "",
+      orderedAt: nowIso
     };
 
     console.log('Creating test order with userId:', userIdToUse);
@@ -521,7 +519,6 @@ export const updateTestOrderById = async (
     status: string;
     priority: string;
     note: string;
-    tester: string;
   }
 ): Promise<{ success: boolean; error?: any }> => {
   try {
@@ -546,7 +543,6 @@ export const updateTestOrderById = async (
       status: updateData.status,
       priority: updateData.priority,
       note: updateData.note,
-      tester: updateData.tester,
       updatedAt: new Date().toISOString(), // Update timestamp
     };
 
