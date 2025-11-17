@@ -5,7 +5,7 @@
  */
 export interface TestOrder {
   run_id: string;
-  testOrderId: string;
+  id: string;
   userId: string;
   testType: string;
   status: "Pending" | "In Progress" | "Completed" | "Reviewed";
@@ -17,7 +17,6 @@ export interface TestOrder {
   note: string;
   orderedAt: string;
   tester: string;
-  customTestOrderId?: string; // Custom test order ID with format TO-YYYYMMDDNNNNN
 }
 
 /**
@@ -40,7 +39,7 @@ export interface TestOrderWithUser {
  */
 export interface TestOrderDetail {
   run_id: string;
-  testOrderId: string;
+  id: string;
   testType: string;
   status: string;
   priority: string;

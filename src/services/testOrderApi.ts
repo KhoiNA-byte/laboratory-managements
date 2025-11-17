@@ -11,6 +11,14 @@ import {
 import { User } from "../types/user";
 
 /**
+ * Test Type interface
+ */
+export interface TestType {
+  id: string;
+  name: string;
+}
+
+/**
  * Response type for create operations
  */
 interface CreateResponse {
@@ -24,27 +32,36 @@ interface CreateResponse {
 export type { TestOrder, TestOrderWithUser, TestOrderDetail, TestOrderDetailResponse };
 
 /**
- * Generate testOrderId with format: YYYYMMDDNNNNNN (date + 6 random numbers)
- * Example: 20251113456789
- * @returns String with format YYYYMMDDNNNNNN
+ * Fetch all test types from the API
+ * @returns Promise containing array of test types
  */
-export const generateTestOrderId = (): string => {
-  // Get today's date in YYYYMMDD format
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
-  const datePrefix = `${year}${month}${day}`; // e.g., "20251113"
-  
-  // Generate 6 random digits
-  const randomSixDigits = Math.floor(100000 + Math.random() * 900000); // Generates number between 100000-999999
-  
-  // Combine date prefix with random number
-  const testOrderId = `${datePrefix}${randomSixDigits}`;
-  
-  console.log('Generated testOrderId:', testOrderId);
-  
-  return testOrderId;
+export const getTestTypes = async (): Promise<{ success: boolean; data: TestType[]; message?: string }> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/test_type`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const testTypes: TestType[] = await response.json();
+    
+    return {
+      success: true,
+      data: testTypes,
+    };
+  } catch (error) {
+    console.error('Error fetching test types:', error);
+    return {
+      success: false,
+      data: [],
+      message: error instanceof Error ? error.message : 'Unknown error occurred',
+    };
+  }
 };
 
 /**
@@ -213,7 +230,7 @@ export const getListTestOrder = async (): Promise<TestOrderListResponse> => {
       
       return {
         run_id: order.run_id,
-        orderNumber: order.testOrderId,
+        orderNumber: order.id,
         patient: user?.name || 'Unknown Patient',
         doctor: doctor?.name || 'Unknown Doctor',
         tester: order.tester || 'Unknown Tester',
@@ -289,7 +306,7 @@ export const getTestOrderDetailById = async (testOrderId: string): Promise<TestO
 
     const testOrderDetail: TestOrderDetail = {
       run_id: testOrder.run_id,
-      testOrderId: testOrder.testOrderId,
+      id: testOrder.id,
       testType: testOrder.testType,
       status: testOrder.status,
       priority: testOrder.priority,
@@ -337,10 +354,7 @@ export const addTestOrder = async (
   existingUserId?: string | null
 ): Promise<CreateResponse> => {
   try {
-    // Generate new IDs
-    const nextTestOrderId = generateTestOrderId(); // Use new format: YYYYMMDDNNNNNN
-    
-    console.log('Generated nextTestOrderId:', nextTestOrderId);
+    console.log('Creating new test order...');
     
     let userIdToUse: string;
     
@@ -407,8 +421,7 @@ export const addTestOrder = async (
     // BUILD TEST ORDER
     const testOrderObj = {
       // Do NOT set 'id' field - let MockAPI auto-generate
-      run_id: "1", // Default run_id
-      testOrderId: nextTestOrderId, // Use the generated testOrderId
+      run_id: "", // Auto empty string
       userId: userIdToUse, // Use existing or newly created userId
       testType: formData.testType || "", // Use testType from form
       status: formData.status || "Pending", // Use status from form, default to "Pending"
@@ -422,7 +435,7 @@ export const addTestOrder = async (
       tester: formData.tester || ""
     };
 
-    console.log('Creating test order with testOrderId:', nextTestOrderId, 'and userId:', userIdToUse);
+    console.log('Creating test order with userId:', userIdToUse);
 
     // Create test order
     const createOrderRes = await fetch(`${API_BASE_URL}/test_orders`, {
@@ -439,12 +452,11 @@ export const addTestOrder = async (
     const createdTestOrder = await createOrderRes.json();
     console.log('Created test order response:', createdTestOrder);
     console.log('Test order auto-generated ID:', createdTestOrder.id);
-    console.log('Test order testOrderId field:', createdTestOrder.testOrderId);
     console.log('Test order userId field:', createdTestOrder.userId);
 
     return {
       success: true,
-      testOrderId: nextTestOrderId, // Return the generated testOrderId
+      testOrderId: createdTestOrder.id, // Return the auto-generated id
       userId: userIdToUse // Return the userId used
     };
 
