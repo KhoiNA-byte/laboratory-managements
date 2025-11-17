@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../store";
+import { RootState } from "../../store";
 
 interface User {
   id: string;
+  userId: string;
   name: string;
   email: string;
   phone: string;
@@ -52,6 +53,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
     if (user) {
       setFormData({
         id: user.id,
+        userId: user.userId,
         name: user.name,
         email: user.email,
         phone: user.phone,

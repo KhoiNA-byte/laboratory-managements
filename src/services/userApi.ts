@@ -4,6 +4,7 @@ import { apiClient } from "./apiClient";
 
 export interface User {
   id: string;
+  userId: string;
   name: string;
   email: string;
   phone: string;
@@ -101,22 +102,20 @@ export const createUserAPI = async (
 export const updateUserAPI = async (userData: User): Promise<User> => {
   try {
     console.log("Updating user with data:", userData);
+
     console.log("Retrieved userId:", userData.userId);
     const userId = userData.userId;
     console.log("Found userId:", userId);
-    console.log("Using endpoint:", `${USERS_ENDPOINT}/${userData.userId}`);
+    console.log("Using endpoint:", `${USERS_ENDPOINT}/${userId}`);
 
     // Validate if phone already exists for another user
     await checkExistingPhoneForUpdate(userData.phone, userData.id);
 
-    const user = await apiClient.put<User>(
-      `${USERS_ENDPOINT}/${userData.userId}`,
-      {
-        ...userData,
-        userId: userId, // Ensure userId is included in the update
-        updatedAt: new Date().toISOString(),
-      }
-    );
+    const user = await apiClient.put<User>(`${USERS_ENDPOINT}/${userId}`, {
+      ...userData,
+      userId: userId, // Ensure userId is included in the update
+      updatedAt: new Date().toISOString(),
+    });
     return user;
   } catch (error) {
     console.error("Error updating user:", error);
