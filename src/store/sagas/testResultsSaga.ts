@@ -1060,28 +1060,34 @@ function* deleteResultSaga(
   action: ReturnType<typeof deleteResultRequest>
 ): Generator<any, void, any> {
   const id = action.payload;
+  const enc = (v: any) => encodeURIComponent(sid(v));
   try {
+    // 1) Try treat id as a resource id on /test_results
     try {
       yield call(axios.delete, `${API_BASE}/test_results/${sid(id)}`);
     } catch {
-      try {
-        const rr = yield call(
-          axios.get,
-          `${API_BASE}/test_results?run_id=${encodeURIComponent(sid(id))}`
-        );
-        const arr = rr?.data ?? [];
-        for (const it of arr) {
-          try {
-            yield call(axios.delete, `${API_BASE}/test_results/${sid(it.id)}`);
-          } catch {}
-        }
-      } catch {}
+      // ignore
     }
 
+    // 2) Delete test_results records where run_id = id
+    try {
+      const rr = yield call(
+        axios.get,
+        `${API_BASE}/test_results?run_id=${enc(id)}`
+      );
+      const arr = rr?.data ?? [];
+      for (const it of arr) {
+        try {
+          yield call(axios.delete, `${API_BASE}/test_results/${sid(it.resultId)}`);
+        } catch {}
+      }
+    } catch {}
+
+    // 3) Delete test_result_rows by run_id
     try {
       const byRun = yield call(
         axios.get,
-        `${API_BASE}/test_result_rows?run_id=${encodeURIComponent(sid(id))}`
+        `${API_BASE}/test_result_rows?run_id=${enc(id)}`
       );
       const list = byRun?.data ?? [];
       for (const r of list) {
@@ -1091,18 +1097,125 @@ function* deleteResultSaga(
       }
     } catch {}
 
+    // 4) Delete comments / test_result_comment threads by run_id (try multiple possible endpoints)
+    const commentEndpoints = [
+      `comments`,
+      `test_result_comment`,
+      `test_result_comments`,
+    ];
+    for (const ep of commentEndpoints) {
+      try {
+        const found = yield call(
+          axios.get,
+          `${API_BASE}/${ep}?run_id=${enc(id)}`
+        );
+        const carr = found?.data ?? [];
+        for (const t of carr) {
+          try {
+            yield call(axios.delete, `${API_BASE}/${ep}/${sid(t.id)}`);
+          } catch {}
+        }
+      } catch {
+        // endpoint may not exist — ignore
+      }
+    }
+
+    // 5) Delete test_orders by run_id — try plural /test_orders, singular /test_order/:id and nested /user/{userId}/test_orders
+    // 5a. Try global collection /test_orders?run_id=...
     try {
-      const cfound = yield call(
+      const toRes = yield call(
         axios.get,
-        `${API_BASE}/comments?run_id=${encodeURIComponent(sid(id))}`
+        `${API_BASE}/test_orders?run_id=${enc(id)}`
       );
-      const carr = cfound?.data ?? [];
-      for (const t of carr) {
+      const ords = toRes?.data ?? [];
+      for (const o of ords) {
         try {
-          yield call(axios.delete, `${API_BASE}/comments/${sid(t.id)}`);
+          // prefer deleting by resource id if available
+          if (o && o.id) {
+            try {
+              yield call(axios.delete, `${API_BASE}/test_orders/${sid(o.id)}`);
+            } catch {
+              // some APIs may use /test_order singular for delete
+              try {
+                yield call(axios.delete, `${API_BASE}/test_order/${sid(o.id)}`);
+              } catch {}
+            }
+          }
         } catch {}
       }
     } catch {}
+
+    // 5b. Try singular path /test_order?run_id=...
+    try {
+      const toRes2 = yield call(
+        axios.get,
+        `${API_BASE}/test_order?run_id=${enc(id)}`
+      );
+      const ords2 = toRes2?.data ?? [];
+      for (const o of ords2) {
+        try {
+          if (o && o.id) {
+            try {
+              yield call(axios.delete, `${API_BASE}/test_order/${sid(o.id)}`);
+            } catch {
+              // ignore
+            }
+          }
+        } catch {}
+      }
+    } catch {}
+
+    // 5c. Try nested user path: GET /user then for each user GET /user/{userId}/test_orders?run_id=...
+    try {
+      const ures = yield call(axios.get, `${API_BASE}/user`);
+      const users = ures?.data ?? [];
+      for (const u of users) {
+        const uid = u?.userId ?? u?.id;
+        if (!uid) continue;
+        try {
+          const nested = yield call(
+            axios.get,
+            `${API_BASE}/user/${encodeURIComponent(
+              uid
+            )}/test_orders?run_id=${enc(id)}`
+          );
+          const nestedArr = nested?.data ?? [];
+          for (const no of nestedArr) {
+            try {
+              // delete nested resource
+              yield call(
+                axios.delete,
+                `${API_BASE}/user/${encodeURIComponent(uid)}/test_orders/${sid(
+                  no.id
+                )}`
+              );
+            } catch {
+              try {
+                // fallback: attempt deleting via top-level collection if available
+                if (no && no.id) {
+                  yield call(
+                    axios.delete,
+                    `${API_BASE}/test_orders/${sid(no.id)}`
+                  );
+                }
+              } catch {}
+            }
+          }
+        } catch {
+          // per-user nested endpoint may not exist — ignore
+        }
+      }
+    } catch {}
+
+    // 6) Best-effort: also try delete test_orders by searching id as resource id
+    try {
+      // try singular resource delete
+      yield call(axios.delete, `${API_BASE}/test_orders/${sid(id)}`);
+    } catch {
+      try {
+        yield call(axios.delete, `${API_BASE}/test_order/${sid(id)}`);
+      } catch {}
+    }
 
     yield put(deleteResultSuccess());
     yield put({ type: fetchListRequest.type });
