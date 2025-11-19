@@ -1,0 +1,11 @@
+{
+  "appName": "Hệ thống quản lý phòng xét nghiệm",
+  "searchPlaceholder": "Tìm kiếm...",
+  "notificationsLabel": "Thông báo",
+  "user": {
+    "unknown": "Người dùng chưa xác định",
+    "noRole": "Chưa có vai trò"
+  }
+}
+
+

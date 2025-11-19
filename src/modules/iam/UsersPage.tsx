@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { RootState } from "../../store";
 import Uheader from "../../components/UsersPage/UHeader";
 import SummaryCard from "../../components/UsersPage/SummaryCard";
@@ -25,6 +26,7 @@ export const UsersPage = () => {
   } = useSelector((state: RootState) => state.users);
 
   const dispatch = useDispatch();
+  const { t } = useTranslation("common");
   const [searchTerm, setSearchTerm] = useState("");
   const [genderFilter, setGenderFilter] = useState("All Genders");
   const [ageFilter, setAgeFilter] = useState("All Ages");
@@ -35,6 +37,7 @@ export const UsersPage = () => {
   const [showViewModal, setShowViewModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
+  const growthPercentage = 8;
 
   const [formData, setFormData] = useState({
     id: "",
@@ -129,6 +132,12 @@ export const UsersPage = () => {
     return roleDisplayMap[role] || role;
   };
 
+  const getDisplayGender = (gender: string) => {
+    if (gender === "Male") return t("usersPage.filters.male");
+    if (gender === "Female") return t("usersPage.filters.female");
+    return gender;
+  };
+
   const getRoleBadgeColor = (role: string) => {
     // Use the display role for styling
     const displayRole = getDisplayRole(role);
@@ -194,9 +203,9 @@ export const UsersPage = () => {
       const newStatus = user.status === "active" ? "inactive" : "active";
 
       const confirmed = window.confirm(
-        `Are you sure you want to ${
-          user.status === "active" ? "deactivate" : "activate"
-        } user ${user.name}?`
+        user.status === "active"
+          ? t("usersPage.confirm.deactivateUser", { name: user.name })
+          : t("usersPage.confirm.activateUser", { name: user.name })
       );
 
       if (confirmed) {
@@ -292,18 +301,30 @@ export const UsersPage = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <Uheader />
+      <div className="space-y-6">
+        <Uheader
+          title={t("pages.users.title")}
+          subtitle={t("pages.users.subtitle")}
+        />
       <SummaryCard
         totalUsers={filteredUsers.length}
         newThisMonth={12}
-        growthPercentage={8}
+          growthPercentage={growthPercentage}
+          totalLabel={t("usersPage.summaryCards.totalUsers")}
+          totalDescription={t("usersPage.summaryCards.activeRecords")}
+          newLabel={t("usersPage.summaryCards.newThisMonth")}
+          newDescription={t("usersPage.summaryCards.growthFromLastMonth", {
+            percentage: growthPercentage,
+          })}
       />
 
       {/* All Users Section */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="p-6 border-b border-gray-200">
-          <BHeader />
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="p-6 border-b border-gray-200">
+            <BHeader
+              title={t("usersPage.allUsers.title")}
+              subtitle={t("usersPage.allUsers.subtitle")}
+            />
           <UsersFilters
             genderFilter={genderFilter}
             ageFilter={ageFilter}
@@ -317,6 +338,13 @@ export const UsersPage = () => {
               dispatch(clearMessages());
               setShowCreateModal(true);
             }}
+              searchPlaceholder={t("usersPage.filters.searchPlaceholder")}
+              newUserLabel={t("usersPage.filters.newUser")}
+              allGenderLabel={t("usersPage.filters.allGenders")}
+              maleLabel={t("usersPage.filters.male")}
+              femaleLabel={t("usersPage.filters.female")}
+              allAgesLabel={t("usersPage.filters.allAges")}
+              allRolesLabel={t("usersPage.filters.allRoles")}
           />
         </div>
 
@@ -325,24 +353,24 @@ export const UsersPage = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-6">
-                  User Name
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-6">
-                  Age/Gender
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-6">
-                  Contact
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-6">
-                  Role
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-6">
-                  Status
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-6">
-                  Actions
-                </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-6">
+                    {t("usersPage.table.userName")}
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-6">
+                    {t("usersPage.table.ageGender")}
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-6">
+                    {t("usersPage.table.contact")}
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-6">
+                    {t("usersPage.table.role")}
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-6">
+                    {t("usersPage.table.status")}
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-6">
+                    {t("usersPage.table.actions")}
+                  </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -351,11 +379,11 @@ export const UsersPage = () => {
                   <td colSpan={6} className="px-4 py-8 text-center sm:px-6">
                     <div className="text-gray-500 text-sm">
                       {users.length === 0
-                        ? "No users found"
-                        : "No users match your filters"}
+                        ? t("usersPage.table.noUsersFound")
+                        : t("usersPage.table.noUsersMatch")}
                     </div>
                     <div className="text-gray-400 text-xs mt-1">
-                      Try adjusting your search or filters
+                      {t("usersPage.table.tryAdjusting")}
                     </div>
                   </td>
                 </tr>
@@ -369,7 +397,7 @@ export const UsersPage = () => {
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap sm:px-6">
                       <div className="text-sm text-gray-900">
-                        {user.age} years / {user.gender}
+                        {user.age} {t("usersPage.table.years")} / {getDisplayGender(user.gender)}
                       </div>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap sm:px-6">
@@ -397,7 +425,9 @@ export const UsersPage = () => {
                           user.status || "active"
                         )}`}
                       >
-                        {user.status === "active" ? "Active" : "Inactive"}
+                        {user.status === "active"
+                          ? t("usersPage.table.active")
+                          : t("usersPage.table.inactive")}
                       </span>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm font-medium relative sm:px-6">
@@ -438,7 +468,7 @@ export const UsersPage = () => {
                                     d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                                   />
                                 </svg>
-                                View Profile
+                                {t("usersPage.table.viewProfile")}
                               </button>
 
                               <button
@@ -458,7 +488,7 @@ export const UsersPage = () => {
                                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
                                   />
                                 </svg>
-                                Edit User
+                                {t("usersPage.table.editUser")}
                               </button>
 
                               <button
@@ -492,8 +522,8 @@ export const UsersPage = () => {
                                   )}
                                 </svg>
                                 {user.status === "active"
-                                  ? "Deactivate User"
-                                  : "Activate User"}
+                                  ? t("usersPage.table.deactivateUser")
+                                  : t("usersPage.table.activateUser")}
                               </button>
                             </div>
                           </div>
@@ -510,7 +540,10 @@ export const UsersPage = () => {
         {/* Results count */}
         <div className="px-4 py-4 border-t border-gray-200 bg-gray-50 sm:px-6">
           <div className="text-sm text-gray-600">
-            Showing {filteredUsers.length} of {users.length} users
+            {t("usersPage.table.showing", {
+              count: filteredUsers.length,
+              total: users.length,
+            })}
           </div>
         </div>
       </div>

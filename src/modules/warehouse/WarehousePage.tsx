@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { RootState, AppDispatch } from "../../store/index";
 import {
   fetchReagentsRequest,
@@ -34,6 +35,7 @@ const QtyDisplay: React.FC<{ q?: number | string; unit?: string }> = ({
 
 const WarehousePage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const { t } = useTranslation("common");
   const { list: reagents, loading } = useSelector(
     (state: RootState) => state.reagents
   );
@@ -48,11 +50,11 @@ const WarehousePage: React.FC = () => {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
 
   const filterTabs = [
-    "All Items",
-    "In Stock",
-    "Low Stock",
-    "Expired",
-    "Out of Stock",
+    { key: "All Items", label: t("warehousePage.filters.allItems") },
+    { key: "In Stock", label: t("warehousePage.filters.inStock") },
+    { key: "Low Stock", label: t("warehousePage.filters.lowStock") },
+    { key: "Expired", label: t("warehousePage.filters.expired") },
+    { key: "Out of Stock", label: t("warehousePage.filters.outOfStock") },
   ];
 
   useEffect(() => {
@@ -72,7 +74,7 @@ const WarehousePage: React.FC = () => {
 
   const handleDelete = (id?: number) => {
     if (!id) return;
-    if (window.confirm("Are you sure you want to delete this reagent?")) {
+    if (window.confirm(t("warehousePage.confirmDelete"))) {
       dispatch(deleteReagentRequest(id));
     }
   };
@@ -90,21 +92,22 @@ const WarehousePage: React.FC = () => {
     <div className="min-h-screen bg-gray-50 p-6">
       {/* Header & Stats */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">Warehouse</h1>
+        <h1 className="text-2xl font-bold">{t("warehousePage.title")}</h1>
+        <p className="text-gray-600">{t("warehousePage.subtitle")}</p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <div className="bg-white p-6 rounded-2xl border">
-          <p className="text-sm text-gray-500">Total</p>
+          <p className="text-sm text-gray-500">{t("warehousePage.summaryCards.total")}</p>
           <p className="text-3xl font-bold">{reagents.length}</p>
         </div>
         <div className="bg-white p-6 rounded-2xl border">
-          <p className="text-sm text-gray-500">Low stock</p>
+          <p className="text-sm text-gray-500">{t("warehousePage.summaryCards.lowStock")}</p>
           <p className="text-3xl font-bold">
             {reagents.filter((r) => (r as any).status === "Low Stock").length}
           </p>
         </div>
         <div className="bg-white p-6 rounded-2xl border">
-          <p className="text-sm text-gray-500">Expiring soon</p>
+          <p className="text-sm text-gray-500">{t("warehousePage.summaryCards.expiringSoon")}</p>
           <p className="text-3xl font-bold">
             {
               reagents.filter(
@@ -121,7 +124,7 @@ const WarehousePage: React.FC = () => {
           </p>
         </div>
         <div className="bg-white p-6 rounded-2xl border">
-          <p className="text-sm text-gray-500">Expired/Out</p>
+          <p className="text-sm text-gray-500">{t("warehousePage.summaryCards.expiredOut")}</p>
           <p className="text-3xl font-bold">
             {
               reagents.filter(
@@ -138,24 +141,24 @@ const WarehousePage: React.FC = () => {
       <div className="bg-white rounded-2xl border p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-lg font-semibold">Reagents Inventory</h3>
+            <h3 className="text-lg font-semibold">{t("warehousePage.inventory.title")}</h3>
             <p className="text-sm text-gray-600">
-              Manage laboratory reagents and supplies
+              {t("warehousePage.inventory.subtitle")}
             </p>
           </div>
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-2">
               {filterTabs.map((tab) => (
                 <button
-                  key={tab}
-                  onClick={() => setActiveFilter(tab)}
+                  key={tab.key}
+                  onClick={() => setActiveFilter(tab.key)}
                   className={`text-sm px-3 py-2 rounded-full border ${
-                    activeFilter === tab
+                    activeFilter === tab.key
                       ? "bg-blue-600 text-white border-blue-600"
                       : "bg-white text-gray-700 border-gray-200"
                   }`}
                 >
-                  {tab}
+                  {tab.label}
                 </button>
               ))}
             </div>
@@ -163,7 +166,7 @@ const WarehousePage: React.FC = () => {
               onClick={() => setIsAddOpen(true)}
               className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow"
             >
-              + Add Reagent
+              + {t("warehousePage.filters.addReagent")}
             </button>
           </div>
         </div>
@@ -171,7 +174,7 @@ const WarehousePage: React.FC = () => {
         {/* Search */}
         <div className="mb-4">
           <input
-            placeholder="Search..."
+            placeholder={t("warehousePage.filters.searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full border rounded-lg px-3 py-2"
@@ -181,31 +184,31 @@ const WarehousePage: React.FC = () => {
         {/* Table */}
         <div className="overflow-x-auto">
           {loading ? (
-            <div className="p-6 text-center text-gray-500">Loading...</div>
+            <div className="p-6 text-center text-gray-500">{t("common.loading")}</div>
           ) : (
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Name
+                    {t("warehousePage.table.name")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Lot
+                    {t("warehousePage.table.lot")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Manufacturer
+                    {t("warehousePage.table.manufacturer")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Quantity
+                    {t("warehousePage.table.quantity")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Expiry
+                    {t("warehousePage.table.expiry")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Location
+                    {t("warehousePage.table.location")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Action
+                    {t("warehousePage.table.action")}
                   </th>
                 </tr>
               </thead>
@@ -246,13 +249,13 @@ const WarehousePage: React.FC = () => {
                               className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
                               onClick={() => handleView(r)}
                             >
-                              View Detail
+                              {t("warehousePage.table.viewDetail")}
                             </button>
                             <button
                               className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-gray-100"
                               onClick={() => handleDelete(r.id)}
                             >
-                              Delete
+                              {t("common.delete")}
                             </button>
                           </div>
                         )}
@@ -263,7 +266,7 @@ const WarehousePage: React.FC = () => {
                 {filtered.length === 0 && (
                   <tr>
                     <td colSpan={7} className="text-center py-8 text-gray-400">
-                      No reagent found.
+                      {t("warehousePage.table.noReagentsFound")}
                     </td>
                   </tr>
                 )}

@@ -4,7 +4,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store";
 import { logoutRequest } from "../store/slices/authSlice";
 import { PERMISSIONS } from "../constants/permissions";
-import { useTranslation } from 'react-i18next'; 
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "../components/LanguageSwitcher";
 
 export const Sidebar = () => {
   const location = useLocation();
@@ -14,15 +15,10 @@ export const Sidebar = () => {
   const permissions = useSelector((state: RootState) => state.auth.permissions);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
 
-  const { t, i18n } = useTranslation(['sidebar', 'common']);
+  const { t } = useTranslation(["sidebar", "common", "layout"]);
 
   const handleUserDropdownToggle = () => {
     setShowUserDropdown(!showUserDropdown);
-  };
-
-  const handleLanguageChange = (lng: string) => {
-    i18n.changeLanguage(lng);
-    setShowUserDropdown(false);
   };
 
   const handleProfile = () => {
@@ -206,7 +202,7 @@ export const Sidebar = () => {
             </svg>
           </div>
           <span className="font-semibold text-lg text-white">
-            Laboratory Management
+            {t("layout:appName")}
           </span>
         </div>
   
@@ -241,10 +237,10 @@ export const Sidebar = () => {
             </div>
             <div className="flex-1 text-left">
               <div className="font-medium">
-                {user?.name || user?.email || "Unknown User"}
+                {user?.name || user?.email || t("layout:user.unknown")}
               </div>
               <div className="text-sm text-blue-100 capitalize">
-                {user?.role?.replace("_", " ") || "No Role"}
+                {user?.role?.replace("_", " ") || t("layout:user.noRole")}
               </div>
             </div>
             <svg
@@ -263,24 +259,10 @@ export const Sidebar = () => {
           {showUserDropdown && (
             <div className="absolute bottom-full left-0 right-0 w-full bg-white rounded-t-lg shadow-lg border border-gray-200 overflow-hidden">
               {/* Language Switcher */}
-              <div className="border-b border-gray-200">
-                <button
-                  onClick={() => handleLanguageChange('vi')}
-                  className={`w-full flex items-center px-4 py-3 transition-colors ${
-                    i18n.language === 'vi' ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
-                  }`}
-                >
-                  🇻🇳 Tiếng Việt
-                </button>
-                <button
-                  onClick={() => handleLanguageChange('en')}
-                  className={`w-full flex items-center px-4 py-3 transition-colors ${
-                    i18n.language === 'en' ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
-                  }`}
-                >
-                  🇺🇸 English
-                </button>
-              </div>
+              <LanguageSwitcher
+                variant="menu"
+                onLanguageChange={() => setShowUserDropdown(false)}
+              />
 
               <button
                 onClick={handleProfile}

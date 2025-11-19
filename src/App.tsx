@@ -9,6 +9,7 @@ import {
 import { AppLayout } from "./layout/AppLayout";
 import { ProtectedRoute } from "./auth/ProtectedRoute";
 import { PERMISSIONS } from "./constants/permissions";
+import { GlobalLanguageToggle } from "./components/GlobalLanguageToggle";
 
 // Dashboard Module
 import { DashboardPage } from "./modules/dashboard/DashboardPage";
@@ -69,6 +70,7 @@ function AppRoutesInner() {
 
   return (
     <>
+      <GlobalLanguageToggle />
       <Routes location={background || location}>
         {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />

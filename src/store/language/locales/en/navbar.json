@@ -1,0 +1,114 @@
+{
+  "searchPlaceholder": "Search...",
+  "defaultTitle": "Laboratory Workspace",
+  "defaultSubtitle": "",
+  "notificationsLabel": "Notifications",
+  "routes": {
+    "dashboard": {
+      "title": "Dashboard",
+      "subtitle": "Overview of laboratory operations and statistics"
+    },
+    "users": {
+      "title": "Users Management",
+      "subtitle": "Manage system users and their access permissions"
+    },
+    "userInfo": {
+      "title": "User Information",
+      "subtitle": "Inspect account details and authentication data"
+    },
+    "roles": {
+      "title": "Roles Management",
+      "subtitle": "Manage user roles and permissions"
+    },
+    "patients": {
+      "title": "Patient Records",
+      "subtitle": "Manage patient medical records and information"
+    },
+    "patientDetails": {
+      "title": "Patient Details",
+      "subtitle": "Review patient demographics and visit data"
+    },
+    "editPatient": {
+      "title": "Edit Patient",
+      "subtitle": "Update patient information and records"
+    },
+    "testOrders": {
+      "title": "Test Orders",
+      "subtitle": "Manage laboratory test orders"
+    },
+    "testOrderDetails": {
+      "title": "Test Order Details",
+      "subtitle": "Inspect order progress, samples, and assignments"
+    },
+    "newTestOrder": {
+      "title": "New Test Order",
+      "subtitle": "Create a new test order"
+    },
+    "editTestOrder": {
+      "title": "Edit Test Order",
+      "subtitle": "Adjust an existing laboratory order"
+    },
+    "myTestResults": {
+      "title": "Test Results",
+      "subtitle": "Your laboratory test history and results"
+    },
+    "instruments": {
+      "title": "Instruments",
+      "subtitle": "Manage laboratory instruments and equipment"
+    },
+    "addInstrument": {
+      "title": "Add Instrument",
+      "subtitle": "Register a new instrument in the catalog"
+    },
+    "editInstrument": {
+      "title": "Edit Instrument",
+      "subtitle": "Update instrument configuration and metadata"
+    },
+    "instrumentDetails": {
+      "title": "Instrument Details",
+      "subtitle": "Review instrument information and specifications"
+    },
+    "warehouse": {
+      "title": "Warehouse",
+      "subtitle": "Manage reagents and laboratory supplies"
+    },
+    "flaggingRules": {
+      "title": "Flagging Rules",
+      "subtitle": "Configure warehouse limits and alerting rules"
+    },
+    "monitoring": {
+      "title": "System Monitoring",
+      "subtitle": "Monitor system health, event logs, and performance metrics"
+    },
+    "hl7Messages": {
+      "title": "HL7 Messages",
+      "subtitle": "Review integration messages and statuses"
+    },
+    "quarantine": {
+      "title": "Quarantine",
+      "subtitle": "Handle quarantined samples and exceptions"
+    },
+    "instrumentLogs": {
+      "title": "Instrument Logs",
+      "subtitle": "Inspect device logs and telemetry"
+    },
+    "reports": {
+      "title": "Reports",
+      "subtitle": "Generate and export laboratory reports"
+    },
+    "auditLogs": {
+      "title": "Audit Logs",
+      "subtitle": "Track user activity and critical events"
+    },
+    "profile": {
+      "title": "Profile",
+      "subtitle": "View and manage information"
+    },
+    "settings": {
+      "title": "Settings",
+      "subtitle": "Manage settings and configurations"
+    }
+  }
+}
+
+

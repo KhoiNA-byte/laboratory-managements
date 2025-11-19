@@ -1,0 +1,11 @@
+{
+  "appName": "Laboratory Management",
+  "searchPlaceholder": "Search...",
+  "notificationsLabel": "Notifications",
+  "user": {
+    "unknown": "Unknown user",
+    "noRole": "No role assigned"
+  }
+}
+
+

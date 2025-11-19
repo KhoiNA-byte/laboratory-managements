@@ -1,11 +1,304 @@
 {
-    "welcome": "Chào mừng",
-    "login": "Đăng nhập",
-    "logout": "Đăng xuất",
-    "profile": "Hồ sơ",
-    "settings": "Cài đặt",
-    "dashboard": "Bảng điều khiển",
-    "users": "Người dùng",
-    "roles": "Vai trò",
-    "history": "Lịch sử"
+  "welcome": "Chào mừng",
+  "login": "Đăng nhập",
+  "logout": "Đăng xuất",
+  "profile": "Hồ sơ",
+  "settings": "Cài đặt",
+  "dashboard": "Bảng điều khiển",
+  "users": "Người dùng",
+  "roles": "Vai trò",
+  "history": "Lịch sử",
+  "pages": {
+    "users": {
+      "title": "Danh mục người dùng",
+      "subtitle": "Quản lý toàn bộ tài khoản, vai trò và trạng thái"
+    },
+    "roles": {
+      "title": "Quản lý vai trò",
+      "subtitle": "Thiết lập vai trò và quyền hạn"
+    },
+    "patients": {
+      "title": "Hồ sơ bệnh nhân",
+      "subtitle": "Quản lý hồ sơ và thông tin bệnh nhân"
+    },
+    "dashboard": {
+      "title": "Bảng điều khiển",
+      "subtitle": "Tổng quan hoạt động và thống kê của phòng xét nghiệm"
+    },
+    "testOrders": {
+      "title": "Đơn xét nghiệm",
+      "subtitle": "Quản lý các yêu cầu xét nghiệm"
+    },
+    "instruments": {
+      "title": "Thiết bị",
+      "subtitle": "Quản lý thiết bị và máy móc trong phòng xét nghiệm"
+    },
+    "warehouse": {
+      "title": "Kho vật tư",
+      "subtitle": "Quản lý hóa chất, vật tư và vật liệu tiêu hao"
+    },
+    "monitoring": {
+      "title": "Giám sát hệ thống",
+      "subtitle": "Theo dõi tình trạng, nhật ký sự kiện và hiệu năng"
+    }
+  },
+  "usersPage": {
+    "summaryCards": {
+      "totalUsers": "Tổng số người dùng",
+      "activeRecords": "Số hồ sơ đang hoạt động",
+      "newThisMonth": "Thêm mới trong tháng",
+      "growthFromLastMonth": "Tăng trưởng so với tháng trước: {{percentage}}%"
+    },
+    "allUsers": {
+      "title": "Tất cả người dùng",
+      "subtitle": "Lọc theo vai trò, trạng thái hoặc thông tin nhân khẩu"
+    },
+    "filters": {
+      "allGenders": "Tất cả giới tính",
+      "allAges": "Tất cả độ tuổi",
+      "allRoles": "Tất cả vai trò",
+      "male": "Nam",
+      "female": "Nữ",
+      "searchPlaceholder": "Tìm theo tên, email hoặc số điện thoại",
+      "newUser": "Thêm người dùng"
+    },
+    "table": {
+      "userName": "Tên người dùng",
+      "ageGender": "Tuổi / giới tính",
+      "contact": "Liên hệ",
+      "role": "Vai trò",
+      "status": "Trạng thái",
+      "actions": "Thao tác",
+      "years": "tuổi",
+      "active": "Đang hoạt động",
+      "inactive": "Ngừng hoạt động",
+      "viewProfile": "Xem hồ sơ",
+      "editUser": "Chỉnh sửa",
+      "deactivateUser": "Ngừng hoạt động",
+      "activateUser": "Kích hoạt",
+      "noUsersFound": "Chưa có người dùng trong hệ thống.",
+      "noUsersMatch": "Không tìm thấy người dùng phù hợp với bộ lọc.",
+      "tryAdjusting": "Hãy thử thay đổi bộ lọc hoặc từ khóa tìm kiếm.",
+      "showing": "Hiển thị {{count}} trong tổng số {{total}} người dùng"
+    },
+    "confirm": {
+      "deactivateUser": "Ngừng hoạt động {{name}}?",
+      "activateUser": "Kích hoạt lại {{name}}?"
+    }
+  },
+  "rolesPage": {
+    "title": "Quản lý vai trò",
+    "subtitle": "Thiết lập vai trò và quyền hạn",
+    "filters": {
+      "allStatus": "Tất cả trạng thái",
+      "active": "Đang hoạt động",
+      "inactive": "Ngừng hoạt động",
+      "searchPlaceholder": "Tìm theo tên, mã hoặc mô tả vai trò",
+      "addRole": "Thêm vai trò"
+    },
+    "table": {
+      "roleName": "Tên vai trò",
+      "roleCode": "Mã vai trò",
+      "description": "Mô tả",
+      "status": "Trạng thái",
+      "actions": "Thao tác",
+      "loading": "Đang tải...",
+      "noRolesFound": "Không tìm thấy vai trò nào.",
+      "editRole": "Chỉnh sửa vai trò",
+      "deleteRole": "Xóa vai trò",
+      "activateRole": "Kích hoạt",
+      "deactivateRole": "Ngừng hoạt động",
+      "showing": "Hiển thị {{count}} trong tổng số {{total}} vai trò"
+    },
+    "confirm": {
+      "deleteRole": "Bạn có chắc chắn muốn xóa vai trò \"{{name}}\"?",
+      "activateRole": "Bạn có chắc chắn muốn kích hoạt vai trò {{name}}?",
+      "deactivateRole": "Bạn có chắc chắn muốn ngừng hoạt động vai trò {{name}}?"
+    }
+  },
+  "patientsPage": {
+    "title": "Hồ sơ bệnh nhân",
+    "subtitle": "Quản lý hồ sơ và thông tin bệnh nhân",
+    "summaryCards": {
+      "totalPatients": "Tổng số bệnh nhân",
+      "activeRecords": "Hồ sơ đang hoạt động",
+      "newThisMonth": "Thêm mới trong tháng",
+      "growthFromLastMonth": "+{{percentage}}% so với tháng trước",
+      "pendingTests": "Xét nghiệm chờ xử lý",
+      "awaitingResults": "Đang chờ kết quả",
+      "completedToday": "Hoàn thành hôm nay",
+      "testResults": "Kết quả xét nghiệm"
+    },
+    "allPatients": {
+      "title": "Tất cả bệnh nhân",
+      "subtitle": "Xem và quản lý hồ sơ bệnh nhân"
+    },
+    "filters": {
+      "searchPlaceholder": "Tìm theo tên, email hoặc MRN...",
+      "addPatient": "Thêm bệnh nhân"
+    },
+    "table": {
+      "mrn": "MRN",
+      "name": "Tên",
+      "dateOfBirth": "Ngày sinh",
+      "gender": "Giới tính",
+      "phone": "Điện thoại",
+      "email": "Email",
+      "actions": "Thao tác",
+      "viewDetails": "Xem chi tiết",
+      "editRecord": "Chỉnh sửa",
+      "deletePatient": "Xóa bệnh nhân",
+      "noPatientsFound": "Không tìm thấy bệnh nhân nào.",
+      "confirmDelete": "Bạn có chắc chắn muốn xóa bệnh nhân {{mrn}}? Hành động này không thể hoàn tác."
+    }
+  },
+  "dashboardPage": {
+    "stats": {
+      "totalPatients": "Tổng số bệnh nhân",
+      "fromLastMonth": "+{{percentage}}% so với tháng trước",
+      "pendingTests": "Xét nghiệm chờ xử lý",
+      "fromYesterday": "+{{count}} so với hôm qua",
+      "activeInstruments": "Thiết bị đang hoạt động",
+      "underMaintenance": "{{count}} đang bảo trì",
+      "alerts": "Cảnh báo",
+      "criticalWarnings": "{{critical}} nghiêm trọng, {{warnings}} cảnh báo"
+    },
+    "recentTestOrders": {
+      "title": "Đơn xét nghiệm gần đây",
+      "subtitle": "Các đơn xét nghiệm mới nhất cần xử lý",
+      "status": {
+        "pending": "chờ xử lý",
+        "inProgress": "đang xử lý",
+        "completed": "hoàn thành"
+      }
+    },
+    "systemAlerts": {
+      "title": "Cảnh báo hệ thống",
+      "subtitle": "Thông báo và cảnh báo quan trọng"
+    }
+  },
+  "testOrdersPage": {
+    "title": "Đơn xét nghiệm",
+    "subtitle": "Quản lý các yêu cầu xét nghiệm",
+    "summaryCards": {
+      "totalOrders": "Tổng số đơn",
+      "pendingOrders": "Đơn chờ xử lý",
+      "inProgress": "Đang xử lý",
+      "completed": "Hoàn thành"
+    },
+    "filters": {
+      "searchPlaceholder": "Tìm kiếm đơn...",
+      "newOrder": "Đơn mới",
+      "allStatus": "Tất cả trạng thái"
+    },
+    "table": {
+      "orderNumber": "Số đơn",
+      "patient": "Bệnh nhân",
+      "test": "Xét nghiệm",
+      "status": "Trạng thái",
+      "date": "Ngày",
+      "actions": "Thao tác"
+    }
+  },
+  "instrumentsPage": {
+    "title": "Thiết bị",
+    "subtitle": "Quản lý thiết bị và máy móc trong phòng xét nghiệm",
+    "filters": {
+      "searchPlaceholder": "Tìm kiếm thiết bị...",
+      "addInstrument": "Thêm thiết bị",
+      "syncInstruments": "Đồng bộ thiết bị"
+    },
+    "table": {
+      "name": "Tên",
+      "model": "Model",
+      "serialNumber": "Số seri",
+      "status": "Trạng thái",
+      "actions": "Thao tác",
+      "viewDetails": "Xem chi tiết",
+      "editInstrument": "Chỉnh sửa",
+      "deleteInstrument": "Xóa thiết bị",
+      "confirmDelete": "Bạn có chắc chắn muốn xóa \"{{name}}\"?",
+      "noInstrumentsFound": "Không tìm thấy thiết bị nào."
+    }
+  },
+  "warehousePage": {
+    "title": "Kho vật tư",
+    "subtitle": "Quản lý hóa chất, vật tư và vật liệu tiêu hao",
+    "summaryCards": {
+      "total": "Tổng số",
+      "lowStock": "Tồn kho thấp",
+      "expiringSoon": "Sắp hết hạn",
+      "expiredOut": "Hết hạn/Hết hàng"
+    },
+    "inventory": {
+      "title": "Danh mục hóa chất",
+      "subtitle": "Quản lý hóa chất và vật tư phòng xét nghiệm"
+    },
+    "filters": {
+      "searchPlaceholder": "Tìm kiếm...",
+      "addReagent": "Thêm hóa chất",
+      "allItems": "Tất cả",
+      "inStock": "Còn hàng",
+      "lowStock": "Tồn kho thấp",
+      "expired": "Hết hạn",
+      "outOfStock": "Hết hàng"
+    },
+    "table": {
+      "name": "Tên",
+      "lot": "Lô",
+      "manufacturer": "Nhà sản xuất",
+      "quantity": "Số lượng",
+      "expiry": "Hết hạn",
+      "location": "Vị trí",
+      "action": "Thao tác",
+      "viewDetail": "Xem chi tiết",
+      "noReagentsFound": "Không tìm thấy hóa chất nào."
+    },
+    "confirmDelete": "Bạn có chắc chắn muốn xóa hóa chất này?"
+  },
+  "monitoringPage": {
+    "title": "Giám sát hệ thống",
+    "subtitle": "Theo dõi tình trạng, nhật ký sự kiện và hiệu năng",
+    "metrics": {
+      "totalEvents": "Tổng số sự kiện",
+      "successEvents": "Sự kiện thành công",
+      "warningEvents": "Sự kiện cảnh báo",
+      "errorEvents": "Sự kiện lỗi"
+    },
+    "recentEvents": {
+      "title": "Sự kiện gần đây",
+      "subtitle": "Các sự kiện và hoạt động hệ thống mới nhất"
+    }
+  },
+  "common": {
+    "loading": "Đang tải...",
+    "error": "Lỗi",
+    "success": "Thành công",
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "delete": "Xóa",
+    "edit": "Chỉnh sửa",
+    "view": "Xem",
+    "add": "Thêm",
+    "search": "Tìm kiếm",
+    "filter": "Lọc",
+    "actions": "Thao tác",
+    "status": "Trạng thái",
+    "active": "Đang hoạt động",
+    "inactive": "Ngừng hoạt động",
+    "yes": "Có",
+    "no": "Không",
+    "confirm": "Xác nhận",
+    "close": "Đóng",
+    "previous": "Trước",
+    "next": "Sau",
+    "page": "Trang {{current}} / {{total}}",
+    "years": "tuổi",
+    "noResults": "Không tìm thấy kết quả"
+  },
+  "patientsPage": {
+    "table": {
+      "lastVisit": "Lần khám cuối"
+    }
   }
+}

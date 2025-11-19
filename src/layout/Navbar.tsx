@@ -1,63 +1,55 @@
 // src/components/Navbar.jsx
 import React from "react";
 import { useDispatch } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { matchPath, useLocation } from "react-router-dom";
 import { logoutRequest } from "../store/slices/authSlice";
 import { MagnifyingGlassIcon, BellIcon } from "@heroicons/react/24/outline";
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "../components/LanguageSwitcher";
 
-const ROUTE_META: Record<string, { title: string; subtitle: string }> = {
-  "/admin/my-test-results": {
-    title: "Test Results",
-    subtitle: "Your laboratory test history and results",
-  },
-  "/admin/test-orders": {
-    title: "Test Orders",
-    subtitle: "Manage laboratory test orders",
-  },
-  "/admin/roles": {
-    title: "Roles Management",
-    subtitle: "Manage user roles and permissions",
-  },
-  "/admin/test-orders/new": {
-    title: "New Test Order",
-    subtitle: "Create a new test order",
-  },
-  "/admin/dashboard": {
-    title: "Dashboard",
-    subtitle: "Overview of laboratory operations and statistics",
-  },
-  "/admin/users": {
-    title: "Users Management",
-    subtitle: "Manage system users and their access permissions",
-  },
-  "/admin/patients": {
-    title: "Patient Records",
-    subtitle: "Manage patient medical records and information",
-  },
-  "/admin/instruments": {
-    title: "Instruments",
-    subtitle: "Manage laboratory instruments and equipment",
-  },
-  "/admin/warehouse": {
-    title: "Warehouse",
-    subtitle: "Manage reagents and laboratory supplies",
-  },
-  "/admin/monitoring": {
-    title: "System Monitoring",
-    subtitle: "Monitor system health, event logs, and performance metrics",
-  },
-  "/admin/reports": {
-    title: "Reports",
-    subtitle: "Generate and export laboratory reports",
-  },
-  "/admin/profile": {
-    title: "Profile",
-    subtitle: "View and manage information",
-  },
-  "/admin/settings": {
-    title: "Settings",
-    subtitle: "Manage settings and configurations",
-  },
+const ROUTE_TRANSLATION_PATTERNS: { key: string; path: string; end?: boolean }[] =
+  [
+    { key: "dashboard", path: "/admin", end: true },
+    { key: "dashboard", path: "/admin/dashboard" },
+    { key: "users", path: "/admin/users" },
+    { key: "userInfo", path: "/admin/user-info" },
+    { key: "roles", path: "/admin/roles" },
+    { key: "patients", path: "/admin/patients", end: true },
+    { key: "patientDetails", path: "/admin/patients/:id", end: true },
+    { key: "editPatient", path: "/admin/patients/:id/edit" },
+    { key: "testOrders", path: "/admin/test-orders", end: true },
+    { key: "newTestOrder", path: "/admin/test-orders/new" },
+    { key: "editTestOrder", path: "/admin/test-orders/:orderId/edit" },
+    { key: "testOrderDetails", path: "/admin/test-orders/:orderId", end: true },
+    { key: "myTestResults", path: "/admin/my-test-results" },
+    { key: "instruments", path: "/admin/instruments", end: true },
+    { key: "addInstrument", path: "/admin/instruments/new" },
+    { key: "editInstrument", path: "/admin/instruments/:instrumentId/edit" },
+    { key: "instrumentDetails", path: "/admin/instruments/:instrumentId", end: true },
+    { key: "warehouse", path: "/admin/warehouse" },
+    { key: "flaggingRules", path: "/admin/flagging-rules" },
+    { key: "monitoring", path: "/admin/monitoring" },
+    { key: "hl7Messages", path: "/admin/hl7-messages" },
+    { key: "quarantine", path: "/admin/quarantine" },
+    { key: "instrumentLogs", path: "/admin/instrument-logs" },
+    { key: "reports", path: "/admin/reports" },
+    { key: "auditLogs", path: "/admin/audit-logs" },
+    { key: "profile", path: "/admin/profile" },
+    { key: "settings", path: "/admin/settings" },
+  ];
+
+const resolveRouteKey = (pathname: string) => {
+  for (const pattern of ROUTE_TRANSLATION_PATTERNS) {
+    if (
+      matchPath(
+        { path: pattern.path, end: pattern.end ?? true },
+        pathname
+      )
+    ) {
+      return pattern.key;
+    }
+  }
+  return undefined;
 };
 
 export interface NavbarProps {
@@ -71,10 +63,20 @@ export const Navbar = ({
 }: NavbarProps) => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const meta = ROUTE_META[location.pathname] || {};
+  const { t } = useTranslation(["navbar", "common"]);
 
-  const title = propTitle ?? meta.title ?? "Default Title";
-  const subtitle = propSubtitle ?? meta.subtitle ?? "";
+  const routeKey = resolveRouteKey(location.pathname);
+
+  const title =
+    propTitle ??
+    (routeKey
+      ? t(`navbar:routes.${routeKey}.title`)
+      : t("navbar:defaultTitle"));
+  const subtitle =
+    propSubtitle ??
+    (routeKey
+      ? t(`navbar:routes.${routeKey}.subtitle`)
+      : t("navbar:defaultSubtitle"));
 
   const handleLogout = () => dispatch(logoutRequest());
 
@@ -87,21 +89,39 @@ export const Navbar = ({
             <p className="text-gray-600 mt-1">{subtitle}</p>
           </div>
           <div className="flex items-center space-x-4">
-            <div className="relative">
+            <div className="relative hidden lg:block">
               <MagnifyingGlassIcon className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search..."
+                placeholder={t("navbar:searchPlaceholder")}
                 className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
-            <div className="relative">
-              <BellIcon className="h-6 w-6 text-gray-600" />
+            <LanguageSwitcher className="hidden md:inline-flex" />
+            <div className="relative" aria-label={t("navbar:notificationsLabel")}>
+              <BellIcon className="h-6 w-6 text-gray-600" aria-hidden="true" />
               <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                 3
               </span>
             </div>
+            <button
+              onClick={handleLogout}
+              className="hidden md:inline-flex items-center rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
+              {t("common:logout")}
+            </button>
           </div>
+        </div>
+        <div className="mt-4 flex flex-col gap-3 lg:hidden">
+          <div className="relative">
+            <MagnifyingGlassIcon className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder={t("navbar:searchPlaceholder")}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <LanguageSwitcher className="self-start" />
         </div>
       </div>
     </div>

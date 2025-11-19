@@ -1,11 +1,304 @@
 {
-    "welcome": "Welcome",
-    "login": "Login",
-    "logout": "Logout",
-    "profile": "Profile",
-    "settings": "Settings",
-    "dashboard": "Dashboard",
-    "users": "Users",
-    "roles": "Roles",
-    "history": "History"
+  "welcome": "Welcome",
+  "login": "Login",
+  "logout": "Logout",
+  "profile": "Profile",
+  "settings": "Settings",
+  "dashboard": "Dashboard",
+  "users": "Users",
+  "roles": "Roles",
+  "history": "History",
+  "pages": {
+    "users": {
+      "title": "User Directory",
+      "subtitle": "Manage every account, role, and lifecycle state"
+    },
+    "roles": {
+      "title": "Roles Management",
+      "subtitle": "Manage user roles and permissions"
+    },
+    "patients": {
+      "title": "Patient Records",
+      "subtitle": "Manage patient medical records and information"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "subtitle": "Overview of laboratory operations and statistics"
+    },
+    "testOrders": {
+      "title": "Test Orders",
+      "subtitle": "Manage laboratory test orders"
+    },
+    "instruments": {
+      "title": "Instruments",
+      "subtitle": "Manage laboratory instruments and equipment"
+    },
+    "warehouse": {
+      "title": "Warehouse",
+      "subtitle": "Manage reagents and laboratory supplies"
+    },
+    "monitoring": {
+      "title": "System Monitoring",
+      "subtitle": "Monitor system health, event logs, and performance metrics"
+    }
+  },
+  "usersPage": {
+    "summaryCards": {
+      "totalUsers": "Total users",
+      "activeRecords": "Active records in the system",
+      "newThisMonth": "New this month",
+      "growthFromLastMonth": "Growth from last month: {{percentage}}%"
+    },
+    "allUsers": {
+      "title": "All users",
+      "subtitle": "Filter by role, status, or demographic data"
+    },
+    "filters": {
+      "allGenders": "All genders",
+      "allAges": "All ages",
+      "allRoles": "All roles",
+      "male": "Male",
+      "female": "Female",
+      "searchPlaceholder": "Search by name, email, or phone",
+      "newUser": "Add user"
+    },
+    "table": {
+      "userName": "User name",
+      "ageGender": "Age / gender",
+      "contact": "Contact",
+      "role": "Role",
+      "status": "Status",
+      "actions": "Actions",
+      "years": "years",
+      "active": "Active",
+      "inactive": "Inactive",
+      "viewProfile": "View profile",
+      "editUser": "Edit user",
+      "deactivateUser": "Deactivate",
+      "activateUser": "Activate",
+      "noUsersFound": "No users available in the system.",
+      "noUsersMatch": "No users match the current filters.",
+      "tryAdjusting": "Try adjusting the filters or search keywords.",
+      "showing": "Showing {{count}} of {{total}} users"
+    },
+    "confirm": {
+      "deactivateUser": "Deactivate {{name}}?",
+      "activateUser": "Activate {{name}}?"
+    }
+  },
+  "rolesPage": {
+    "title": "Roles Management",
+    "subtitle": "Manage user roles and permissions",
+    "filters": {
+      "allStatus": "All Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "searchPlaceholder": "Search by role name, code, or description",
+      "addRole": "Add Role"
+    },
+    "table": {
+      "roleName": "Role Name",
+      "roleCode": "Role Code",
+      "description": "Description",
+      "status": "Status",
+      "actions": "Actions",
+      "loading": "Loading roles...",
+      "noRolesFound": "No roles found.",
+      "editRole": "Edit Role",
+      "deleteRole": "Delete Role",
+      "activateRole": "Activate",
+      "deactivateRole": "Deactivate",
+      "showing": "Showing {{count}} of {{total}} roles"
+    },
+    "confirm": {
+      "deleteRole": "Are you sure you want to delete role \"{{name}}\"?",
+      "activateRole": "Are you sure you want to activate role {{name}}?",
+      "deactivateRole": "Are you sure you want to deactivate role {{name}}?"
+    }
+  },
+  "patientsPage": {
+    "title": "Patient Records",
+    "subtitle": "Manage patient medical records and information",
+    "summaryCards": {
+      "totalPatients": "Total Patients",
+      "activeRecords": "Active records",
+      "newThisMonth": "New This Month",
+      "growthFromLastMonth": "+{{percentage}}% from last month",
+      "pendingTests": "Pending Tests",
+      "awaitingResults": "Awaiting results",
+      "completedToday": "Completed Today",
+      "testResults": "Test results"
+    },
+    "allPatients": {
+      "title": "All Patients",
+      "subtitle": "View and manage patient medical records"
+    },
+    "filters": {
+      "searchPlaceholder": "Search by name, email, or MRN...",
+      "addPatient": "Add Patient"
+    },
+    "table": {
+      "mrn": "MRN",
+      "name": "Name",
+      "dateOfBirth": "Date of Birth",
+      "gender": "Gender",
+      "phone": "Phone",
+      "email": "Email",
+      "actions": "Actions",
+      "viewDetails": "View Details",
+      "editRecord": "Edit Record",
+      "deletePatient": "Delete Patient",
+      "noPatientsFound": "No patients found.",
+      "confirmDelete": "Are you sure you want to delete patient {{mrn}}? This action cannot be undone."
+    }
+  },
+  "dashboardPage": {
+    "stats": {
+      "totalPatients": "Total Patients",
+      "fromLastMonth": "+{{percentage}}% from last month",
+      "pendingTests": "Pending Tests",
+      "fromYesterday": "+{{count}} from yesterday",
+      "activeInstruments": "Active Instruments",
+      "underMaintenance": "{{count}} under maintenance",
+      "alerts": "Alerts",
+      "criticalWarnings": "{{critical}} critical, {{warnings}} warnings"
+    },
+    "recentTestOrders": {
+      "title": "Recent Test Orders",
+      "subtitle": "Latest test orders requiring attention",
+      "status": {
+        "pending": "pending",
+        "inProgress": "in progress",
+        "completed": "completed"
+      }
+    },
+    "systemAlerts": {
+      "title": "System Alerts",
+      "subtitle": "Important notifications and warnings"
+    }
+  },
+  "testOrdersPage": {
+    "title": "Test Orders",
+    "subtitle": "Manage laboratory test orders",
+    "summaryCards": {
+      "totalOrders": "Total Orders",
+      "pendingOrders": "Pending Orders",
+      "inProgress": "In Progress",
+      "completed": "Completed"
+    },
+    "filters": {
+      "searchPlaceholder": "Search orders...",
+      "newOrder": "New Order",
+      "allStatus": "All Status"
+    },
+    "table": {
+      "orderNumber": "Order Number",
+      "patient": "Patient",
+      "test": "Test",
+      "status": "Status",
+      "date": "Date",
+      "actions": "Actions"
+    }
+  },
+  "instrumentsPage": {
+    "title": "Instruments",
+    "subtitle": "Manage laboratory instruments and equipment",
+    "filters": {
+      "searchPlaceholder": "Search instruments...",
+      "addInstrument": "Add Instrument",
+      "syncInstruments": "Sync Instruments"
+    },
+    "table": {
+      "name": "Name",
+      "model": "Model",
+      "serialNumber": "Serial Number",
+      "status": "Status",
+      "actions": "Actions",
+      "viewDetails": "View Details",
+      "editInstrument": "Edit Instrument",
+      "deleteInstrument": "Delete Instrument",
+      "confirmDelete": "Are you sure you want to delete \"{{name}}\"?",
+      "noInstrumentsFound": "No instruments found."
+    }
+  },
+  "warehousePage": {
+    "title": "Warehouse",
+    "subtitle": "Manage reagents and laboratory supplies",
+    "summaryCards": {
+      "total": "Total",
+      "lowStock": "Low stock",
+      "expiringSoon": "Expiring soon",
+      "expiredOut": "Expired/Out"
+    },
+    "inventory": {
+      "title": "Reagents Inventory",
+      "subtitle": "Manage laboratory reagents and supplies"
+    },
+    "filters": {
+      "searchPlaceholder": "Search...",
+      "addReagent": "Add Reagent",
+      "allItems": "All Items",
+      "inStock": "In Stock",
+      "lowStock": "Low Stock",
+      "expired": "Expired",
+      "outOfStock": "Out of Stock"
+    },
+    "table": {
+      "name": "Name",
+      "lot": "Lot",
+      "manufacturer": "Manufacturer",
+      "quantity": "Quantity",
+      "expiry": "Expiry",
+      "location": "Location",
+      "action": "Action",
+      "viewDetail": "View Detail",
+      "noReagentsFound": "No reagent found."
+    },
+    "confirmDelete": "Are you sure you want to delete this reagent?"
+  },
+  "monitoringPage": {
+    "title": "System Monitoring",
+    "subtitle": "Monitor system health, event logs, and performance metrics",
+    "metrics": {
+      "totalEvents": "Total Events",
+      "successEvents": "Success Events",
+      "warningEvents": "Warning Events",
+      "errorEvents": "Error Events"
+    },
+    "recentEvents": {
+      "title": "Recent Events",
+      "subtitle": "Latest system events and activities"
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "actions": "Actions",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "yes": "Yes",
+    "no": "No",
+    "confirm": "Confirm",
+    "close": "Close",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {{current}} of {{total}}",
+    "years": "years",
+    "noResults": "No results found"
+  },
+  "patientsPage": {
+    "table": {
+      "lastVisit": "Last Visit"
+    }
   }
+}
