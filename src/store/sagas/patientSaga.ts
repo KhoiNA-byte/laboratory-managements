@@ -67,9 +67,6 @@ function* updatePatientSaga(action: PayloadAction<any>): Generator {
       type: "patients/updatePatientFailure",
 
       payload: error.message || "Failed to update patient",
-
-      payload: error.message,
-dev
     });
   }
 }

@@ -30,34 +30,34 @@ const ROUTE_META: Record<string, { title: string; subtitle: string }> = {
     title: "Users Management",
     subtitle: "Manage system users and their access permissions",
   },
-   "/admin/patients": {
+  "/admin/patients": {
     title: "Patient Records",
     subtitle: "Manage patient medical records and information",
   },
-   "/admin/instruments": {
+  "/admin/instruments": {
     title: "Instruments",
     subtitle: "Manage laboratory instruments and equipment",
   },
-   "/admin/warehouse": {
+  "/admin/warehouse": {
     title: "Warehouse",
     subtitle: "Manage reagents and laboratory supplies",
   },
-   "/admin/monitoring": {
+  "/admin/monitoring": {
     title: "System Monitoring",
     subtitle: "Monitor system health, event logs, and performance metrics",
   },
-   "/admin/reports": {
+  "/admin/reports": {
     title: "Reports",
     subtitle: "Generate and export laboratory reports",
   },
-   "/admin/profile": {
+  "/admin/profile": {
     title: "Profile",
     subtitle: "View and manage information",
   },
-   "/admin/settings": {
+  "/admin/settings": {
     title: "Settings",
     subtitle: "Manage settings and configurations",
-  }
+  },
 };
 
 export interface NavbarProps {
@@ -80,7 +80,6 @@ export const Navbar = ({
 
   return (
     <div className="bg-white">
-      
       <div className="px-6 py-4">
         <div className="flex items-center justify-between">
           <div>

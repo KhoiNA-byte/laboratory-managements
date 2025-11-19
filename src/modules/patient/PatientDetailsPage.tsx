@@ -12,85 +12,6 @@ export const PatientDetailsPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Mock data for all patients
-  // const allPatients = [
-  //   {
-  //     id: "MRN-2024-001",
-  //     name: "John Doe",
-  //     mrn: "MRN-2024-001",
-  //     age: 40,
-  //     gender: "male",
-  //     dateOfBirth: "15/3/1985",
-  //     phone: "+1 (555) 123-4567",
-  //     email: "john.doe@email.com",
-  //     address: "123 Main St, New York, NY 10001",
-  //     avatar: "JD",
-  //   },
-  //   {
-  //     id: "MRN-2024-002",
-  //     name: "Jane Smith",
-  //     mrn: "MRN-2024-002",
-  //     age: 35,
-  //     gender: "female",
-  //     dateOfBirth: "22/7/1989",
-  //     phone: "+1 (555) 234-5678",
-  //     email: "jane.smith@email.com",
-  //     address: "456 Oak Ave, Los Angeles, CA 90210",
-  //     avatar: "JS",
-  //   },
-  //   {
-  //     id: "MRN-2024-003",
-  //     name: "Robert Johnson",
-  //     mrn: "MRN-2024-003",
-  //     age: 46,
-  //     gender: "male",
-  //     dateOfBirth: "8/12/1978",
-  //     phone: "+1 (555) 345-6789",
-  //     email: "robert.j@email.com",
-  //     address: "789 Pine St, Chicago, IL 60601",
-  //     avatar: "RJ",
-  //   },
-  //   {
-  //     id: "MRN-2024-004",
-  //     name: "Emily Williams",
-  //     mrn: "MRN-2024-004",
-  //     age: 30,
-  //     gender: "female",
-  //     dateOfBirth: "3/5/1994",
-  //     phone: "+1 (555) 456-7890",
-  //     email: "emily.w@email.com",
-  //     address: "321 Elm St, Houston, TX 77001",
-  //     avatar: "EW",
-  //   },
-  //   {
-  //     id: "MRN-2024-005",
-  //     name: "Michael Brown",
-  //     mrn: "MRN-2024-005",
-  //     age: 43,
-  //     gender: "male",
-  //     dateOfBirth: "18/9/1981",
-  //     phone: "+1 (555) 567-8901",
-  //     email: "michael.b@email.com",
-  //     address: "654 Maple Ave, Phoenix, AZ 85001",
-  //     avatar: "MB",
-  //   },
-  //   {
-  //     id: "MRN-2024-006",
-  //     name: "Sarah Davis",
-  //     mrn: "MRN-2024-006",
-  //     age: 36,
-  //     gender: "female",
-  //     dateOfBirth: "12/11/1988",
-  //     phone: "+1 (555) 678-9012",
-  //     email: "sarah.d@email.com",
-  //     address: "987 Cedar Rd, Philadelphia, PA 19101",
-  //     avatar: "SD",
-  //   },
-  // ];
-
-  // // Find the specific patient by ID
-  // const patientData = allPatients.find((patient) => patient.id === id);
-
   useEffect(() => {
     if (!id) {
       navigate("/admin/patients"); // Nếu không có ID, quay lại
@@ -164,255 +85,6 @@ export const PatientDetailsPage = () => {
       </div>
     );
   }
-
-  // // Mock data for recent activity based on patient
-  // const getRecentActivity = (patientId: string) => {
-  //   const activities = {
-  //     "MRN-2024-001": [
-  //       {
-  //         id: 1,
-  //         testName: "Complete Blood Count (CBC)",
-  //         date: "2025-01-10",
-  //         status: "Completed",
-  //         result: "Normal",
-  //       },
-  //       {
-  //         id: 2,
-  //         testName: "Lipid Panel",
-  //         date: "2025-01-08",
-  //         status: "Completed",
-  //         result: "Normal",
-  //       },
-  //       {
-  //         id: 3,
-  //         testName: "Thyroid Function Test",
-  //         date: "2025-01-05",
-  //         status: "In Progress",
-  //         result: "-",
-  //       },
-  //     ],
-  //     "MRN-2024-002": [
-  //       {
-  //         id: 1,
-  //         testName: "Complete Blood Count (CBC)",
-  //         date: "2025-01-09",
-  //         status: "Completed",
-  //         result: "Normal",
-  //       },
-  //       {
-  //         id: 2,
-  //         testName: "Urinalysis",
-  //         date: "2025-01-07",
-  //         status: "Completed",
-  //         result: "Normal",
-  //       },
-  //       {
-  //         id: 3,
-  //         testName: "Blood Glucose Test",
-  //         date: "2025-01-04",
-  //         status: "Pending",
-  //         result: "-",
-  //       },
-  //     ],
-  //     "MRN-2024-003": [
-  //       {
-  //         id: 1,
-  //         testName: "Complete Blood Count (CBC)",
-  //         date: "2025-01-11",
-  //         status: "Completed",
-  //         result: "Normal",
-  //       },
-  //       {
-  //         id: 2,
-  //         testName: "Liver Function Test",
-  //         date: "2025-01-09",
-  //         status: "Completed",
-  //         result: "Normal",
-  //       },
-  //       {
-  //         id: 3,
-  //         testName: "Kidney Function Test",
-  //         date: "2025-01-06",
-  //         status: "In Progress",
-  //         result: "-",
-  //       },
-  //     ],
-  //     "MRN-2024-004": [
-  //       {
-  //         id: 1,
-  //         testName: "Complete Blood Count (CBC)",
-  //         date: "2025-01-12",
-  //         status: "Completed",
-  //         result: "Normal",
-  //       },
-  //       {
-  //         id: 2,
-  //         testName: "Pregnancy Test",
-  //         date: "2025-01-10",
-  //         status: "Completed",
-  //         result: "Negative",
-  //       },
-  //       {
-  //         id: 3,
-  //         testName: "Iron Studies",
-  //         date: "2025-01-08",
-  //         status: "Pending",
-  //         result: "-",
-  //       },
-  //     ],
-  //     "MRN-2024-005": [
-  //       {
-  //         id: 1,
-  //         testName: "Complete Blood Count (CBC)",
-  //         date: "2025-01-11",
-  //         status: "Completed",
-  //         result: "Normal",
-  //       },
-  //       {
-  //         id: 2,
-  //         testName: "Prostate Specific Antigen",
-  //         date: "2025-01-09",
-  //         status: "Completed",
-  //         result: "Normal",
-  //       },
-  //       {
-  //         id: 3,
-  //         testName: "Cardiac Enzymes",
-  //         date: "2025-01-07",
-  //         status: "In Progress",
-  //         result: "-",
-  //       },
-  //     ],
-  //     "MRN-2024-006": [
-  //       {
-  //         id: 1,
-  //         testName: "Complete Blood Count (CBC)",
-  //         date: "2025-01-09",
-  //         status: "Completed",
-  //         result: "Normal",
-  //       },
-  //       {
-  //         id: 2,
-  //         testName: "Thyroid Function Test",
-  //         date: "2025-01-07",
-  //         status: "Completed",
-  //         result: "Normal",
-  //       },
-  //       {
-  //         id: 3,
-  //         testName: "Vitamin D Test",
-  //         date: "2025-01-05",
-  //         status: "Pending",
-  //         result: "-",
-  //       },
-  //     ],
-  //   };
-  //   return (
-  //     activities[patientId as keyof typeof activities] ||
-  //     activities["MRN-2024-001"]
-  //   );
-  // };
-
-  // const recentActivity = getRecentActivity(patientData.id);
-
-  // // Mock data for summary stats based on patient
-  // const getSummaryStats = (patientId: string) => {
-  //   const stats = {
-  //     "MRN-2024-001": [
-  //       {
-  //         title: "Total Tests",
-  //         value: "24",
-  //         subtitle: "All time",
-  //         icon: "document",
-  //       },
-  //       {
-  //         title: "Pending",
-  //         value: "1",
-  //         subtitle: "In progress",
-  //         icon: "clock",
-  //       },
-  //       { title: "Last Visit", value: "3d", subtitle: "ago", icon: "calendar" },
-  //     ],
-  //     "MRN-2024-002": [
-  //       {
-  //         title: "Total Tests",
-  //         value: "18",
-  //         subtitle: "All time",
-  //         icon: "document",
-  //       },
-  //       {
-  //         title: "Pending",
-  //         value: "1",
-  //         subtitle: "In progress",
-  //         icon: "clock",
-  //       },
-  //       { title: "Last Visit", value: "2d", subtitle: "ago", icon: "calendar" },
-  //     ],
-  //     "MRN-2024-003": [
-  //       {
-  //         title: "Total Tests",
-  //         value: "31",
-  //         subtitle: "All time",
-  //         icon: "document",
-  //       },
-  //       {
-  //         title: "Pending",
-  //         value: "1",
-  //         subtitle: "In progress",
-  //         icon: "clock",
-  //       },
-  //       { title: "Last Visit", value: "5d", subtitle: "ago", icon: "calendar" },
-  //     ],
-  //     "MRN-2024-004": [
-  //       {
-  //         title: "Total Tests",
-  //         value: "15",
-  //         subtitle: "All time",
-  //         icon: "document",
-  //       },
-  //       {
-  //         title: "Pending",
-  //         value: "1",
-  //         subtitle: "In progress",
-  //         icon: "clock",
-  //       },
-  //       { title: "Last Visit", value: "1d", subtitle: "ago", icon: "calendar" },
-  //     ],
-  //     "MRN-2024-005": [
-  //       {
-  //         title: "Total Tests",
-  //         value: "28",
-  //         subtitle: "All time",
-  //         icon: "document",
-  //       },
-  //       {
-  //         title: "Pending",
-  //         value: "1",
-  //         subtitle: "In progress",
-  //         icon: "clock",
-  //       },
-  //       { title: "Last Visit", value: "4d", subtitle: "ago", icon: "calendar" },
-  //     ],
-  //     "MRN-2024-006": [
-  //       {
-  //         title: "Total Tests",
-  //         value: "22",
-  //         subtitle: "All time",
-  //         icon: "document",
-  //       },
-  //       {
-  //         title: "Pending",
-  //         value: "1",
-  //         subtitle: "In progress",
-  //         icon: "clock",
-  //       },
-  //       { title: "Last Visit", value: "2d", subtitle: "ago", icon: "calendar" },
-  //     ],
-  //   };
-  //   return stats[patientId as keyof typeof stats] || stats["MRN-2024-001"];
-  // };
-
-  // const summaryStats = getSummaryStats(patientData.id);
 
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
@@ -573,16 +245,6 @@ export const PatientDetailsPage = () => {
         return "N/A";
       }
 
-      // Trả về định dạng ngày/tháng/năm và giờ theo chuẩn Việt Nam
-      // return date.toLocaleString('vi-VN', {
-      //   day: '2-digit',
-      //   month: '2-digit',
-      //   year: 'numeric',
-      //   hour: '2-digit',
-      //   minute: '2-digit',
-      // });
-
-      // Hoặc nếu bạn chỉ muốn ngày (09/11/2025):
       return date.toLocaleDateString("vi-VN");
     } catch (error) {
       console.error("Error in formatDateTime function:", error);
@@ -613,11 +275,8 @@ export const PatientDetailsPage = () => {
         icon: "clock",
       },
       {
-        // --- ĐOẠN CỦA BẠN ĐÃ ĐƯỢC CHỈNH SỬA ---
         title: "Last Visit",
-        value: lastVisitValue, // <-- Hiển thị ngày tháng đã định dạng// Bỏ "ago" và để trống subtitle
-        icon: "calendar",
-        // --- KẾT THÚC ---
+        value: lastVisitValue,
       },
     ];
   };
@@ -658,24 +317,6 @@ export const PatientDetailsPage = () => {
       </div>
     );
   }
-
-  // if (!patient) {
-  //   // Dùng markup "Not Found" từ file gốc
-  //   return (
-  //     <div className="space-y-6">
-  //       <div className="text-center py-12">
-  //         {/* ... (Copy markup "Patient Not Found" từ file gốc) ... */}
-  //         <h3 className="mt-2 text-sm font-medium text-gray-900">
-  //           Patient Not Found
-  //         </h3>
-  //         <p className="mt-1 text-sm text-gray-500">
-  //           The patient with ID "{id}" could not be found.
-  //         </p>
-  //         {/* ... (Copy Link "Back to Patients" từ file gốc) ... */}
-  //       </div>
-  //     </div>
-  //   );
-  // }
 
   const summaryStats = getSummaryStats(patient);
   // Sắp xếp test order mới nhất lên đầu (dựa vào orderedAt)
@@ -753,10 +394,6 @@ export const PatientDetailsPage = () => {
                   {patient.age} years / {patient.gender}
                 </span>
               </div>
-              {/* <div className="flex items-center">
-                {getIcon("calendar")}
-                <span className="ml-3 text-gray-700 text-sm">DOB: N/A</span>
-              </div> */}
               <div className="flex items-center">
                 {getIcon("phone")}
                 <span className="ml-3 text-gray-700 text-sm">
@@ -766,7 +403,9 @@ export const PatientDetailsPage = () => {
               <div className="flex items-center">
                 {getIcon("email")}
                 <span className="ml-3 text-gray-700 text-sm">
-                  {patient.email}
+                  {patient.email && patient.email.trim()
+                    ? patient.email
+                    : "_No email_"}
                 </span>
               </div>
               <div className="flex items-center">
@@ -809,7 +448,7 @@ export const PatientDetailsPage = () => {
                 {[
                   { id: "overview", label: "Overview" },
                   { id: "test-history", label: "Test History" },
-                  { id: "documents", label: "Documents" },
+                  // { id: "documents", label: "Documents" },
                 ].map((tab) => (
                   <button
                     key={tab.id}
@@ -892,9 +531,6 @@ export const PatientDetailsPage = () => {
                             <p className="text-lg font-bold text-gray-900">
                               {stat.value}
                             </p>
-                            {/* <p className="text-xs text-gray-500">
-                              {stat.subtitle}
-                            </p> */}
                           </div>
                         </div>
                       </div>
@@ -1017,7 +653,7 @@ export const PatientDetailsPage = () => {
                                           {order.note || "N/A"}
                                         </td>
                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                          {order.testOrderId}
+                                          {order.id}
                                         </td>
                                       </tr>
                                     ))
@@ -1032,7 +668,7 @@ export const PatientDetailsPage = () => {
                 </div>
               )}
 
-              {activeTab === "documents" && (
+              {/* {activeTab === "documents" && (
                 <div className="text-center py-12">
                   <div className="text-gray-500">
                     <svg
@@ -1056,7 +692,7 @@ export const PatientDetailsPage = () => {
                     </p>
                   </div>
                 </div>
-              )}
+              )} */}
             </div>
           </div>
         </div>

@@ -3,14 +3,14 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getPatientById } from "../../services/patientApi"; // 1. Import API
-import type { Patient } from "../../services/patientApi"; // 1. Import Interface
+import { getPatientById } from "../../services/patientApi";
+
 import {
   updatePatientRequest,
   clearMessages,
   clearUpdateSuccess,
-} from "../../store/slices/patientSlice"; // 2. Import Redux Actions
-import type { RootState } from "../../store"; // 2. Import RootState
+} from "../../store/slices/patientSlice";
+import type { RootState } from "../../store";
 
 export const EditPatientPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -127,10 +127,9 @@ export const EditPatientPage = () => {
   // 7. Xử lý tự động điều hướng khi cập nhật thành công
   useEffect(() => {
     if (updateSuccess) {
-      // Chờ 2 giây để người dùng đọc thông báo
       const timer = setTimeout(() => {
-        navigate(`/admin/patients/${id}`); // Quay lại trang chi tiết
-        dispatch(clearUpdateSuccess()); // Reset cờ
+        navigate(`/admin/patients/${id}`);
+        dispatch(clearUpdateSuccess());
       }, 2000);
       return () => clearTimeout(timer);
     }
@@ -159,9 +158,9 @@ export const EditPatientPage = () => {
     // Chuyển đổi dữ liệu về đúng type
     const patientDataToSubmit = {
       ...formData,
-      age: parseInt(formData.age, 10), // Chuyển age về number
-      id: id, // Thêm ID của patient
-      role: "normal_user", // Giữ nguyên role
+      age: parseInt(formData.age, 10),
+      id: id,
+      role: "normal_user",
     };
 
     // Gửi action
@@ -200,7 +199,7 @@ export const EditPatientPage = () => {
     );
   }
 
-  // 13. Render Form (Cấu trúc JSX lấy từ EditPatientPage và logic từ UpdateUserModal)
+  // 13. Render Form
   return (
     <div className="space-y-6">
       {/* Header Section */}
@@ -246,7 +245,6 @@ export const EditPatientPage = () => {
             Personal Details
           </h2>
           {/* CÁC TRƯỜNG CỦA FORM ĐÃ ĐƯỢC CẬP NHẬT */}
-          {/* (Copy cấu trúc từ UpdateUserModal.tsx) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Name */}
             <div>
@@ -358,9 +356,9 @@ export const EditPatientPage = () => {
                 <option value="" disabled>
                   Select gender
                 </option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
               </select>
             </div>
 
@@ -389,7 +387,7 @@ export const EditPatientPage = () => {
           </div>
         </div>
 
-        {/* Form Actions (Logic từ UpdateUserModal) */}
+        {/* Form Actions */}
         <div className="flex items-center justify-end space-x-4 p-6 border-t border-gray-200">
           {/* Messages Section */}
           <div className="flex-grow">

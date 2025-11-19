@@ -17,8 +17,12 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
     gender: "Male",
     phone: "",
     email: "",
+    identifyNumber: "",
     address: "",
   });
+
+  // Track touched fields to show validation messages only after interaction / submit
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   if (!isOpen) return null;
 
@@ -29,18 +33,68 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleBlur = (
+    e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name } = e.target;
+    setTouched((prev) => ({ ...prev, [name]: true }));
+  };
+
+  const validateName = (value: string) => value.trim() === "";
+  const validateDob = (value: string) => {
+    if (!value) return true;
+    const d = new Date(value);
+    if (isNaN(d.getTime())) return true;
+    // future date invalid
+    if (d > new Date()) return true;
+    return false;
+  };
+  const validatePhone = (value: string) => !/^0\d{9}$/.test(value);
+  const validateEmail = (value: string) =>
+    value !== "" && !/^\S+@\S+\.\S+$/.test(value);
+  const validateIdentify = (value: string) => !/^0\d{11}$/.test(value);
+  const validateAddress = (value: string) => value.trim() === "";
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 🧮 Tính tuổi dựa vào năm sinh
-    const birthYear = new Date(formData.dob).getFullYear();
+    const nameErr = validateName(formData.name);
+    const dobErr = validateDob(formData.dob);
+    const phoneErr = validatePhone(formData.phone);
+    const emailErr = validateEmail(formData.email);
+    const identifyErr = validateIdentify(formData.identifyNumber);
+    const addressErr = validateAddress(formData.address);
+
+    if (
+      nameErr ||
+      dobErr ||
+      phoneErr ||
+      emailErr ||
+      identifyErr ||
+      addressErr
+    ) {
+      // mark all as touched so errors show
+      setTouched({
+        name: true,
+        dob: true,
+        phone: true,
+        email: true,
+        identifyNumber: true,
+        address: true,
+      });
+      return;
+    }
+
+    // compute age safely
+    const dobDate = new Date(formData.dob);
+    const birthYear = isNaN(dobDate.getFullYear())
+      ? new Date().getFullYear()
+      : dobDate.getFullYear();
     const currentYear = new Date().getFullYear();
     const age = currentYear - birthYear;
 
-    // 🕒 Thời gian hiện tại ISO
     const now = new Date().toISOString();
 
-    // 🧩 Dữ liệu hoàn chỉnh gửi lên API
     const fullPatientData = {
       name: formData.name.trim(),
       email: formData.email || "",
@@ -54,20 +108,27 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
       createdAt: now,
       updatedAt: now,
       password: "AdminSecure2024!",
-      // Giả lập id & userId (thực tế backend hoặc mockAPI sẽ tự tạo)
-      id: `id-${Date.now()}`,
+      id: formData.identifyNumber || `id-${Date.now()}`,
       userId: `${Math.floor(Math.random() * 1000)}`,
     };
 
-    // Gửi dữ liệu ra ngoài
     onCreate(fullPatientData);
 
-    // Thông báo popup
     alert(`Patient ${formData.name} has been added successfully!`);
     console.log("Patient created:", fullPatientData);
 
     onClose();
+    // reset touched (optional)
+    setTouched({});
   };
+
+  const nameError = touched.name && validateName(formData.name);
+  const dobError = touched.dob && validateDob(formData.dob);
+  const phoneError = touched.phone && validatePhone(formData.phone);
+  const emailError = touched.email && validateEmail(formData.email);
+  const identifyError =
+    touched.identifyNumber && validateIdentify(formData.identifyNumber);
+  const addressError = touched.address && validateAddress(formData.address);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
@@ -101,10 +162,24 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
+                onBlur={handleBlur}
                 placeholder="Full name"
                 required
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                onInvalid={(e) =>
+                  (e.target as HTMLInputElement).setCustomValidity(
+                    "Full name is required"
+                  )
+                }
+                onInput={(e) =>
+                  (e.target as HTMLInputElement).setCustomValidity("")
+                }
               />
+              {nameError && (
+                <p className="mt-1 text-red-600 text-sm">
+                  Full name is required
+                </p>
+              )}
             </div>
 
             {/* Date of Birth */}
@@ -117,9 +192,23 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
                 name="dob"
                 value={formData.dob}
                 onChange={handleChange}
+                onBlur={handleBlur}
                 required
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                onInvalid={(e) =>
+                  (e.target as HTMLInputElement).setCustomValidity(
+                    "Valid date of birth is required"
+                  )
+                }
+                onInput={(e) =>
+                  (e.target as HTMLInputElement).setCustomValidity("")
+                }
               />
+              {dobError && (
+                <p className="mt-1 text-red-600 text-sm">
+                  Please provide a valid date of birth (not in the future).
+                </p>
+              )}
             </div>
 
             {/* Gender */}
@@ -131,6 +220,7 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
                 name="gender"
                 value={formData.gender}
                 onChange={handleChange}
+                onBlur={handleBlur}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
               >
                 <option>Male</option>
@@ -140,7 +230,7 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
             </div>
 
             {/* Phone */}
-            <div>
+            <div className="relative">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Phone Number *
               </label>
@@ -148,30 +238,112 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
                 type="tel"
                 name="phone"
                 value={formData.phone}
-                onChange={handleChange}
-                placeholder="Phone number"
+                onChange={(e) => {
+                  const value = e.target.value;
+
+                  if (!value) {
+                    e.target.setCustomValidity("Invalid phone number");
+                  } else if (!/^0\d{9}$/.test(value)) {
+                    e.target.setCustomValidity("Invalid phone number");
+                  } else {
+                    e.target.setCustomValidity("");
+                  }
+
+                  handleChange(e);
+                }}
+                onBlur={handleBlur}
+                placeholder="(10 digits, starts with 0)"
                 required
+                pattern="0\d{9}"
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                onInvalid={(e) =>
+                  (e.target as HTMLInputElement).setCustomValidity(
+                    "Invalid phone number"
+                  )
+                }
+                onInput={(e) =>
+                  (e.target as HTMLInputElement).setCustomValidity("")
+                }
               />
+
+              {/* Red error text hiển thị khi invalid */}
+              {formData.phone !== "" && !/^0\d{9}$/.test(formData.phone) && (
+                <p className="absolute right-0 mt-1 text-red-600 text-sm">
+                  Invalid phone number
+                </p>
+              )}
+              {touched.phone && phoneError && (
+                <p className="mt-1 text-red-600 text-sm">
+                  Invalid phone number
+                </p>
+              )}
             </div>
 
             {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address
+                Email
               </label>
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
+                onBlur={handleBlur}
                 placeholder="example@email.com"
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
               />
+              {emailError && (
+                <p className="mt-1 text-red-600 text-sm">
+                  Invalid email address
+                </p>
+              )}
+            </div>
+
+            {/* Identify Number */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Identify Number *
+              </label>
+              <input
+                type="text"
+                name="identifyNumber"
+                value={formData.identifyNumber}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (!/^0\d{11}$/.test(value)) {
+                    (e.target as HTMLInputElement).setCustomValidity(
+                      "Invalid identify number"
+                    );
+                  } else {
+                    (e.target as HTMLInputElement).setCustomValidity("");
+                  }
+                  handleChange(e);
+                }}
+                onBlur={handleBlur}
+                placeholder="Enter identify number"
+                required
+                pattern="0\d{11}"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                onInvalid={(e) =>
+                  (e.target as HTMLInputElement).setCustomValidity(
+                    "Invalid identify number"
+                  )
+                }
+                onInput={(e) =>
+                  (e.target as HTMLInputElement).setCustomValidity("")
+                }
+              />
+              {identifyError && (
+                <p className="mt-1 text-red-600 text-sm">
+                  Identify number is required and must match pattern
+                  0xxxxxxxxxxx
+                </p>
+              )}
             </div>
 
             {/* Address */}
-            <div>
+            <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Address *
               </label>
@@ -180,10 +352,22 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
                 name="address"
                 value={formData.address}
                 onChange={handleChange}
+                onBlur={handleBlur}
                 placeholder="123 Main St, City, State, ZIP"
                 required
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                onInvalid={(e) =>
+                  (e.target as HTMLInputElement).setCustomValidity(
+                    "Address is required"
+                  )
+                }
+                onInput={(e) =>
+                  (e.target as HTMLInputElement).setCustomValidity("")
+                }
               />
+              {addressError && (
+                <p className="mt-1 text-red-600 text-sm">Address is required</p>
+              )}
             </div>
           </div>
 

@@ -153,7 +153,7 @@ export const PatientsPage = () => {
     if (!isoString) return "—";
     const date = new Date(isoString);
     if (isNaN(date.getTime())) return isoString.slice(0, 10); // fallback nếu chuỗi không hợp lệ
-    return date.toISOString().split("T")[0]; // ✅ YYYY-MM-DD
+    return date.toISOString().split("T")[0];
   };
 
   return (
@@ -594,7 +594,7 @@ export const PatientsPage = () => {
         </div>
       </div>
 
-      {/* Pagination - siêu sát bảng */}
+      {/* Pagination */}
       {filteredPatients.length > 0 && (
         <div className="flex justify-center items-center mt-0 mb-4 space-x-2">
           <button
