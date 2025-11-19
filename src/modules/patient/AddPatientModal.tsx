@@ -17,7 +17,7 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
     gender: "Male",
     phone: "",
     email: "",
-    identifyNumber: "",
+    // identifyNumber: "",
     address: "",
   });
 
@@ -62,7 +62,7 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
     const dobErr = validateDob(formData.dob);
     const phoneErr = validatePhone(formData.phone);
     const emailErr = validateEmail(formData.email);
-    const identifyErr = validateIdentify(formData.identifyNumber);
+    // const identifyErr = validateIdentify(formData.identifyNumber);
     const addressErr = validateAddress(formData.address);
 
     if (
@@ -70,7 +70,7 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
       dobErr ||
       phoneErr ||
       emailErr ||
-      identifyErr ||
+      // identifyErr ||
       addressErr
     ) {
       // mark all as touched so errors show
@@ -108,7 +108,7 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
       createdAt: now,
       updatedAt: now,
       password: "AdminSecure2024!",
-      id: formData.identifyNumber || `id-${Date.now()}`,
+      // id: formData.identifyNumber || `id-${Date.now()}`,
       userId: `${Math.floor(Math.random() * 1000)}`,
     };
 
@@ -126,8 +126,8 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
   const dobError = touched.dob && validateDob(formData.dob);
   const phoneError = touched.phone && validatePhone(formData.phone);
   const emailError = touched.email && validateEmail(formData.email);
-  const identifyError =
-    touched.identifyNumber && validateIdentify(formData.identifyNumber);
+  // const identifyError =
+  //   touched.identifyNumber && validateIdentify(formData.identifyNumber);
   const addressError = touched.address && validateAddress(formData.address);
 
   return (
@@ -301,7 +301,7 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
             </div>
 
             {/* Identify Number */}
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Identify Number *
               </label>
@@ -340,7 +340,7 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
                   0xxxxxxxxxxx
                 </p>
               )}
-            </div>
+            </div> */}
 
             {/* Address */}
             <div className="md:col-span-2">

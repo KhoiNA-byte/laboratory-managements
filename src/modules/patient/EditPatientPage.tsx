@@ -40,35 +40,60 @@ export const EditPatientPage = () => {
   const [pageLoading, setPageLoading] = useState<boolean>(true);
   const [pageError, setPageError] = useState<string | null>(null);
 
-  // 5. Logic validation (Lấy từ UpdateUserModal.tsx và điều chỉnh)
+  // 5. Logic validation (Đã cập nhật theo yêu cầu)
   const validateField = (name: string, value: string | number) => {
     const errors: { [key: string]: string } = { ...validationErrors };
-    value = value.toString();
+    // Đảm bảo value là string để xử lý trim/regex
+    const stringValue = value.toString().trim();
 
     switch (name) {
       case "name":
-        if (!value.trim()) errors.name = "Name is required";
-        else delete errors.name;
+        if (!stringValue) {
+          errors.name = "Name is required";
+        } else if (
+          !/^[a-zA-Z\sàáãạảăắằặẳẵâấầậẩẫèéẽẹẻêếềệểễìíĩịỉòóõọỏôốồộổỗơớờợởỡùúũụủưứừựửữỳýỹỵỷĐđ]+$/i.test(
+            stringValue
+          )
+        ) {
+          // Regex cho phép chữ cái (cả tiếng Việt), và khoảng trắng. Không cho phép số/ký tự đặc biệt.
+          errors.name =
+            "Full Name cannot contain numbers or special characters";
+        } else {
+          delete errors.name;
+        }
         break;
       case "email":
-        if (!value.trim()) errors.email = "Email is required";
-        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
+        // Bỏ required. Chỉ kiểm tra format nếu có giá trị.
+        if (stringValue && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(stringValue))
           errors.email = "Invalid email format";
         else delete errors.email;
         break;
       case "phone":
-        if (!value.trim()) errors.phone = "Phone is required";
-        else delete errors.phone;
+        if (!stringValue) {
+          errors.phone = "Phone is required";
+        } else if (!/^0\d{9}$/.test(stringValue)) {
+          // Format: Bắt đầu bằng 0, tổng cộng 10 số.
+          errors.phone = "Phone number must be 10 digits and start with 0";
+        } else {
+          delete errors.phone;
+        }
         break;
       case "age":
-        if (!value.trim()) errors.age = "Age is required";
-        else if (isNaN(Number(value)) || Number(value) <= 0)
+        if (!stringValue) {
+          errors.age = "Age is required";
+        } else if (isNaN(Number(stringValue)) || Number(stringValue) <= 0) {
           errors.age = "Age must be a positive number";
-        else delete errors.age;
+        } else {
+          delete errors.age;
+        }
         break;
       case "address":
-        if (!value.trim()) errors.address = "Address is required";
+        if (!stringValue) errors.address = "Address is required";
         else delete errors.address;
+        break;
+      case "gender":
+        if (!stringValue) errors.gender = "Gender is required";
+        else delete errors.gender;
         break;
       default:
         break;
@@ -78,12 +103,20 @@ export const EditPatientPage = () => {
 
   const isFormValid = () => {
     // Kiểm tra không còn lỗi
-    if (Object.keys(validationErrors).some((key) => validationErrors[key])) {
+    const hasValidationErrors = Object.keys(validationErrors).some(
+      (key) => validationErrors[key]
+    );
+
+    if (hasValidationErrors) {
       return false;
     }
-    // Kiểm tra các trường bắt buộc
-    const { name, email, phone, age, address, gender } = formData;
-    return name && email && phone && age && address && gender;
+
+    // Kiểm tra các trường bắt buộc (name, phone, age, address, gender)
+    const { name, phone, age, address, gender } = formData;
+
+    return (
+      name.trim() && phone.trim() && age.trim() && address.trim() && gender // Kiểm tra gender
+    );
   };
 
   // 6. Fetch dữ liệu Patient khi trang được tải
@@ -99,16 +132,67 @@ export const EditPatientPage = () => {
       try {
         const patient = await getPatientById(id);
         // Set dữ liệu cho form (chuyển đổi các giá trị về string)
-        setFormData({
+        const initialData = {
           name: patient.name,
-          email: patient.email,
+          email: patient.email || "", // Đảm bảo không null
           phone: patient.phone,
           gender: patient.gender,
           age: patient.age.toString(),
           address: patient.address,
+        };
+        setFormData(initialData);
+
+        // Chạy validation ban đầu cho các trường bắt buộc/có quy tắc
+        const initialErrors: { [key: string]: string } = {};
+        Object.entries(initialData).forEach(([key, value]) => {
+          if (key !== "email" || value) {
+            const tempErrors: { [key: string]: string } = {};
+            const stringValue = value.toString().trim();
+
+            switch (key) {
+              case "name":
+                if (!stringValue) tempErrors.name = "Name is required";
+                else if (
+                  !/^[a-zA-Z\sàáãạảăắằặẳẵâấầậẩẫèéẽẹẻêếềệểễìíĩịỉòóõọỏôốồộổỗơớờợởỡùúũụủưứừựửữỳýỹỵỷĐđ]+$/i.test(
+                    stringValue
+                  )
+                )
+                  tempErrors.name =
+                    "Full Name cannot contain numbers or special characters";
+                break;
+              case "email":
+                if (
+                  stringValue &&
+                  !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(stringValue)
+                )
+                  tempErrors.email = "Invalid email format";
+                break;
+              case "phone":
+                if (!stringValue) tempErrors.phone = "Phone is required";
+                else if (!/^0\d{9}$/.test(stringValue))
+                  tempErrors.phone =
+                    "Phone number must be 10 digits and start with 0";
+                break;
+              case "age":
+                if (!stringValue) tempErrors.age = "Age is required";
+                else if (isNaN(Number(stringValue)) || Number(stringValue) <= 0)
+                  tempErrors.age = "Age must be a positive number";
+                break;
+              case "address":
+                if (!stringValue) tempErrors.address = "Address is required";
+                break;
+              case "gender":
+                if (!stringValue) tempErrors.gender = "Gender is required";
+                break;
+              default:
+                break;
+            }
+
+            Object.assign(initialErrors, tempErrors);
+          }
         });
-        // Xóa lỗi validation cũ
-        setValidationErrors({});
+
+        setValidationErrors(initialErrors);
       } catch (err) {
         setPageError("Failed to load patient data. Patient not found.");
       } finally {
@@ -118,7 +202,7 @@ export const EditPatientPage = () => {
 
     fetchPatient();
 
-    // Clear messages khi component mount
+    // Clear messages khi component unmount
     return () => {
       dispatch(clearMessages());
     };
@@ -135,7 +219,7 @@ export const EditPatientPage = () => {
     }
   }, [updateSuccess, navigate, dispatch, id]);
 
-  // 8. Handle input change (Lấy từ UpdateUserModal.tsx)
+  // 8. Handle input change
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -151,6 +235,12 @@ export const EditPatientPage = () => {
   // 9. Handle Submit (Gửi action Redux)
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Thực hiện validation đầy đủ trước khi submit
+    Object.keys(formData).forEach((key) => {
+      validateField(key, formData[key as keyof typeof formData]);
+    });
+
     if (!isFormValid() || !id) {
       return;
     }
@@ -158,8 +248,10 @@ export const EditPatientPage = () => {
     // Chuyển đổi dữ liệu về đúng type
     const patientDataToSubmit = {
       ...formData,
+      // Đảm bảo age là số nguyên
       age: parseInt(formData.age, 10),
       id: id,
+      // Giữ role nếu cần
       role: "normal_user",
     };
 
@@ -244,7 +336,7 @@ export const EditPatientPage = () => {
           <h2 className="text-lg font-semibold text-gray-900">
             Personal Details
           </h2>
-          {/* CÁC TRƯỜNG CỦA FORM ĐÃ ĐƯỢC CẬP NHẬT */}
+          {/* CÁC TRƯỜNG CỦA FORM */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Name */}
             <div>
@@ -275,7 +367,7 @@ export const EditPatientPage = () => {
                 htmlFor="email"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Email
+                Email (Optional)
               </label>
               <input
                 type="email"
