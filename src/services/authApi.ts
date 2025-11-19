@@ -9,10 +9,21 @@ export interface Credentials {
 
 export interface AuthResponse {
   user: {
-    id: string;
-    email: string;
-    role: string;
+    id: string; // ID từ MockAPI
+    userId?: string; // Object ID - có thể không cần dùng
     name: string;
+    email: string;
+    phone: string;
+    gender: string;
+    role: string;
+    age: number;
+    address: string;
+    status: string;
+    lastLogin: string;
+    createdAt?: string;
+    updatedAt?: string;
+    identifyNumber?: string;
+    dateOfBirth?: string;
     username?: string;
   };
   token: string;
@@ -67,6 +78,16 @@ export const loginAPI = async (
         email: foundUser.email,
         role: foundUser.role,
         name: foundUser.name,
+        phone: foundUser.phone,
+        gender: foundUser.gender,
+        age: foundUser.age,
+        address: foundUser.address,
+        status: foundUser.status,
+        lastLogin: foundUser.lastLogin,
+        createdAt: foundUser.createdAt,
+        updatedAt: foundUser.updatedAt,
+        identifyNumber: foundUser.identifyNumber,
+        dateOfBirth: foundUser.dateOfBirth,
       },
       token: `mockapi-token-${foundUser.id}-${Date.now()}`,
       redirectPath: redirectPath,

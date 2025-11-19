@@ -144,3 +144,21 @@ export const getUserIdFromId = async (id: string): Promise<string | null> => {
     return null;
   }
 };
+
+
+// Get user by ID and extract userId
+export const getUserById = async (id: string): Promise<any> => {
+  try {
+    const response = await fetch(`${USERS_ENDPOINT}/${id}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch user: ${response.status}`);
+    }
+    const user = await response.json();
+    console.log("Fetched user data:", user);
+    return user;
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    throw error;
+  }
+};
+

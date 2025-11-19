@@ -7,6 +7,16 @@ interface User {
   email: string;
   role: string;
   name?: string;
+  phone?: string;
+  gender?: string;
+  age?: number;
+  address?: string;
+  status?: string;
+  lastLogin?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  identifyNumber?: string;
+  dateOfBirth?: string;
 }
 
 interface AuthState {

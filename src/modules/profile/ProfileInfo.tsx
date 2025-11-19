@@ -1,64 +1,106 @@
-"use client"
-import { Phone, Mail, MapPin } from "lucide-react"
-
-// Mock user data - replace with actual Redux selector
-const mockUser = {
-  name: "John Doe",
-  mrn: "MRN-2024-001",
-  avatar: "JD",
-  age: 40,
-  gender: "male",
-  dob: "15/3/1985",
-  phone: "+1 (555) 123-4567",
-  email: "john.doe@email.com",
-  address: "123 Main St, New York, NY 10001",
-}
+"use client";
+import { Phone, Mail, MapPin } from "lucide-react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store"; // Điều chỉnh đường dẫn nếu cần
 
 export default function ProfileInfo() {
-  // const dispatch = useDispatch()
-  // const { user, loading } = useSelector(state => state.users)
-  // useEffect(() => {
-  //   dispatch(fetchUserRequest())
-  // }, [])
+  // Lấy thông tin user từ Redux store
+  const { user } = useSelector((state: RootState) => state.auth);
+
+  if (!user) {
+    return (
+      <div className="bg-white rounded-lg border border-border p-6 lg:col-span-1">
+        <div className="flex flex-col items-center">
+          <div className="w-24 h-24 bg-gray-300 rounded-full flex items-center justify-center text-white text-2xl font-semibold mb-4">
+            ?
+          </div>
+          <p className="text-muted-foreground">No user data available</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Tạo avatar từ tên
+  const getAvatarFromName = (name: string) => {
+    return name
+      .split(" ")
+      .map((word) => word[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  // Format date nếu cần
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "N/A";
+    return new Date(dateString).toLocaleDateString();
+  };
 
   return (
     <div className="bg-white rounded-lg border border-border p-6 lg:col-span-1">
       <div className="flex flex-col items-center">
         <div className="w-24 h-24 bg-blue-500 rounded-full flex items-center justify-center text-white text-2xl font-semibold mb-4">
-          {mockUser.avatar}
+          {getAvatarFromName(user.name ?? "")}
         </div>
-        <h2 className="text-xl font-semibold text-foreground">{mockUser.name}</h2>
-        <p className="text-sm text-muted-foreground mb-6">{mockUser.mrn}</p>
+        <h2 className="text-xl font-semibold text-foreground">{user.name}</h2>
+        <p className="text-sm text-muted-foreground mb-6">User ID: {user.id}</p>
 
         <div className="w-full space-y-4 text-sm">
           <div className="flex items-center gap-3 pb-4 border-b border-border">
-            <span className="text-muted-foreground font-medium w-24">Age / Gender</span>
+            <span className="text-muted-foreground font-medium w-24">
+              Age / Gender
+            </span>
             <span className="text-foreground">
-              {mockUser.age} years / {mockUser.gender}
+              {user.age} years / {user.gender}
             </span>
           </div>
 
           <div className="flex items-center gap-3 pb-4 border-b border-border">
-            <span className="text-muted-foreground font-medium w-24">Date of Birth</span>
-            <span className="text-foreground">{mockUser.dob}</span>
+            <span className="text-muted-foreground font-medium w-24">
+              Last Login
+            </span>
+            <span className="text-foreground">
+              {formatDate(user.lastLogin)}
+            </span>
           </div>
 
           <div className="flex items-center gap-3 pb-4 border-b border-border">
             <Phone className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-            <span className="text-foreground">{mockUser.phone}</span>
+            <span className="text-foreground">{user.phone}</span>
           </div>
 
           <div className="flex items-center gap-3 pb-4 border-b border-border">
             <Mail className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-            <span className="text-foreground">{mockUser.email}</span>
+            <span className="text-foreground">{user.email}</span>
           </div>
 
           <div className="flex items-start gap-3">
             <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-0.5" />
-            <span className="text-foreground">{mockUser.address}</span>
+            <span className="text-foreground">{user.address}</span>
+          </div>
+
+          {/* Thêm các thông tin khác nếu cần */}
+          <div className="flex items-center gap-3 pb-4 border-b border-border">
+            <span className="text-muted-foreground font-medium w-24">Role</span>
+            <span className="text-foreground">{user.role}</span>
+          </div>
+
+          <div className="flex items-center gap-3 pb-4 border-b border-border">
+            <span className="text-muted-foreground font-medium w-24">
+              Status
+            </span>
+            <span
+              className={`px-2 py-1 rounded-full text-xs ${
+                user.status === "active"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-red-100 text-red-800"
+              }`}
+            >
+              {user.status}
+            </span>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

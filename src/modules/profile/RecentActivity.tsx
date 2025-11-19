@@ -1,5 +1,5 @@
-"use client"
-import { Activity } from "lucide-react"
+"use client";
+import { Activity } from "lucide-react";
 
 // Mock activity data
 const mockActivities = [
@@ -26,7 +26,7 @@ const mockActivities = [
     status: "In Progress",
     statusColor: "bg-amber-100 text-amber-700",
   },
-]
+];
 
 export default function RecentActivity() {
   // const dispatch = useDispatch()
@@ -37,24 +37,41 @@ export default function RecentActivity() {
 
   return (
     <div className="bg-white rounded-lg border border-border p-6 lg:col-span-2">
-      <h3 className="text-lg font-semibold text-foreground mb-2">Recent Activity</h3>
-      <p className="text-sm text-muted-foreground mb-4">Latest test orders and results</p>
+      <h3 className="text-lg font-semibold text-foreground mb-2">
+        Recent Activity
+      </h3>
+      <p className="text-sm text-muted-foreground mb-4">
+        Latest test orders and results
+      </p>
 
       <div className="space-y-3">
         {mockActivities.map((activity) => (
-          <div key={activity.id} className="flex items-center gap-4 p-3 bg-muted rounded-lg hover:bg-muted/80">
+          <div
+            key={activity.id}
+            className="flex items-center gap-4 p-3 bg-muted rounded-lg hover:bg-muted/80"
+          >
             <Activity className="w-5 h-5 text-blue-500 flex-shrink-0" />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground">{activity.test}</p>
+              <p className="text-sm font-medium text-foreground">
+                {activity.test}
+              </p>
               <p className="text-xs text-muted-foreground">{activity.date}</p>
             </div>
             <div className="flex items-center gap-2">
-              <span className={`px-3 py-1 text-xs font-medium rounded ${activity.statusColor}`}>{activity.status}</span>
-              {activity.flag && <span className="text-xs text-muted-foreground">{activity.flag}</span>}
+              <span
+                className={`px-3 py-1 text-xs font-medium rounded ${activity.statusColor}`}
+              >
+                {activity.status}
+              </span>
+              {activity.flag && (
+                <span className="text-xs text-muted-foreground">
+                  {activity.flag}
+                </span>
+              )}
             </div>
           </div>
         ))}
       </div>
     </div>
-  )
+  );
 }
