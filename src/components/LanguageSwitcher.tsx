@@ -36,8 +36,8 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
                         key={lang.code}
                         onClick={() => handleChange(lang.code)}
                         className={`flex items-center gap-3 px-4 py-2 text-sm transition-colors ${i18n.language === lang.code
-                                ? "bg-blue-50 text-blue-600 font-medium"
-                                : "text-gray-600 hover:bg-gray-50"
+                            ? "bg-blue-50 text-blue-600 font-medium"
+                            : "text-gray-600 hover:bg-gray-50"
                             }`}
                     >
                         <span className="text-lg">{lang.flag}</span>
@@ -50,15 +50,15 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
 
     return (
         <div
-            className={`inline-flex items-center rounded-full border border-gray-300 bg-white p-1 text-xs font-medium shadow-sm ${className}`}
+            className={`inline-flex items-center rounded-full border border-gray-300 bg-white p-1 text-xs font-medium shadow-sm min-w-[11rem] ${className}`}
         >
             {languages.map((lang) => (
                 <button
                     key={lang.code}
                     onClick={() => handleChange(lang.code)}
-                    className={`flex items-center gap-1 rounded-full px-3 py-1 transition ${i18n.language === lang.code
-                            ? "bg-blue-600 text-white shadow"
-                            : "text-gray-600 hover:text-gray-900"
+                    className={`flex flex-1 items-center justify-center gap-1 rounded-full px-3 py-1 transition ${i18n.language === lang.code
+                        ? "bg-blue-600 text-white shadow"
+                        : "text-gray-600 hover:text-gray-900"
                         }`}
                 >
                     <span>{lang.flag}</span>
