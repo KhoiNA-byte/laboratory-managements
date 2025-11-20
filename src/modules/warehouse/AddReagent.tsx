@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { AppDispatch } from "../../store/index";
 import { addReagentRequest, ReagentForm } from "../../store/slices/reagentSlice";
 
@@ -18,6 +19,7 @@ const Input: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = (props) => 
 );
 
 const AddReagent: React.FC<AddReagentProps> = ({ isOpen, onClose }) => {
+  const { t } = useTranslation("common");
   const dispatch = useDispatch<AppDispatch>();
   const [form, setForm] = useState<ReagentForm>({
     name: "",
@@ -67,9 +69,7 @@ const AddReagent: React.FC<AddReagentProps> = ({ isOpen, onClose }) => {
 
   const onSubmitForm = () => {
     if (!valid) {
-      setError(
-        "Please fill required fields. Ensure min stock ≤ max stock and required fields are not empty."
-      );
+      setError(t("modals.addReagent.validation.fillRequired"));
       return;
     }
     setError(null);
@@ -101,8 +101,8 @@ const AddReagent: React.FC<AddReagentProps> = ({ isOpen, onClose }) => {
       <div className="bg-white rounded-2xl w-full max-w-[720px] shadow-lg overflow-hidden">
         {/* Header */}
         <div className="p-6 border-b">
-          <h3 className="text-xl font-semibold">Add Reagent</h3>
-          <p className="text-sm text-gray-500">Enter reagent details</p>
+          <h3 className="text-xl font-semibold">{t("modals.addReagent.title")}</h3>
+          <p className="text-sm text-gray-500">{t("modals.addReagent.subtitle")}</p>
         </div>
 
         {/* Form */}
@@ -110,35 +110,35 @@ const AddReagent: React.FC<AddReagentProps> = ({ isOpen, onClose }) => {
           {/* Name & Lot */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Name *</label>
+              <label className="block text-sm font-medium mb-1">{t("modals.addReagent.name")} *</label>
               <Input
                 name="name"
                 value={form.name}
                 onChange={handleChange}
-                placeholder="Reagent Name"
+                placeholder={t("modals.addReagent.placeholders.name")}
               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">
-                Lot number *
+                {t("modals.addReagent.lotNumber")} *
               </label>
               <Input
                 name="lotNumber"
                 value={form.lotNumber}
                 onChange={handleChange}
-                placeholder="LOT-2025-..."
+                placeholder={t("modals.addReagent.placeholders.lotNumber")}
               />
             </div>
           </div>
 
           {/* Manufacturer */}
           <div>
-            <label className="block text-sm font-medium mb-1">Manufacturer *</label>
+            <label className="block text-sm font-medium mb-1">{t("modals.addReagent.manufacturer")} *</label>
             <Input
               name="manufacturer"
               value={form.manufacturer}
               onChange={handleChange}
-              placeholder="Manufacturer"
+              placeholder={t("modals.addReagent.placeholders.manufacturer")}
             />
           </div>
 
@@ -146,7 +146,7 @@ const AddReagent: React.FC<AddReagentProps> = ({ isOpen, onClose }) => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
             <div>
               <label className="block text-sm text-gray-600 mb-1">
-                Quantity *
+                {t("modals.addReagent.quantity")} *
               </label>
               <Input
                 name="quantity"
@@ -157,7 +157,7 @@ const AddReagent: React.FC<AddReagentProps> = ({ isOpen, onClose }) => {
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Unit</label>
+              <label className="block text-sm text-gray-600 mb-1">{t("modals.addReagent.unit")}</label>
               <select
                 name="unit"
                 value={form.unit}
@@ -172,7 +172,7 @@ const AddReagent: React.FC<AddReagentProps> = ({ isOpen, onClose }) => {
             </div>
             <div>
               <label className="block text-sm text-gray-600 mb-1">
-                Expiry date *
+                {t("modals.addReagent.expiryDate")} *
               </label>
               <Input
                 name="expiryDate"
@@ -183,7 +183,7 @@ const AddReagent: React.FC<AddReagentProps> = ({ isOpen, onClose }) => {
             </div>
             <div>
               <label className="block text-sm text-gray-600 mb-1">
-                Location *
+                {t("modals.addReagent.location")} *
               </label>
               <select
                 name="location"
@@ -191,7 +191,7 @@ const AddReagent: React.FC<AddReagentProps> = ({ isOpen, onClose }) => {
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
               >
-                <option value="">Select...</option>
+                <option value="">{t("modals.addReagent.selectLocation")}</option>
                 <option>Refrigerator A1</option>
                 <option>Refrigerator A2</option>
                 <option>Cabinet B1</option>
@@ -204,7 +204,7 @@ const AddReagent: React.FC<AddReagentProps> = ({ isOpen, onClose }) => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
             <div>
               <label className="block text-sm text-gray-600 mb-1">
-                Usage per run (µL)
+                {t("modals.addReagent.usagePerRun")}
               </label>
               <Input
                 name="usagePerRun"
@@ -212,11 +212,11 @@ const AddReagent: React.FC<AddReagentProps> = ({ isOpen, onClose }) => {
                 min={0}
                 value={form.usagePerRun === undefined ? "" : (form.usagePerRun as any)}
                 onChange={handleChange}
-                placeholder="e.g., 50"
+                placeholder={t("modals.addReagent.placeholders.usagePerRun")}
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Min stock</label>
+              <label className="block text-sm text-gray-600 mb-1">{t("modals.addReagent.minStock")}</label>
               <Input
                 name="minStock"
                 type="number"
@@ -226,7 +226,7 @@ const AddReagent: React.FC<AddReagentProps> = ({ isOpen, onClose }) => {
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Max stock</label>
+              <label className="block text-sm text-gray-600 mb-1">{t("modals.addReagent.maxStock")}</label>
               <Input
                 name="maxStock"
                 type="number"
@@ -236,7 +236,7 @@ const AddReagent: React.FC<AddReagentProps> = ({ isOpen, onClose }) => {
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Cost (per unit)</label>
+              <label className="block text-sm text-gray-600 mb-1">{t("modals.addReagent.cost")}</label>
               <Input
                 name="cost"
                 type="number"
@@ -244,7 +244,7 @@ const AddReagent: React.FC<AddReagentProps> = ({ isOpen, onClose }) => {
                 step="0.01"
                 value={form.cost as any}
                 onChange={handleChange}
-                placeholder="e.g., 12.50"
+                placeholder={t("modals.addReagent.placeholders.cost")}
               />
             </div>
           </div>
@@ -258,7 +258,7 @@ const AddReagent: React.FC<AddReagentProps> = ({ isOpen, onClose }) => {
             onClick={onClose}
             className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100"
           >
-            Cancel
+            {t("common.cancel")}
           </button>
           <button
             onClick={onSubmitForm}
@@ -267,7 +267,7 @@ const AddReagent: React.FC<AddReagentProps> = ({ isOpen, onClose }) => {
               valid ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-300"
             }`}
           >
-            {submitting ? "Adding..." : "Add Reagent"}
+            {submitting ? t("modals.addReagent.adding") : t("modals.addReagent.addReagent")}
           </button>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { TestOrderFormData } from "../../types/testOrder";
 import {
   addTestOrder,
@@ -20,6 +21,7 @@ import {
 } from "../../utils/helpers";
 
 const NewTestOrderPage: React.FC = () => {
+  const { t } = useTranslation("common");
   const navigate = useNavigate();
 
   // Store found user ID from phone search
@@ -122,7 +124,7 @@ const NewTestOrderPage: React.FC = () => {
   // Handle search phone - Call API to search user by phone number
   const handleSearchPhone = async () => {
     if (!formData.phoneNumber || formData.phoneNumber.trim() === "") {
-      alert("Please enter a phone number");
+      alert(t("modals.testOrder.validation.phoneRequired"));
       return;
     }
 
@@ -139,7 +141,7 @@ const NewTestOrderPage: React.FC = () => {
           setFoundUserId(null);
           setErrors((prev) => ({
             ...prev,
-            phoneNumber: "This patient account is inactive and cannot be used",
+            phoneNumber: t("modals.testOrder.validation.patientInactive"),
           }));
           console.log("User found but status is inactive:", userData);
           return;
@@ -163,16 +165,16 @@ const NewTestOrderPage: React.FC = () => {
 
         console.log("User found and data filled:", userData);
         console.log("Saved userId:", userData.userId);
-        alert(`Patient found: ${userData.name}`);
+        alert(t("modals.testOrder.validation.patientFound", { name: userData.name }));
       } else {
         // User not found - clear saved userId
         setFoundUserId(null);
-        alert("No patient found with this phone number");
+        alert(t("modals.testOrder.validation.patientNotFound"));
         console.log("No user found with phone:", formData.phoneNumber);
       }
     } catch (error) {
       console.error("Error searching for user:", error);
-      alert("An error occurred while searching. Please try again.");
+      alert(t("modals.testOrder.validation.searchError"));
     }
   };
 
@@ -196,11 +198,11 @@ const NewTestOrderPage: React.FC = () => {
       if (result.success) {
         navigate("/admin/test-orders");
       } else {
-        alert("Failed to create test order. Please try again.");
+        alert(t("modals.testOrder.validation.saveError"));
       }
     } catch (error) {
       console.error("Error saving test order:", error);
-      alert("An error occurred while saving. Please try again.");
+      alert(t("modals.testOrder.validation.saveError"));
     }
   };
 
@@ -215,9 +217,9 @@ const NewTestOrderPage: React.FC = () => {
           {/* Header */}
           <div className="px-6 py-4 border-b border-gray-200">
             <h1 className="text-2xl font-bold text-gray-900">
-              Test Order Information
+              {t("modals.testOrder.title")}
             </h1>
-            <p className="text-gray-600 mt-1">Add the test order details</p>
+            <p className="text-gray-600 mt-1">{t("modals.testOrder.subtitle")}</p>
           </div>
 
           {/* Form Content */}
@@ -239,7 +241,7 @@ const NewTestOrderPage: React.FC = () => {
                 onClick={handleCancel}
                 className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors font-medium"
               >
-                Cancel
+                {t("common.cancel")}
               </button>
               <button
                 onClick={handleSave}
@@ -250,7 +252,7 @@ const NewTestOrderPage: React.FC = () => {
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 }`}
               >
-                Create
+                {t("modals.testOrder.create")}
               </button>
             </div>
           </div>

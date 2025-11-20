@@ -1,4 +1,5 @@
 "use client";
+import { useTranslation } from "react-i18next";
 import { Button } from "../../components/button";
 import {
   Card,
@@ -8,27 +9,19 @@ import {
   CardTitle,
 } from "../../components/card";
 
-const SCHEDULED = [
-  { id: 1, name: "Daily Test Summary", schedule: "Sent every day at 6:00 PM" },
-  {
-    id: 2,
-    name: "Weekly Inventory Report",
-    schedule: "Sent every Monday at 9:00 AM",
-  },
-  {
-    id: 3,
-    name: "Monthly Performance Report",
-    schedule: "Sent on the 1st of each month",
-  },
-];
-
 export function ScheduledReports() {
+  const { t } = useTranslation("common");
+  
+  const SCHEDULED = [
+    { id: 1, name: t("reportsPage.scheduledReports.dailyTestSummary"), schedule: t("reportsPage.scheduledReports.dailyTestSummaryDesc") },
+  ];
+
   return (
     <Card className="mt-6">
       <CardHeader>
-        <CardTitle>Scheduled Reports</CardTitle>
+        <CardTitle>{t("reportsPage.scheduledReports.title")}</CardTitle>
         <CardDescription>
-          Automatically generated reports sent via email
+          {t("reportsPage.scheduledReports.subtitle")}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -45,7 +38,7 @@ export function ScheduledReports() {
                 </p>
               </div>
               <Button variant="outline" size="sm">
-                Configure
+                {t("reportsPage.scheduledReports.configure")}
               </Button>
             </div>
           ))}

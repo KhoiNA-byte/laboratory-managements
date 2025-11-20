@@ -1,6 +1,7 @@
 // src/pages/InstrumentsPage.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { Instrument } from '../../store/types';
@@ -11,6 +12,7 @@ import SyncInstrumentsPopup from './SyncInstrumentsPopup';
 
 
 const InstrumentsPage: React.FC = () => {
+  const { t } = useTranslation("common");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   
@@ -61,7 +63,7 @@ const InstrumentsPage: React.FC = () => {
   };
 
   const handleDeleteInstrument = async (instrument: Instrument) => {
-    if (window.confirm(`Are you sure you want to delete "${instrument.name}"?`)) {
+    if (window.confirm(t("instrumentsPage.table.confirmDelete", { name: instrument.name }))) {
       try {
         setDeleteLoading(instrument.id);
         
@@ -125,7 +127,7 @@ const InstrumentsPage: React.FC = () => {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-        <p className="text-gray-500 mt-4">Loading instruments...</p>
+        <p className="text-gray-500 mt-4">{t("common.loading")}</p>
       </div>
     </div>
   );
@@ -146,30 +148,30 @@ const InstrumentsPage: React.FC = () => {
 
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Instruments</h1>
-        <p className="text-gray-600">Manage laboratory instruments and equipment</p>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">{t("instrumentsPage.title")}</h1>
+        <p className="text-gray-600">{t("instrumentsPage.subtitle")}</p>
       </div>
 
       {/* Status Cards */}
       <div className="grid grid-cols-4 gap-4 mb-8">
         <div className="bg-white rounded-lg p-4 shadow-sm border">
-          <div className="text-sm text-gray-500 mb-1">Total Instruments</div>
+          <div className="text-sm text-gray-500 mb-1">{t("instrumentsPage.summaryCards.totalInstruments")}</div>
           <div className="text-xl font-semibold text-gray-900">{instruments.length}</div>
         </div>
         <div className="bg-white rounded-lg p-4 shadow-sm border">
-          <div className="text-sm text-gray-500 mb-1">Active</div>
+          <div className="text-sm text-gray-500 mb-1">{t("instrumentsPage.summaryCards.active")}</div>
           <div className="text-xl font-semibold text-gray-900">
             {instruments.filter(i => i.status === 'Active').length}
           </div>
         </div>
         <div className="bg-white rounded-lg p-4 shadow-sm border">
-          <div className="text-sm text-gray-500 mb-1">Maintenance</div>
+          <div className="text-sm text-gray-500 mb-1">{t("instrumentsPage.summaryCards.maintenance")}</div>
           <div className="text-xl font-semibold text-gray-900">
             {instruments.filter(i => i.status === 'Maintenance').length}
           </div>
         </div>
         <div className="bg-white rounded-lg p-4 shadow-sm border">
-          <div className="text-sm text-gray-500 mb-1">Calibration Due</div>
+          <div className="text-sm text-gray-500 mb-1">{t("instrumentsPage.summaryCards.calibrationDue")}</div>
           <div className="text-xl font-semibold text-gray-900">
             {calibrationDueCount}
           </div>
@@ -181,8 +183,8 @@ const InstrumentsPage: React.FC = () => {
         <div className="p-6 border-b">
           <div className="flex justify-between items-center">
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">All Instruments</h2>
-              <p className="text-gray-600 text-sm">View and manage laboratory equipment</p>
+              <h2 className="text-xl font-semibold text-gray-900">{t("instrumentsPage.allInstruments.title")}</h2>
+              <p className="text-gray-600 text-sm">{t("instrumentsPage.allInstruments.subtitle")}</p>
             </div>
             <div className="flex items-center space-x-3">
               {/* Sync-up Button */}
@@ -194,7 +196,7 @@ const InstrumentsPage: React.FC = () => {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
-                <span>{loading ? 'Refreshing...' : 'Sync-up'}</span>
+                <span>{loading ? t("instrumentsPage.filters.refreshing") : t("instrumentsPage.filters.syncInstruments")}</span>
               </button>
 
               {/* Add Instrument Button */}
@@ -205,7 +207,7 @@ const InstrumentsPage: React.FC = () => {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
-                <span>Add Instrument</span>
+                <span>{t("instrumentsPage.filters.addInstrument")}</span>
               </button>
 
               {/* Search Input */}
@@ -215,7 +217,7 @@ const InstrumentsPage: React.FC = () => {
                 </svg>
                 <input
                   type="text"
-                  placeholder="Search instruments..."
+                  placeholder={t("instrumentsPage.filters.searchPlaceholder")}
                   className="border rounded-lg pl-10 pr-4 py-2 w-64 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -229,7 +231,7 @@ const InstrumentsPage: React.FC = () => {
         <div className="p-6">
           {filteredInstruments.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
-              {searchTerm ? 'No instruments found' : 'No instruments available'}
+              {searchTerm ? t("instrumentsPage.table.noInstrumentsFound") : t("instrumentsPage.table.noInstrumentsAvailable")}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -266,13 +268,13 @@ const InstrumentsPage: React.FC = () => {
                             onClick={() => handleViewDetails(instrument)}
                             className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                           >
-                            View Details
+                            {t("instrumentsPage.table.viewDetails")}
                           </button>
                           <button 
                             onClick={() => handleEditInstrument(instrument)}
                             className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                           >
-                            Edit Instrument
+                            {t("instrumentsPage.table.editInstrument")}
                           </button>
                           <button 
                             onClick={() => handleDeleteInstrument(instrument)}
@@ -282,10 +284,10 @@ const InstrumentsPage: React.FC = () => {
                             {deleteLoading === instrument.id ? (
                               <>
                                 <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-red-600"></div>
-                                <span>Deleting...</span>
+                                <span>{t("instrumentsPage.table.deleting")}</span>
                               </>
                             ) : (
-                              <span>Delete Instrument</span>
+                              <span>{t("instrumentsPage.table.deleteInstrument")}</span>
                             )}
                           </button>
                         </div>
@@ -296,25 +298,25 @@ const InstrumentsPage: React.FC = () => {
                   {/* Instrument Details */}
                   <div className="mb-3">
                     <div className="flex justify-between items-center py-1">
-                      <span className="text-gray-500 text-sm">Status</span>
+                      <span className="text-gray-500 text-sm">{t("instrumentsPage.table.status")}</span>
                       <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${getStatusColor(instrument.status)}`}>
                         {instrument.status}
                       </span>
                     </div>
                     <div className="flex justify-between items-center py-1">
-                      <span className="text-gray-500 text-sm">Serial Number</span>
+                      <span className="text-gray-500 text-sm">{t("instrumentsPage.table.serialNumber")}</span>
                       <span className="text-gray-900 text-sm font-medium text-right">{instrument.serialNumber}</span>
                     </div>
                     <div className="flex justify-between items-center py-1">
-                      <span className="text-gray-500 text-sm">Location</span>
+                      <span className="text-gray-500 text-sm">{t("instrumentsPage.table.location")}</span>
                       <span className="text-gray-900 text-sm font-medium text-right">{instrument.location}</span>
                     </div>
                     <div className="flex justify-between items-center py-1">
-                      <span className="text-gray-500 text-sm">Manufacturer</span>
+                      <span className="text-gray-500 text-sm">{t("instrumentsPage.table.manufacturer")}</span>
                       <span className="text-gray-900 text-sm font-medium text-right">{instrument.manufacturer}</span>
                     </div>
                     <div className="flex justify-between items-center py-1">
-                      <span className="text-gray-500 text-sm">Next Calibration</span>
+                      <span className="text-gray-500 text-sm">{t("instrumentsPage.table.nextCalibration")}</span>
                       <span className="text-gray-900 text-sm font-medium text-right">{instrument.nextCalibration}</span>
                     </div>
                   </div>
@@ -326,7 +328,7 @@ const InstrumentsPage: React.FC = () => {
                         <svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <span className="text-red-800 text-sm font-medium">Calibration due soon</span>
+                        <span className="text-red-800 text-sm font-medium">{t("instrumentsPage.table.calibrationDueSoon")}</span>
                       </div>
                     </div>
                   )}

@@ -1,5 +1,6 @@
 // src/components/InstrumentDetailPopup.tsx
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Instrument } from '../../store/types'
 
 interface InstrumentDetailsPopupProps {
@@ -29,6 +30,7 @@ const InstrumentDetailsPopup: React.FC<InstrumentDetailsPopupProps> = ({
   onClose,
   onEdit 
 }) => {
+  const { t, i18n } = useTranslation();
   const [testTypes, setTestTypes] = useState<TestType[]>([]);
   const [reagents, setReagents] = useState<Reagent[]>([]);
   const [loading, setLoading] = useState({
@@ -98,6 +100,19 @@ const InstrumentDetailsPopup: React.FC<InstrumentDetailsPopupProps> = ({
     }
   };
 
+  const translateStatus = (status: string) => {
+    switch (status) {
+      case 'Active':
+        return t('common.active');
+      case 'Maintenance':
+        return t('modals.instrumentDetails.maintenance');
+      case 'Inactive':
+        return t('common.inactive');
+      default:
+        return status;
+    }
+  };
+
   // Tính số ngày còn lại đến lần hiệu chuẩn tiếp theo
   const getDaysUntilCalibration = () => {
     const calibrationDate = new Date(instrument.nextCalibration);
@@ -111,13 +126,14 @@ const InstrumentDetailsPopup: React.FC<InstrumentDetailsPopupProps> = ({
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', {
+      const locale = i18n.language === 'vi' ? 'vi-VN' : 'en-US';
+      return date.toLocaleDateString(locale, {
         year: 'numeric',
         month: 'short',
         day: 'numeric'
       });
     } catch (error) {
-      return 'Invalid Date';
+      return t('modals.instrumentDetails.invalidDate');
     }
   };
 
@@ -146,8 +162,8 @@ const InstrumentDetailsPopup: React.FC<InstrumentDetailsPopupProps> = ({
         {/* Header - Sticky */}
         <div className="sticky top-0 bg-white z-10 flex justify-between items-start p-6 border-b rounded-t-lg">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Instrument Details</h2>
-            <p className="text-gray-600 text-sm mt-1">Complete information about {instrument.name}</p>
+            <h2 className="text-xl font-semibold text-gray-900">{t('modals.instrumentDetails.title')}</h2>
+            <p className="text-gray-600 text-sm mt-1">{t('modals.instrumentDetails.subtitle', { name: instrument.name })}</p>
           </div>
           <button
             onClick={onClose}
@@ -163,32 +179,32 @@ const InstrumentDetailsPopup: React.FC<InstrumentDetailsPopupProps> = ({
         <div className="p-6 space-y-6">
           {/* Section 1: Basic Information */}
           <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('modals.instrumentDetails.basicInformation')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="text-sm text-gray-500 block mb-1">Instrument Name</label>
+                <label className="text-sm text-gray-500 block mb-1">{t('modals.instrumentDetails.instrumentName')}</label>
                 <p className="text-gray-900 font-medium">{instrument.name}</p>
               </div>
               <div>
-                <label className="text-sm text-gray-500 block mb-1">Model</label>
+                <label className="text-sm text-gray-500 block mb-1">{t('modals.instrumentDetails.model')}</label>
                 <p className="text-gray-900 font-medium">{instrument.model}</p>
               </div>
               <div>
-                <label className="text-sm text-gray-500 block mb-1">Serial Number</label>
+                <label className="text-sm text-gray-500 block mb-1">{t('modals.instrumentDetails.serialNumber')}</label>
                 <p className="text-gray-900 font-medium">{instrument.serialNumber}</p>
               </div>
               <div>
-                <label className="text-sm text-gray-500 block mb-1">Status</label>
+                <label className="text-sm text-gray-500 block mb-1">{t('modals.instrumentDetails.status')}</label>
                 <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(instrument.status)}`}>
-                  {instrument.status}
+                  {translateStatus(instrument.status)}
                 </span>
               </div>
               <div>
-                <label className="text-sm text-gray-500 block mb-1">Location</label>
+                <label className="text-sm text-gray-500 block mb-1">{t('modals.instrumentDetails.location')}</label>
                 <p className="text-gray-900 font-medium">{instrument.location}</p>
               </div>
               <div>
-                <label className="text-sm text-gray-500 block mb-1">Manufacturer</label>
+                <label className="text-sm text-gray-500 block mb-1">{t('modals.instrumentDetails.manufacturer')}</label>
                 <p className="text-gray-900 font-medium">{instrument.manufacturer}</p>
               </div>
             </div>
@@ -196,23 +212,23 @@ const InstrumentDetailsPopup: React.FC<InstrumentDetailsPopupProps> = ({
 
           {/* Section 2: Calibration Information */}
           <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Calibration Information</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('modals.instrumentDetails.calibrationInformation')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="text-sm text-gray-500 block mb-1">Next Calibration</label>
+                <label className="text-sm text-gray-500 block mb-1">{t('modals.instrumentDetails.nextCalibration')}</label>
                 <p className="text-gray-900 font-medium">{formatDate(instrument.nextCalibration)}</p>
               </div>
               <div>
-                <label className="text-sm text-gray-500 block mb-1">Calibration Status</label>
+                <label className="text-sm text-gray-500 block mb-1">{t('modals.instrumentDetails.calibrationStatus')}</label>
                 <div className="flex items-center space-x-2">
                   <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
                     instrument.calibrationDue ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
                   }`}>
-                    {instrument.calibrationDue ? 'Due Soon' : 'On Track'}
+                    {instrument.calibrationDue ? t('modals.instrumentDetails.dueSoon') : t('modals.instrumentDetails.onTrack')}
                   </span>
                   {isCalibrationDueSoon && (
                     <span className="text-sm text-red-600">
-                      ({daysUntilCalibration} days remaining)
+                      ({t('modals.instrumentDetails.daysRemaining', { days: daysUntilCalibration })})
                     </span>
                   )}
                 </div>
@@ -222,35 +238,35 @@ const InstrumentDetailsPopup: React.FC<InstrumentDetailsPopupProps> = ({
 
           {/* Section 3: Testing Configuration */}
           <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Testing Configuration</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('modals.instrumentDetails.testingConfiguration')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Supported Test Type */}
               <div>
-                <label className="text-sm text-gray-500 block mb-2">Supported Test Type</label>
+                <label className="text-sm text-gray-500 block mb-2">{t('modals.instrumentDetails.supportedTestType')}</label>
                 {loading.testTypes ? (
-                  <p className="text-gray-500 text-sm">Loading test type...</p>
+                  <p className="text-gray-500 text-sm">{t('modals.instrumentDetails.loadingTestType')}</p>
                 ) : testTypeInfo ? (
                   <div className="bg-white border border-gray-200 rounded-lg p-3">
                     <div className="flex justify-between items-start">
                       <span className="font-medium text-gray-900">{testTypeInfo.id}</span>
                       <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-                        Test Type
+                        {t('modals.instrumentDetails.testType')}
                       </span>
                     </div>
                     <p className="text-sm text-gray-600 mt-1">{testTypeInfo.name}</p>
                   </div>
                 ) : (
-                  <p className="text-gray-500 text-sm">No test type selected</p>
+                  <p className="text-gray-500 text-sm">{t('modals.instrumentDetails.noTestTypeSelected')}</p>
                 )}
               </div>
 
               {/* Supported Reagents */}
               <div>
                 <label className="text-sm text-gray-500 block mb-2">
-                  Supported Reagents ({selectedReagents.length})
+                  {t('modals.instrumentDetails.supportedReagents', { count: selectedReagents.length })}
                 </label>
                 {loading.reagents ? (
-                  <p className="text-gray-500 text-sm">Loading reagents...</p>
+                  <p className="text-gray-500 text-sm">{t('modals.instrumentDetails.loadingReagents')}</p>
                 ) : selectedReagents.length > 0 ? (
                   <div className="max-h-48 overflow-y-auto space-y-2">
                     {selectedReagents.map((reagent) => (
@@ -264,14 +280,14 @@ const InstrumentDetailsPopup: React.FC<InstrumentDetailsPopupProps> = ({
                           </span>
                         </div>
                         <div className="text-xs text-gray-600 mt-1 space-y-1">
-                          <div>Lot: {reagent.lot_number} • Mfg: {reagent.manufacturer}</div>
-                          <div>Expires: {formatDate(reagent.expiry_date)} • Storage: {reagent.location}</div>
+                          <div>{t('modals.instrumentDetails.lot')}: {reagent.lot_number} • {t('modals.instrumentDetails.mfg')}: {reagent.manufacturer}</div>
+                          <div>{t('modals.instrumentDetails.expires')}: {formatDate(reagent.expiry_date)} • {t('modals.instrumentDetails.storage')}: {reagent.location}</div>
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-500 text-sm">No reagents selected</p>
+                  <p className="text-gray-500 text-sm">{t('modals.instrumentDetails.noReagentsSelected')}</p>
                 )}
               </div>
             </div>
@@ -294,16 +310,16 @@ const InstrumentDetailsPopup: React.FC<InstrumentDetailsPopupProps> = ({
                   </div>
                   <div>
                     <p className="font-medium text-red-800">
-                      {instrument.calibrationDue ? 'Calibration Due!' : 'Calibration due soon'}
+                      {instrument.calibrationDue ? t('modals.instrumentDetails.calibrationDue') : t('modals.instrumentDetails.calibrationDueSoon')}
                     </p>
                     <p className="text-sm text-red-600">
-                      Next calibration: {formatDate(instrument.nextCalibration)}
+                      {t('modals.instrumentDetails.nextCalibrationLabel')} {formatDate(instrument.nextCalibration)}
                     </p>
                   </div>
                 </div>
                 <div className="text-right">
                   <p className="font-medium text-red-800">
-                    {daysUntilCalibration} days remaining
+                    {t('modals.instrumentDetails.daysRemaining', { days: daysUntilCalibration })}
                   </p>
                 </div>
               </div>
@@ -312,7 +328,7 @@ const InstrumentDetailsPopup: React.FC<InstrumentDetailsPopupProps> = ({
 
           {/* Instrument ID */}
           <div className="pt-6 border-t border-gray-200">
-            <label className="text-sm text-gray-500 block mb-1">Instrument ID</label>
+            <label className="text-sm text-gray-500 block mb-1">{t('modals.instrumentDetails.instrumentId')}</label>
             <p className="text-gray-900 font-mono text-sm">{instrument.id}</p>
           </div>
         </div>
@@ -323,7 +339,7 @@ const InstrumentDetailsPopup: React.FC<InstrumentDetailsPopupProps> = ({
             onClick={onClose}
             className="px-4 py-2 text-sm text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
           >
-            Close
+            {t('common.close')}
           </button>
           <button
             onClick={() => {
@@ -332,7 +348,7 @@ const InstrumentDetailsPopup: React.FC<InstrumentDetailsPopupProps> = ({
             }}
             className="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            Edit Instrument
+            {t('instrumentsPage.table.editInstrument')}
           </button>
         </div>
       </div>

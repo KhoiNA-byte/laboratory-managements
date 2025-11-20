@@ -1,34 +1,37 @@
 "use client";
+import { useTranslation } from "react-i18next";
 import { Activity } from "lucide-react";
 
-// Mock activity data
-const mockActivities = [
-  {
-    id: "1",
-    test: "Complete Blood Count (CBC)",
-    date: "2025-01-10",
-    status: "Completed",
-    statusColor: "bg-blue-100 text-blue-700",
-    flag: "Normal",
-  },
-  {
-    id: "2",
-    test: "Lipid Panel",
-    date: "2025-01-08",
-    status: "Completed",
-    statusColor: "bg-blue-100 text-blue-700",
-    flag: "Normal",
-  },
-  {
-    id: "3",
-    test: "Thyroid Function Test",
-    date: "2025-01-05",
-    status: "In Progress",
-    statusColor: "bg-amber-100 text-amber-700",
-  },
-];
-
 export default function RecentActivity() {
+  const { t } = useTranslation("common");
+  
+  // Mock activity data
+  const mockActivities = [
+    {
+      id: "1",
+      test: "Complete Blood Count (CBC)",
+      date: "2025-01-10",
+      status: "Completed",
+      statusColor: "bg-blue-100 text-blue-700",
+      flag: "Normal",
+    },
+    {
+      id: "2",
+      test: "Lipid Panel",
+      date: "2025-01-08",
+      status: "Completed",
+      statusColor: "bg-blue-100 text-blue-700",
+      flag: "Normal",
+    },
+    {
+      id: "3",
+      test: "Thyroid Function Test",
+      date: "2025-01-05",
+      status: "In Progress",
+      statusColor: "bg-amber-100 text-amber-700",
+    },
+  ];
+
   // const dispatch = useDispatch()
   // const { activities, loading } = useSelector(state => state.activities)
   // useEffect(() => {
@@ -38,10 +41,10 @@ export default function RecentActivity() {
   return (
     <div className="bg-white rounded-lg border border-border p-6 lg:col-span-2">
       <h3 className="text-lg font-semibold text-foreground mb-2">
-        Recent Activity
+        {t("profilePage.recentActivity.title")}
       </h3>
       <p className="text-sm text-muted-foreground mb-4">
-        Latest test orders and results
+        {t("profilePage.recentActivity.subtitle")}
       </p>
 
       <div className="space-y-3">
@@ -61,11 +64,11 @@ export default function RecentActivity() {
               <span
                 className={`px-3 py-1 text-xs font-medium rounded ${activity.statusColor}`}
               >
-                {activity.status}
+                {activity.status === "Completed" ? t("profilePage.recentActivity.completed") : activity.status === "In Progress" ? t("profilePage.recentActivity.inProgress") : activity.status}
               </span>
               {activity.flag && (
                 <span className="text-xs text-muted-foreground">
-                  {activity.flag}
+                  {activity.flag === "Normal" ? t("profilePage.recentActivity.normal") : activity.flag}
                 </span>
               )}
             </div>

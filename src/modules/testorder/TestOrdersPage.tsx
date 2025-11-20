@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import {
   getListTestOrder,
@@ -368,9 +369,10 @@ const FiltersContainer = styled.div`
 `;
 
 export const TestOrdersPage = () => {
+  const { t } = useTranslation("common");
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab, setActiveTab] = useState("All Orders");
+  const [activeTab, setActiveTab] = useState("all");
   const [showActionsDropdown, setShowActionsDropdown] = useState<string | null>(
     null
   );
@@ -416,7 +418,7 @@ export const TestOrdersPage = () => {
   const handleDeleteOrder = async (orderNumber: string) => {
     // Confirm deletion
     const confirmDelete = window.confirm(
-      `Are you sure you want to delete test order ${orderNumber}? This action cannot be undone.`
+      t("testOrdersPage.table.confirmDelete", { orderNumber })
     );
 
     if (!confirmDelete) {
@@ -453,7 +455,7 @@ export const TestOrdersPage = () => {
 
   const filteredOrders = testOrders.filter((order) => {
     // Filter by active tab
-    const matchesTab = activeTab === "All Orders" || order.status === activeTab;
+    const matchesTab = activeTab === "all" || order.status === activeTab;
 
     // Filter by search term
     const matchesSearch =
@@ -484,9 +486,9 @@ export const TestOrdersPage = () => {
         <Card>
           <CardContent>
             <CardInfo>
-              <CardTitle>Pending</CardTitle>
+              <CardTitle>{t("testOrdersPage.summaryCards.pending")}</CardTitle>
               <CardNumber>{statusCounts.pending}</CardNumber>
-              <CardSubtitle>Awaiting processing</CardSubtitle>
+              <CardSubtitle>{t("testOrdersPage.summaryCards.pendingSubtitle")}</CardSubtitle>
             </CardInfo>
             <CardIcon>
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -505,9 +507,9 @@ export const TestOrdersPage = () => {
         <Card>
           <CardContent>
             <CardInfo>
-              <CardTitle>In Progress</CardTitle>
+              <CardTitle>{t("testOrdersPage.summaryCards.inProgress")}</CardTitle>
               <CardNumber>{statusCounts.inProgress}</CardNumber>
-              <CardSubtitle>Being processed</CardSubtitle>
+              <CardSubtitle>{t("testOrdersPage.summaryCards.inProgressSubtitle")}</CardSubtitle>
             </CardInfo>
             <CardIcon>
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -526,9 +528,9 @@ export const TestOrdersPage = () => {
         <Card>
           <CardContent>
             <CardInfo>
-              <CardTitle>Completed</CardTitle>
+              <CardTitle>{t("testOrdersPage.summaryCards.completed")}</CardTitle>
               <CardNumber>{statusCounts.completed}</CardNumber>
-              <CardSubtitle>Ready for review</CardSubtitle>
+              <CardSubtitle>{t("testOrdersPage.summaryCards.completedSubtitle")}</CardSubtitle>
             </CardInfo>
             <CardIcon>
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -547,9 +549,9 @@ export const TestOrdersPage = () => {
         <Card>
           <CardContent>
             <CardInfo>
-              <CardTitle>Reviewed</CardTitle>
+              <CardTitle>{t("testOrdersPage.summaryCards.reviewed")}</CardTitle>
               <CardNumber>{statusCounts.reviewed}</CardNumber>
-              <CardSubtitle>Finalized</CardSubtitle>
+              <CardSubtitle>{t("testOrdersPage.summaryCards.reviewedSubtitle")}</CardSubtitle>
             </CardInfo>
             <CardIcon>
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -570,9 +572,9 @@ export const TestOrdersPage = () => {
         <TableHeader>
           <HeaderTop>
             <HeaderInfo>
-              <HeaderTitle>All Test Orders</HeaderTitle>
+              <HeaderTitle>{t("testOrdersPage.allOrders.title")}</HeaderTitle>
               <HeaderSubtitle>
-                View and manage laboratory test orders.
+                {t("testOrdersPage.allOrders.subtitle")}
               </HeaderSubtitle>
             </HeaderInfo>
             <NewOrderButton onClick={handleNewOrder}>
@@ -584,7 +586,7 @@ export const TestOrdersPage = () => {
                   d="M12 4v16m8-8H4"
                 />
               </svg>
-              New Order
+              {t("testOrdersPage.filters.newOrder")}
             </NewOrderButton>
           </HeaderTop>
 
@@ -592,18 +594,18 @@ export const TestOrdersPage = () => {
             {/* Tabs */}
             <TabsContainer>
               {[
-                "All Orders",
-                "Pending",
-                "In Progress",
-                "Completed",
-                "Reviewed",
+                { key: "all", label: t("testOrdersPage.filters.allOrders") },
+                { key: "Pending", label: t("testOrdersPage.filters.pending") },
+                { key: "In Progress", label: t("testOrdersPage.filters.inProgress") },
+                { key: "Completed", label: t("testOrdersPage.filters.completed") },
+                { key: "Reviewed", label: t("testOrdersPage.filters.reviewed") },
               ].map((tab) => (
                 <Tab
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  $active={activeTab === tab}
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  $active={activeTab === tab.key}
                 >
-                  {tab}
+                  {tab.label}
                 </Tab>
               ))}
             </TabsContainer>
@@ -613,7 +615,7 @@ export const TestOrdersPage = () => {
               <SearchWrapper>
                 <SearchInput
                   type="text"
-                  placeholder="Search orders..."
+                  placeholder={t("testOrdersPage.filters.searchPlaceholder")}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -637,13 +639,13 @@ export const TestOrdersPage = () => {
           <Table>
             <TableHead>
               <TableHeadRow>
-                <TableHeadCell>Order Number</TableHeadCell>
-                <TableHeadCell>Patient</TableHeadCell>
-                <TableHeadCell>Test Type</TableHeadCell>
-                <TableHeadCell>Priority</TableHeadCell>
-                <TableHeadCell>Status</TableHeadCell>
-                <TableHeadCell>Ordered</TableHeadCell>
-                <TableHeadCell>Actions</TableHeadCell>
+                <TableHeadCell>{t("testOrdersPage.table.orderNumber")}</TableHeadCell>
+                <TableHeadCell>{t("testOrdersPage.table.patient")}</TableHeadCell>
+                <TableHeadCell>{t("testOrdersPage.table.testType")}</TableHeadCell>
+                <TableHeadCell>{t("testOrdersPage.table.priority")}</TableHeadCell>
+                <TableHeadCell>{t("testOrdersPage.table.status")}</TableHeadCell>
+                <TableHeadCell>{t("testOrdersPage.table.ordered")}</TableHeadCell>
+                <TableHeadCell>{t("testOrdersPage.table.actions")}</TableHeadCell>
               </TableHeadRow>
             </TableHead>
             <TableBody>
@@ -653,7 +655,7 @@ export const TestOrdersPage = () => {
                     colSpan={7}
                     style={{ textAlign: "center", padding: "2rem" }}
                   >
-                    Loading test orders...
+                    {t("testOrdersPage.table.loading")}
                   </TableCell>
                 </TableRow>
               ) : error ? (
@@ -666,7 +668,7 @@ export const TestOrdersPage = () => {
                       color: "#dc2626",
                     }}
                   >
-                    Error: {error}
+                    {t("testOrdersPage.table.error")}: {error}
                   </TableCell>
                 </TableRow>
               ) : filteredOrders.length === 0 ? (
@@ -675,7 +677,7 @@ export const TestOrdersPage = () => {
                     colSpan={7}
                     style={{ textAlign: "center", padding: "2rem" }}
                   >
-                    No test orders found
+                    {t("testOrdersPage.table.noOrdersFound")}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -745,7 +747,7 @@ export const TestOrdersPage = () => {
                                     d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                                   />
                                 </svg>
-                                View Details
+                                {t("testOrdersPage.table.viewDetails")}
                               </DropdownItem>
                               <DropdownItem
                                 onClick={() =>
@@ -764,7 +766,7 @@ export const TestOrdersPage = () => {
                                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
                                   />
                                 </svg>
-                                Update Test Order
+                                {t("testOrdersPage.table.updateTestOrder")}
                               </DropdownItem>
                               <DropdownItem
                                 $danger
@@ -784,7 +786,7 @@ export const TestOrdersPage = () => {
                                     d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                                   />
                                 </svg>
-                                Delete Test Order
+                                {t("testOrdersPage.table.deleteTestOrder")}
                               </DropdownItem>
                             </DropdownContent>
                           </DropdownMenu>

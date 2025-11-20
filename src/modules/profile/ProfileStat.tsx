@@ -1,37 +1,40 @@
 "use client";
+import { useTranslation } from "react-i18next";
 import { FileText, Clock, Calendar } from "lucide-react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-// Mock stats data
-const mockStats = [
-  {
-    id: "1",
-    label: "Total Tests",
-    value: "24",
-    subtext: "All time",
-    icon: FileText,
-    color: "text-blue-500",
-  },
-  {
-    id: "2",
-    label: "Pending",
-    value: "1",
-    subtext: "In progress",
-    icon: Clock,
-    color: "text-amber-500",
-  },
-  {
-    id: "3",
-    label: "Last Visit",
-    value: "3d",
-    subtext: "ago",
-    icon: Calendar,
-    color: "text-green-500",
-  },
-];
-
 export default function ProfileStats() {
+  const { t } = useTranslation("common");
+  
+  // Mock stats data
+  const mockStats = [
+    {
+      id: "1",
+      label: t("profilePage.stats.totalTests"),
+      value: "24",
+      subtext: t("profilePage.stats.totalTestsSubtext"),
+      icon: FileText,
+      color: "text-blue-500",
+    },
+    {
+      id: "2",
+      label: t("profilePage.stats.pending"),
+      value: "1",
+      subtext: t("profilePage.stats.pendingSubtext"),
+      icon: Clock,
+      color: "text-amber-500",
+    },
+    {
+      id: "3",
+      label: t("profilePage.stats.lastVisit"),
+      value: "3d",
+      subtext: t("profilePage.stats.lastVisitSubtext"),
+      icon: Calendar,
+      color: "text-green-500",
+    },
+  ];
+
   // const dispatch = useDispatch()
   // const { stats, loading } = useSelector(state => state.stats)
   // useEffect(() => {

@@ -27,7 +27,7 @@ export const RolesPage = () => {
 
   const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState(t("rolesPage.filters.allStatus"));
+  const [statusFilter, setStatusFilter] = useState("all");
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -61,11 +61,11 @@ export const RolesPage = () => {
         role.roleCode.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesStatus =
-        statusFilter === t("rolesPage.filters.allStatus") || role.status === statusFilter;
+        statusFilter === "all" || role.status === statusFilter;
 
       return matchesSearch && matchesStatus;
     });
-  }, [roles, searchTerm, statusFilter, t]);
+  }, [roles, searchTerm, statusFilter]);
 
   // Function to display role names properly
   const getDisplayRoleName = (roleCode: string) => {
@@ -500,7 +500,7 @@ export const RolesPage = () => {
         {/* Results count */}
         <div className="px-4 py-4 border-t border-gray-200 bg-gray-50 sm:px-6">
           <div className="text-sm text-gray-600">
-            {t("common.showing", { count: filteredRoles.length, total: roles.length })}
+            {t("rolesPage.table.showing", { count: filteredRoles.length, total: roles.length })}
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { PERMISSIONS } from "../../constants/permissions";
 
 interface CreateRoleModalProps {
@@ -38,6 +39,7 @@ const CreateRoleModal: React.FC<CreateRoleModalProps> = ({
   error,
   successMessage,
 }) => {
+  const { t } = useTranslation("common");
   const [validationErrors, setValidationErrors] = useState<{
     [key: string]: string;
   }>({});
@@ -65,7 +67,7 @@ const CreateRoleModal: React.FC<CreateRoleModalProps> = ({
     switch (name) {
       case "roleName":
         if (!value || value.trim().length < 2) {
-          errors.roleName = "Role name must be at least 2 characters long";
+          errors.roleName = t("modals.createRole.validation.roleNameRequired");
         } else {
           delete errors.roleName;
         }
@@ -73,10 +75,9 @@ const CreateRoleModal: React.FC<CreateRoleModalProps> = ({
 
       case "roleCode":
         if (!value || value.trim().length < 2) {
-          errors.roleCode = "Role code must be at least 2 characters long";
+          errors.roleCode = t("modals.createRole.validation.roleCodeRequired");
         } else if (!/^[a-z_]+$/.test(value)) {
-          errors.roleCode =
-            "Role code can only contain lowercase letters and underscores";
+          errors.roleCode = t("modals.createRole.validation.roleCodeInvalid");
         } else {
           delete errors.roleCode;
         }
@@ -84,7 +85,7 @@ const CreateRoleModal: React.FC<CreateRoleModalProps> = ({
 
       case "description":
         if (!value || value.trim().length < 5) {
-          errors.description = "Description must be at least 5 characters long";
+          errors.description = t("modals.createRole.validation.descriptionRequired");
         } else {
           delete errors.description;
         }
@@ -215,10 +216,10 @@ const CreateRoleModal: React.FC<CreateRoleModalProps> = ({
         </button>
 
         <h2 className="text-xl font-semibold text-gray-900 mb-4">
-          Create New Role
+          {t("modals.createRole.title")}
         </h2>
         <p className="text-sm text-gray-500 mb-6">
-          Define a new role with its permissions and access levels
+          {t("modals.createRole.subtitle")}
         </p>
 
         <form onSubmit={handleFormSubmit} className="space-y-6">
@@ -228,7 +229,7 @@ const CreateRoleModal: React.FC<CreateRoleModalProps> = ({
               {/* Role Name */}
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Role Name *
+                  {t("modals.createRole.roleName")} *
                 </label>
                 <input
                   type="text"
@@ -240,7 +241,7 @@ const CreateRoleModal: React.FC<CreateRoleModalProps> = ({
                       ? "border-red-300"
                       : "border-gray-300"
                   }`}
-                  placeholder="e.g., Administrator, Lab Manager"
+                  placeholder={t("modals.createRole.roleNamePlaceholder")}
                   required
                 />
                 {validationErrors.roleName && (
@@ -253,7 +254,7 @@ const CreateRoleModal: React.FC<CreateRoleModalProps> = ({
               {/* Role Code */}
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Role Code *
+                  {t("modals.createRole.roleCode")} *
                 </label>
                 <input
                   type="text"
@@ -265,7 +266,7 @@ const CreateRoleModal: React.FC<CreateRoleModalProps> = ({
                       ? "border-red-300"
                       : "border-gray-300"
                   }`}
-                  placeholder="e.g., admin, lab_manager"
+                  placeholder={t("modals.createRole.roleCodePlaceholder")}
                   required
                 />
                 {validationErrors.roleCode && (
@@ -274,14 +275,14 @@ const CreateRoleModal: React.FC<CreateRoleModalProps> = ({
                   </p>
                 )}
                 <p className="mt-1 text-xs text-gray-500">
-                  Use lowercase letters and underscores only
+                  {t("modals.createRole.roleCodeHint")}
                 </p>
               </div>
 
               {/* Description */}
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Description *
+                  {t("modals.createRole.description")} *
                 </label>
                 <textarea
                   name="description"
@@ -293,7 +294,7 @@ const CreateRoleModal: React.FC<CreateRoleModalProps> = ({
                       ? "border-red-300"
                       : "border-gray-300"
                   }`}
-                  placeholder="Describe the role's responsibilities and permissions..."
+                  placeholder={t("modals.createRole.descriptionPlaceholder")}
                   required
                 />
                 {validationErrors.description && (
@@ -306,7 +307,7 @@ const CreateRoleModal: React.FC<CreateRoleModalProps> = ({
               {/* Status */}
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Status
+                  {t("modals.createRole.status")}
                 </label>
                 <select
                   name="status"
@@ -314,8 +315,8 @@ const CreateRoleModal: React.FC<CreateRoleModalProps> = ({
                   onChange={handleInputChange}
                   className="mt-1 w-full border border-gray-300 bg-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
+                  <option value="active">{t("common.active")}</option>
+                  <option value="inactive">{t("common.inactive")}</option>
                 </select>
               </div>
             </div>
@@ -323,7 +324,7 @@ const CreateRoleModal: React.FC<CreateRoleModalProps> = ({
             {/* Right Column - Permissions */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
-                Permissions
+                {t("modals.createRole.permissions")}
               </label>
               <div className="border border-gray-200 rounded-lg max-h-96 overflow-y-auto">
                 {Object.entries(groupedPermissions).map(
@@ -369,14 +370,14 @@ const CreateRoleModal: React.FC<CreateRoleModalProps> = ({
                             onClick={() => selectAllInModule(module)}
                             className="text-xs text-blue-600 hover:text-blue-800"
                           >
-                            Select All
+                            {t("modals.createRole.selectAll")}
                           </button>
                           <button
                             type="button"
                             onClick={() => deselectAllInModule(module)}
                             className="text-xs text-red-600 hover:text-red-800"
                           >
-                            Deselect All
+                            {t("modals.createRole.deselectAll")}
                           </button>
                         </div>
                       </div>
@@ -416,7 +417,7 @@ const CreateRoleModal: React.FC<CreateRoleModalProps> = ({
 
               {/* Selected Permissions Count */}
               <div className="mt-3 text-sm text-gray-600">
-                {formData.permission?.length || 0} permissions selected
+                {t("modals.createRole.permissionsSelected", { count: formData.permission?.length || 0 })}
               </div>
 
               {/* Quick Actions */}
@@ -435,7 +436,7 @@ const CreateRoleModal: React.FC<CreateRoleModalProps> = ({
                   }}
                   className="text-xs text-blue-600 hover:text-blue-800"
                 >
-                  Select All Permissions
+                  {t("modals.createRole.selectAllPermissions")}
                 </button>
                 <button
                   type="button"
@@ -447,7 +448,7 @@ const CreateRoleModal: React.FC<CreateRoleModalProps> = ({
                   }}
                   className="text-xs text-red-600 hover:text-red-800"
                 >
-                  Clear All Permissions
+                  {t("modals.createRole.clearAllPermissions")}
                 </button>
               </div>
             </div>
@@ -477,7 +478,7 @@ const CreateRoleModal: React.FC<CreateRoleModalProps> = ({
               type="button"
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
             >
-              Cancel
+              {t("common.cancel")}
             </button>
             <button
               type="submit"
@@ -488,7 +489,7 @@ const CreateRoleModal: React.FC<CreateRoleModalProps> = ({
                   : "bg-gray-400 cursor-not-allowed"
               }`}
             >
-              Create Role
+              {t("modals.createRole.createRole")}
             </button>
           </div>
         </form>

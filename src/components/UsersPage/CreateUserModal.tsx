@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { RootState } from "../../store";
 
 interface CreateUserModalProps {
@@ -21,6 +22,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   error,
   successMessage,
 }) => {
+  const { t } = useTranslation("common");
   const [validationErrors, setValidationErrors] = useState<{
     [key: string]: string;
   }>({});
@@ -58,7 +60,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
     switch (name) {
       case "name":
         if (!value || value.toString().trim().length < 2) {
-          errors.name = "Name must be at least 2 characters long";
+          errors.name = t("modals.createUser.validation.nameRequired");
         } else {
           delete errors.name;
         }
@@ -67,7 +69,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
       case "email":
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!value || !emailRegex.test(value.toString())) {
-          errors.email = "Please enter a valid email address";
+          errors.email = t("modals.createUser.validation.emailRequired");
         } else {
           delete errors.email;
         }
@@ -76,7 +78,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
       case "phone":
         const phoneRegex = /^[0-9+\-\s()]{10,}$/;
         if (!value || !phoneRegex.test(value.toString().replace(/\s/g, ""))) {
-          errors.phone = "Please enter a valid phone number";
+          errors.phone = t("modals.createUser.validation.phoneRequired");
         } else {
           delete errors.phone;
         }
@@ -84,7 +86,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
 
       case "id":
         if (!value || value.toString().trim().length < 1) {
-          errors.id = "Identity number is required";
+          errors.id = t("modals.createUser.validation.idRequired");
         } else {
           delete errors.id;
         }
@@ -93,7 +95,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
       case "age":
         const ageNum = Number(value);
         if (!value || ageNum < 1 || ageNum > 120) {
-          errors.age = "Age must be between 1 and 120";
+          errors.age = t("modals.createUser.validation.ageRequired");
         } else {
           delete errors.age;
         }
@@ -101,7 +103,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
 
       case "address":
         if (!value || value.toString().trim().length < 5) {
-          errors.address = "Address must be at least 5 characters long";
+          errors.address = t("modals.createUser.validation.addressRequired");
         } else {
           delete errors.address;
         }
@@ -109,7 +111,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
 
       case "password":
         if (!value || value.toString().length < 6) {
-          errors.password = "Password must be at least 6 characters long";
+          errors.password = t("modals.createUser.validation.passwordRequired");
         } else {
           delete errors.password;
         }
@@ -189,10 +191,10 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
         </button>
 
         <h2 className="text-xl font-semibold text-gray-900 mb-4">
-          Create New User
+          {t("modals.createUser.title")}
         </h2>
         <p className="text-sm text-gray-500 mb-6">
-          Fill in the required information to create a new user account
+          {t("modals.createUser.subtitle")}
         </p>
 
         <form
@@ -202,7 +204,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
           {/* Full Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Full Name *
+              {t("modals.createUser.fullName")} *
             </label>
             <input
               type="text"
@@ -224,7 +226,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
           {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Email *
+              {t("modals.createUser.email")} *
             </label>
             <input
               type="email"
@@ -246,7 +248,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
           {/* Phone */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Phone Number *
+              {t("modals.createUser.phoneNumber")} *
             </label>
             <input
               type="text"
@@ -268,7 +270,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
           {/* Identity Number */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Identity Number *
+              {t("modals.createUser.identityNumber")} *
             </label>
             <input
               type="text"
@@ -287,7 +289,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
           {/* Gender */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Gender *
+              {t("modals.createUser.gender")} *
             </label>
             <select
               name="gender"
@@ -295,17 +297,17 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
               onChange={handleInputChange}
               className="mt-1 w-full border border-gray-300 bg-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-              <option value="prefer_not_to_say">Prefer not to say</option>
+              <option value="male">{t("modals.createUser.genderOptions.male")}</option>
+              <option value="female">{t("modals.createUser.genderOptions.female")}</option>
+              <option value="other">{t("modals.createUser.genderOptions.other")}</option>
+              <option value="prefer_not_to_say">{t("modals.createUser.genderOptions.preferNotToSay")}</option>
             </select>
           </div>
 
           {/* Role - Now Dynamic */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Role *
+              {t("modals.createUser.role")} *
             </label>
             <select
               name="role"
@@ -314,7 +316,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
               className="mt-1 w-full border border-gray-300 bg-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               required
             >
-              <option value="">Select a role</option>
+              <option value="">{t("modals.createUser.selectRole")}</option>
               {activeRoles.map((role) => (
                 <option key={role.roleCode} value={role.roleCode}>
                   {role.roleName}
@@ -323,12 +325,12 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
             </select>
             {activeRoles.length === 0 && (
               <p className="mt-1 text-xs text-red-500">
-                No active roles available. Please create roles first.
+                {t("modals.createUser.noActiveRoles")}
               </p>
             )}
             {activeRoles.length > 0 && (
               <p className="mt-1 text-xs text-gray-500">
-                {activeRoles.length} active role(s) available
+                {t("modals.createUser.activeRolesAvailable", { count: activeRoles.length })}
               </p>
             )}
           </div>
@@ -336,7 +338,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
           {/* Age */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Age *
+              {t("modals.createUser.age")} *
             </label>
             <input
               type="number"
@@ -359,7 +361,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
           {/* Address */}
           <div className="sm:col-span-2">
             <label className="block text-sm font-medium text-gray-700">
-              Address *
+              {t("modals.createUser.address")} *
             </label>
             <input
               type="text"
@@ -380,7 +382,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
           {/* Password */}
           <div className="sm:col-span-2">
             <label className="block text-sm font-medium text-gray-700">
-              Password *
+              {t("modals.createUser.password")} *
             </label>
             <input
               type="password"
@@ -422,7 +424,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
               type="button"
               className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100"
             >
-              Cancel
+              {t("common.cancel")}
             </button>
             <button
               type="submit"
@@ -433,7 +435,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                   : "bg-gray-400 cursor-not-allowed"
               }`}
             >
-              Create User
+              {t("modals.createUser.createUser")}
             </button>
           </div>
         </form>

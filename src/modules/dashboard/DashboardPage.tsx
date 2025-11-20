@@ -1,6 +1,9 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 
 export const DashboardPage = () => {
+    const { t } = useTranslation()
+    
     return (
         <div className="space-y-6">
             {/* Stats Cards */}
@@ -9,9 +12,9 @@ export const DashboardPage = () => {
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-sm font-medium text-gray-600 mb-1">Total Patients</p>
+                            <p className="text-sm font-medium text-gray-600 mb-1">{t('dashboardPage.stats.totalPatients')}</p>
                             <p className="text-3xl font-bold text-gray-900">2,847</p>
-                            <p className="text-sm text-green-600 mt-1">+12.5% from last month</p>
+                            <p className="text-sm text-green-600 mt-1">{t('dashboardPage.stats.fromLastMonth', { percentage: 12.5 })}</p>
                         </div>
                         <div className="w-12 h-12 flex items-center justify-center">
                             <svg className="h-6 w-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -25,9 +28,9 @@ export const DashboardPage = () => {
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-sm font-medium text-gray-600 mb-1">Pending Tests</p>
+                            <p className="text-sm font-medium text-gray-600 mb-1">{t('dashboardPage.stats.pendingTests')}</p>
                             <p className="text-3xl font-bold text-gray-900">47</p>
-                            <p className="text-sm text-red-600 mt-1">+3 from yesterday</p>
+                            <p className="text-sm text-red-600 mt-1">{t('dashboardPage.stats.fromYesterday', { count: 3 })}</p>
                         </div>
                         <div className="w-12 h-12 flex items-center justify-center">
                             <svg className="h-6 w-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -41,9 +44,9 @@ export const DashboardPage = () => {
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-sm font-medium text-gray-600 mb-1">Active Instruments</p>
+                            <p className="text-sm font-medium text-gray-600 mb-1">{t('dashboardPage.stats.activeInstruments')}</p>
                             <p className="text-3xl font-bold text-gray-900">12/15</p>
-                            <p className="text-sm text-gray-500 mt-1">3 under maintenance</p>
+                            <p className="text-sm text-gray-500 mt-1">{t('dashboardPage.stats.underMaintenance', { count: 3 })}</p>
                         </div>
                         <div className="w-12 h-12 flex items-center justify-center">
                             <svg className="h-6 w-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -57,9 +60,9 @@ export const DashboardPage = () => {
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-sm font-medium text-gray-600 mb-1">Alerts</p>
+                            <p className="text-sm font-medium text-gray-600 mb-1">{t('dashboardPage.stats.alerts')}</p>
                             <p className="text-3xl font-bold text-gray-900">5</p>
-                            <p className="text-sm text-gray-500 mt-1">2 critical, 3 warnings</p>
+                            <p className="text-sm text-gray-500 mt-1">{t('dashboardPage.stats.criticalWarnings', { critical: 2, warnings: 3 })}</p>
                         </div>
                         <div className="w-12 h-12 flex items-center justify-center">
                             <svg className="h-6 w-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -76,17 +79,17 @@ export const DashboardPage = () => {
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                     <div className="flex items-center justify-between mb-4">
                         <div>
-                            <h3 className="text-lg font-semibold text-gray-900">Recent Test Orders</h3>
-                            <p className="text-sm text-gray-600">Latest test orders requiring attention</p>
+                            <h3 className="text-lg font-semibold text-gray-900">{t('dashboardPage.recentTestOrders.title')}</h3>
+                            <p className="text-sm text-gray-600">{t('dashboardPage.recentTestOrders.subtitle')}</p>
                         </div>
                     </div>
 
                     <div className="space-y-4">
                         {[
-                            { name: 'John Doe', test: 'Complete Blood Count', status: 'pending', time: '10 minutes ago', statusColor: 'bg-gray-100 text-gray-800' },
-                            { name: 'Jane Smith', test: 'Lipid Panel', status: 'in progress', time: '25 minutes ago', statusColor: 'bg-blue-100 text-blue-800' },
-                            { name: 'Bob Johnson', test: 'Liver Function Test', status: 'in progress', time: '1 hour ago', statusColor: 'bg-blue-100 text-blue-800' },
-                            { name: 'Alice Williams', test: 'Thyroid Panel', status: 'completed', time: '2 hours ago', statusColor: 'bg-blue-600 text-white' },
+                            { name: 'John Doe', test: 'Complete Blood Count', status: 'pending', time: '10', timeUnit: 'minutes', statusColor: 'bg-gray-100 text-gray-800' },
+                            { name: 'Jane Smith', test: 'Lipid Panel', status: 'inProgress', time: '25', timeUnit: 'minutes', statusColor: 'bg-blue-100 text-blue-800' },
+                            { name: 'Bob Johnson', test: 'Liver Function Test', status: 'inProgress', time: '1', timeUnit: 'hour', statusColor: 'bg-blue-100 text-blue-800' },
+                            { name: 'Alice Williams', test: 'Thyroid Panel', status: 'completed', time: '2', timeUnit: 'hours', statusColor: 'bg-blue-600 text-white' },
                         ].map((order, index) => (
                             <div key={index} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
                                 <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
@@ -100,9 +103,11 @@ export const DashboardPage = () => {
                                 </div>
                                 <div className="text-right">
                                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${order.statusColor}`}>
-                                        {order.status}
+                                        {t(`dashboardPage.recentTestOrders.status.${order.status}`)}
                                     </span>
-                                    <p className="text-xs text-gray-500 mt-1">{order.time}</p>
+                                    <p className="text-xs text-gray-500 mt-1">
+                                        {t(`dashboardPage.recentTestOrders.timeAgo.${order.timeUnit}`, { count: parseInt(order.time) })}
+                                    </p>
                                 </div>
                             </div>
                         ))}
@@ -113,41 +118,45 @@ export const DashboardPage = () => {
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                     <div className="flex items-center justify-between mb-4">
                         <div>
-                            <h3 className="text-lg font-semibold text-gray-900">System Alerts</h3>
-                            <p className="text-sm text-gray-600">Important notifications and warnings</p>
+                            <h3 className="text-lg font-semibold text-gray-900">{t('dashboardPage.systemAlerts.title')}</h3>
+                            <p className="text-sm text-gray-600">{t('dashboardPage.systemAlerts.subtitle')}</p>
                         </div>
                     </div>
 
                     <div className="space-y-4">
                         {[
                             {
-                                title: 'Low Reagent Stock',
-                                description: 'CBC Reagent Kit below 20%',
-                                time: '5 min ago',
+                                titleKey: 'lowReagentStock',
+                                descriptionKey: 'lowReagentStockDesc',
+                                time: 5,
+                                timeUnit: 'minutes',
                                 type: 'critical',
                                 icon: 'exclamation',
                                 color: 'text-red-600'
                             },
                             {
-                                title: 'Calibration Due',
-                                description: 'Hematology Analyzer needs calibration',
-                                time: '1 hour ago',
+                                titleKey: 'calibrationDue',
+                                descriptionKey: 'calibrationDueDesc',
+                                time: 1,
+                                timeUnit: 'hour',
                                 type: 'warning',
                                 icon: 'exclamation',
                                 color: 'text-yellow-600'
                             },
                             {
-                                title: 'Instrument Maintenance',
-                                description: 'Chemistry Analyzer scheduled maintenance',
-                                time: '2 hours ago',
+                                titleKey: 'instrumentMaintenance',
+                                descriptionKey: 'instrumentMaintenanceDesc',
+                                time: 2,
+                                timeUnit: 'hours',
                                 type: 'info',
                                 icon: 'info',
                                 color: 'text-blue-600'
                             },
                             {
-                                title: 'Quality Control Alert',
-                                description: 'QC results out of range for Glucose test',
-                                time: '3 hours ago',
+                                titleKey: 'qualityControlAlert',
+                                descriptionKey: 'qualityControlAlertDesc',
+                                time: 3,
+                                timeUnit: 'hours',
                                 type: 'warning',
                                 icon: 'exclamation',
                                 color: 'text-yellow-600'
@@ -164,9 +173,11 @@ export const DashboardPage = () => {
                                     </svg>
                                 </div>
                                 <div className="flex-1">
-                                    <p className="font-medium text-gray-900">{alert.title}</p>
-                                    <p className="text-sm text-gray-600">{alert.description}</p>
-                                    <p className="text-xs text-gray-500 mt-1">{alert.time}</p>
+                                    <p className="font-medium text-gray-900">{t(`dashboardPage.systemAlerts.alerts.${alert.titleKey}.title`)}</p>
+                                    <p className="text-sm text-gray-600">{t(`dashboardPage.systemAlerts.alerts.${alert.titleKey}.description`)}</p>
+                                    <p className="text-xs text-gray-500 mt-1">
+                                        {t(`dashboardPage.recentTestOrders.timeAgo.${alert.timeUnit}`, { count: alert.time })}
+                                    </p>
                                 </div>
                             </div>
                         ))}

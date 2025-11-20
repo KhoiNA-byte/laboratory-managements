@@ -1,9 +1,11 @@
 "use client";
+import { useTranslation } from "react-i18next";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store"; // Điều chỉnh đường dẫn nếu cần
 
 export default function ProfileInfo() {
+  const { t } = useTranslation("common");
   // Lấy thông tin user từ Redux store
   const { user } = useSelector((state: RootState) => state.auth);
 
@@ -14,7 +16,7 @@ export default function ProfileInfo() {
           <div className="w-24 h-24 bg-gray-300 rounded-full flex items-center justify-center text-white text-2xl font-semibold mb-4">
             ?
           </div>
-          <p className="text-muted-foreground">No user data available</p>
+          <p className="text-muted-foreground">{t("profilePage.profileInfo.noUserData")}</p>
         </div>
       </div>
     );
@@ -43,21 +45,21 @@ export default function ProfileInfo() {
           {getAvatarFromName(user.name ?? "")}
         </div>
         <h2 className="text-xl font-semibold text-foreground">{user.name}</h2>
-        <p className="text-sm text-muted-foreground mb-6">User ID: {user.id}</p>
+        <p className="text-sm text-muted-foreground mb-6">{t("profilePage.profileInfo.userId")}: {user.id}</p>
 
         <div className="w-full space-y-4 text-sm">
           <div className="flex items-center gap-3 pb-4 border-b border-border">
             <span className="text-muted-foreground font-medium w-24">
-              Age / Gender
+              {t("profilePage.profileInfo.ageGender")}
             </span>
             <span className="text-foreground">
-              {user.age} years / {user.gender}
+              {user.age} {t("profilePage.profileInfo.years")} / {user.gender === "Male" ? t("usersPage.filters.male") : user.gender === "Female" ? t("usersPage.filters.female") : user.gender}
             </span>
           </div>
 
           <div className="flex items-center gap-3 pb-4 border-b border-border">
             <span className="text-muted-foreground font-medium w-24">
-              Last Login
+              {t("profilePage.profileInfo.lastLogin")}
             </span>
             <span className="text-foreground">
               {formatDate(user.lastLogin)}
@@ -81,13 +83,13 @@ export default function ProfileInfo() {
 
           {/* Thêm các thông tin khác nếu cần */}
           <div className="flex items-center gap-3 pb-4 border-b border-border">
-            <span className="text-muted-foreground font-medium w-24">Role</span>
+            <span className="text-muted-foreground font-medium w-24">{t("profilePage.profileInfo.role")}</span>
             <span className="text-foreground">{user.role}</span>
           </div>
 
           <div className="flex items-center gap-3 pb-4 border-b border-border">
             <span className="text-muted-foreground font-medium w-24">
-              Status
+              {t("profilePage.profileInfo.status")}
             </span>
             <span
               className={`px-2 py-1 rounded-full text-xs ${
@@ -96,7 +98,7 @@ export default function ProfileInfo() {
                   : "bg-red-100 text-red-800"
               }`}
             >
-              {user.status}
+              {user.status === "active" ? t("common.active") : t("common.inactive")}
             </span>
           </div>
         </div>

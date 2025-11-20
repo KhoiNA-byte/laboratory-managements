@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store'
 import { eventService } from '../../services/event'
@@ -121,6 +122,7 @@ const fetchInstruments = async (): Promise<any[]> => {
 }
 
 export const MonitoringPage = () => {
+    const { t } = useTranslation("common");
     const [activeTab, setActiveTab] = useState<'overview' | 'logs'>('overview')
     const [metrics, setMetrics] = useState<any[]>([])
     const [events, setEvents] = useState<any[]>([])
@@ -200,21 +202,21 @@ export const MonitoringPage = () => {
                 // TÍNH TOÁN SỐ LƯỢNG THẬT
                 const newMetrics = [
                     {
-                        title: 'Active Users',
+                        title: t('monitoringPage.metrics.activeUsers'),
                         value: usersData.length.toString(), // Số users thật
-                        subtitle: 'Registered users',
+                        subtitle: t('monitoringPage.metrics.activeUsersSubtitle'),
                         icon: '👥'
                     },
                     {
-                        title: 'Tests Today',
+                        title: t('monitoringPage.metrics.testsToday'),
                         value: todayTests.length.toString(), // Số tests thật hôm nay
-                        subtitle: 'Completed today',
+                        subtitle: t('monitoringPage.metrics.testsTodaySubtitle'),
                         icon: '📈'
                     },
                     {
-                        title: 'Active Instruments',
+                        title: t('monitoringPage.metrics.activeInstruments'),
                         value: activeInstruments.toString(), // Số instruments active thật
-                        subtitle: 'Currently operational',
+                        subtitle: t('monitoringPage.metrics.activeInstrumentsSubtitle'),
                         icon: '⚙️'
                     }
                 ]
@@ -242,21 +244,21 @@ export const MonitoringPage = () => {
 
                     setMetrics([
                         {
-                            title: 'Active Users',
+                            title: t('monitoringPage.metrics.activeUsers'),
                             value: usersCount,
-                            subtitle: 'Registered users',
+                            subtitle: t('monitoringPage.metrics.activeUsersSubtitle'),
                             icon: '👥'
                         },
                         {
-                            title: 'Tests Today',
+                            title: t('monitoringPage.metrics.testsToday'),
                             value: testsCount,
-                            subtitle: 'Completed today',
+                            subtitle: t('monitoringPage.metrics.testsTodaySubtitle'),
                             icon: '📈'
                         },
                         {
-                            title: 'Active Instruments',
+                            title: t('monitoringPage.metrics.activeInstruments'),
                             value: activeInstrumentsCount.toString(),
-                            subtitle: 'Currently operational',
+                            subtitle: t('monitoringPage.metrics.activeInstrumentsSubtitle'),
                             icon: '⚙️'
                         }
                     ])
@@ -264,21 +266,21 @@ export const MonitoringPage = () => {
                     // Ultimate fallback
                     setMetrics([
                         {
-                            title: 'Active Users',
+                            title: t('monitoringPage.metrics.activeUsers'),
                             value: '0',
-                            subtitle: 'Registered users',
+                            subtitle: t('monitoringPage.metrics.activeUsersSubtitle'),
                             icon: '👥'
                         },
                         {
-                            title: 'Tests Today',
+                            title: t('monitoringPage.metrics.testsToday'),
                             value: '0',
-                            subtitle: 'Completed today',
+                            subtitle: t('monitoringPage.metrics.testsTodaySubtitle'),
                             icon: '📈'
                         },
                         {
-                            title: 'Active Instruments',
+                            title: t('monitoringPage.metrics.activeInstruments'),
                             value: '0',
-                            subtitle: 'Currently operational',
+                            subtitle: t('monitoringPage.metrics.activeInstrumentsSubtitle'),
                             icon: '⚙️'
                         }
                     ])
@@ -317,7 +319,7 @@ export const MonitoringPage = () => {
             <div className="min-h-screen bg-gray-50 flex items-center justify-center">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="text-gray-500 mt-4">Loading real system metrics...</p>
+                    <p className="text-gray-500 mt-4">{t("monitoringPage.eventLogs.loading")}</p>
                 </div>
             </div>
         )
@@ -328,8 +330,8 @@ export const MonitoringPage = () => {
             {/* Header */}
             <div className="bg-white border-b border-gray-200 px-6 py-6">
                 <div className="mb-6">
-                    <h1 className="text-3xl font-bold text-gray-900">System Monitoring</h1>
-                    <p className="text-gray-500 mt-1">Real-time system metrics and event logs</p>
+                    <h1 className="text-3xl font-bold text-gray-900">{t("monitoringPage.title")}</h1>
+                    <p className="text-gray-500 mt-1">{t("monitoringPage.subtitle")}</p>
                 </div>
 
                 {/* Tabs */}
@@ -341,7 +343,7 @@ export const MonitoringPage = () => {
                                 : 'border-transparent text-gray-500 hover:text-gray-700'
                             }`}
                     >
-                        Overview
+                        {t("monitoringPage.tabs.overview")}
                     </button>
                     <button
                         onClick={() => setActiveTab('logs')}
@@ -350,7 +352,7 @@ export const MonitoringPage = () => {
                                 : 'border-transparent text-gray-500 hover:text-gray-700'
                             }`}
                     >
-                        Event Logs
+                        {t("monitoringPage.tabs.logs")}
                     </button>
                 </div>
             </div>
@@ -379,14 +381,14 @@ export const MonitoringPage = () => {
                             <div className="px-6 py-4 border-b border-gray-200">
                                 <div className="flex justify-between items-center">
                                     <div>
-                                        <h2 className="text-lg font-semibold text-gray-900">Recent Events</h2>
-                                        <p className="text-sm text-gray-500 mt-1">Latest system events and activities</p>
+                                        <h2 className="text-lg font-semibold text-gray-900">{t("monitoringPage.recentEvents.title")}</h2>
+                                        <p className="text-sm text-gray-500 mt-1">{t("monitoringPage.recentEvents.subtitle")}</p>
                                     </div>
                                     <button 
                                         onClick={() => setActiveTab('logs')}
                                         className="text-sm text-blue-600 hover:text-blue-800 font-medium"
                                     >
-                                        View All →
+                                        {t("monitoringPage.recentEvents.viewAll")}
                                     </button>
                                 </div>
                             </div>
@@ -413,7 +415,7 @@ export const MonitoringPage = () => {
                                 <div className="flex-1">
                                     <input
                                         type="text"
-                                        placeholder="Search events..."
+                                        placeholder={t("monitoringPage.eventLogs.searchPlaceholder")}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         value={eventFilters.search}
                                         onChange={(e) => setEventFilters(prev => ({
@@ -430,11 +432,11 @@ export const MonitoringPage = () => {
                                         type: e.target.value
                                     }))}
                                 >
-                                    <option value="all">All Types</option>
-                                    <option value="success">Success</option>
-                                    <option value="info">Info</option>
-                                    <option value="warning">Warning</option>
-                                    <option value="error">Error</option>
+                                    <option value="all">{t("monitoringPage.eventLogs.allTypes")}</option>
+                                    <option value="success">{t("monitoringPage.eventLogs.success")}</option>
+                                    <option value="info">{t("monitoringPage.eventLogs.info")}</option>
+                                    <option value="warning">{t("monitoringPage.eventLogs.warning")}</option>
+                                    <option value="error">{t("monitoringPage.eventLogs.error")}</option>
                                 </select>
                             </div>
                         </div>
@@ -442,9 +444,9 @@ export const MonitoringPage = () => {
                         {/* Event Logs */}
                         <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
                             <div className="px-6 py-4 border-b border-gray-200">
-                                <h2 className="text-lg font-semibold text-gray-900">Event Logs</h2>
+                                <h2 className="text-lg font-semibold text-gray-900">{t("monitoringPage.eventLogs.title")}</h2>
                                 <p className="text-sm text-gray-500 mt-1">
-                                    {filteredEvents.length} events found
+                                    {t("monitoringPage.eventLogs.subtitle", { count: filteredEvents.length })}
                                 </p>
                             </div>
                             <div className="divide-y divide-gray-100 max-h-[600px] overflow-y-auto">
@@ -462,7 +464,7 @@ export const MonitoringPage = () => {
                                     ))
                                 ) : (
                                     <div className="p-8 text-center text-gray-500">
-                                        No events found matching your filters
+                                        {t("monitoringPage.eventLogs.noEventsFound")}
                                     </div>
                                 )}
                             </div>

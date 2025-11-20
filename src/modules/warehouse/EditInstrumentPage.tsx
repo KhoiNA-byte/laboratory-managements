@@ -1,6 +1,7 @@
 // src/components/EditInstrumentPopup.tsx
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { Instrument } from '../../store/types';
 
 interface EditInstrumentPopupProps {
@@ -30,6 +31,7 @@ const EditInstrumentPopup: React.FC<EditInstrumentPopupProps> = ({
   onClose,
   onSave 
 }) => {
+  const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -138,41 +140,41 @@ const EditInstrumentPopup: React.FC<EditInstrumentPopupProps> = ({
     
     switch (field) {
       case 'name':
-        if (!value.trim()) return 'Instrument name is required';
-        if (specialCharRegex.test(value)) return 'Instrument name cannot contain special characters';
-        if (value.trim().length < 2) return 'Instrument name must be at least 2 characters';
+        if (!value.trim()) return t('modals.addInstrument.validation.nameRequired');
+        if (specialCharRegex.test(value)) return t('modals.addInstrument.validation.nameSpecialChars');
+        if (value.trim().length < 2) return t('modals.addInstrument.validation.nameMinLength');
         return '';
       
       case 'model':
-        if (!value.trim()) return 'Model is required';
-        if (specialCharRegex.test(value)) return 'Model cannot contain special characters';
+        if (!value.trim()) return t('modals.addInstrument.validation.modelRequired');
+        if (specialCharRegex.test(value)) return t('modals.addInstrument.validation.modelSpecialChars');
         return '';
       
       case 'serialNumber':
-        if (!value.trim()) return 'Serial number is required';
-        if (specialCharRegex.test(value)) return 'Serial number cannot contain special characters';
+        if (!value.trim()) return t('modals.addInstrument.validation.serialRequired');
+        if (specialCharRegex.test(value)) return t('modals.addInstrument.validation.serialSpecialChars');
         return '';
       
       case 'manufacturer':
-        if (!value.trim()) return 'Manufacturer is required';
-        if (specialCharRegex.test(value)) return 'Manufacturer cannot contain special characters';
+        if (!value.trim()) return t('modals.addInstrument.validation.manufacturerRequired');
+        if (specialCharRegex.test(value)) return t('modals.addInstrument.validation.manufacturerSpecialChars');
         return '';
       
       case 'location':
-        if (!value.trim()) return 'Location is required';
+        if (!value.trim()) return t('modals.addInstrument.validation.locationRequired');
         return '';
       
       case 'nextCalibration':
-        if (!value.trim()) return 'Next calibration date is required';
-        if (new Date(value) <= new Date()) return 'Next calibration must be in the future';
+        if (!value.trim()) return t('modals.addInstrument.validation.calibrationRequired');
+        if (new Date(value) <= new Date()) return t('modals.addInstrument.validation.calibrationFuture');
         return '';
       
       case 'supportedTest':
-        if (!value.trim()) return 'Supported test is required';
+        if (!value.trim()) return t('modals.addInstrument.validation.testTypeRequired');
         return '';
       
       case 'supportedReagents':
-        if (!value.length) return 'At least one reagent must be selected';
+        if (!value.length) return t('modals.addInstrument.validation.reagentsRequired');
         return '';
       
       default:
@@ -224,13 +226,14 @@ const EditInstrumentPopup: React.FC<EditInstrumentPopupProps> = ({
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', {
+      const locale = i18n.language === 'vi' ? 'vi-VN' : 'en-US';
+      return date.toLocaleDateString(locale, {
         year: 'numeric',
         month: 'short',
         day: 'numeric'
       });
     } catch (error) {
-      return 'Invalid Date';
+      return t('modals.instrumentDetails.invalidDate');
     }
   };
 
@@ -253,7 +256,7 @@ const EditInstrumentPopup: React.FC<EditInstrumentPopupProps> = ({
     if (!instrument) return;
     
     if (!validateForm()) {
-      alert('Please fix all validation errors before saving');
+      alert(t('modals.addInstrument.validation.fixErrors'));
       return;
     }
 
@@ -285,15 +288,28 @@ const EditInstrumentPopup: React.FC<EditInstrumentPopupProps> = ({
       onClose();
     } catch (error) {
       console.error('Error saving instrument:', error);
-      alert('Error saving instrument');
+      alert(t('modals.editInstrument.errorSaving'));
     } finally {
       setSaving(false);
     }
   };
 
   const handleCancel = () => {
-    if (window.confirm('Are you sure you want to cancel? All changes will be lost.')) {
+    if (window.confirm(t('modals.addInstrument.validation.cancelConfirm'))) {
       onClose();
+    }
+  };
+
+  const translateStatus = (status: string) => {
+    switch (status) {
+      case 'Active':
+        return t('common.active');
+      case 'Maintenance':
+        return t('modals.instrumentDetails.maintenance');
+      case 'Inactive':
+        return t('common.inactive');
+      default:
+        return status;
     }
   };
 
@@ -312,9 +328,9 @@ const EditInstrumentPopup: React.FC<EditInstrumentPopupProps> = ({
         {/* Header */}
         <div className="flex justify-between items-start p-6 border-b">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Edit Instrument</h2>
-            <p className="text-gray-600 text-sm mt-1">Update instrument information</p>
-            <p className="text-gray-500 text-xs mt-1">ID: {instrument.id}</p>
+            <h2 className="text-xl font-semibold text-gray-900">{t('modals.editInstrument.title')}</h2>
+            <p className="text-gray-600 text-sm mt-1">{t('modals.editInstrument.subtitle')}</p>
+            <p className="text-gray-500 text-xs mt-1">{t('modals.editInstrument.id')}: {instrument.id}</p>
           </div>
           <button
             onClick={handleCancel}
@@ -330,13 +346,13 @@ const EditInstrumentPopup: React.FC<EditInstrumentPopupProps> = ({
         <div className="p-6 space-y-6">
           {/* Section 1: Basic Information */}
           <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">{t('modals.addInstrument.basicInformation')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Left Column */}
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Instrument Name <span className="text-red-500">*</span>
+                    {t('modals.addInstrument.instrumentName')} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -352,7 +368,7 @@ const EditInstrumentPopup: React.FC<EditInstrumentPopupProps> = ({
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Model <span className="text-red-500">*</span>
+                    {t('modals.addInstrument.model')} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -368,7 +384,7 @@ const EditInstrumentPopup: React.FC<EditInstrumentPopupProps> = ({
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Serial Number <span className="text-red-500">*</span>
+                    {t('modals.addInstrument.serialNumber')} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -387,7 +403,7 @@ const EditInstrumentPopup: React.FC<EditInstrumentPopupProps> = ({
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Manufacturer <span className="text-red-500">*</span>
+                    {t('modals.addInstrument.manufacturer')} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -403,22 +419,22 @@ const EditInstrumentPopup: React.FC<EditInstrumentPopupProps> = ({
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Status <span className="text-red-500">*</span>
+                    {t('modals.addInstrument.status')} <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={formData.status}
                     onChange={(e) => handleInputChange('status', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
-                    <option value="Active">Active</option>
-                    <option value="Maintenance">Maintenance</option>
-                    <option value="Inactive">Inactive</option>
+                    <option value="Active">{t('common.active')}</option>
+                    <option value="Maintenance">{t('modals.instrumentDetails.maintenance')}</option>
+                    <option value="Inactive">{t('common.inactive')}</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Location <span className="text-red-500">*</span>
+                    {t('modals.addInstrument.location')} <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={formData.location}
@@ -428,7 +444,7 @@ const EditInstrumentPopup: React.FC<EditInstrumentPopupProps> = ({
                     }`}
                     required
                   >
-                    <option value="">Select a location</option>
+                    <option value="">{t('modals.addInstrument.selectLocation')}</option>
                     {locationOptions.map((location) => (
                       <option key={location} value={location}>
                         {location}
@@ -443,11 +459,11 @@ const EditInstrumentPopup: React.FC<EditInstrumentPopupProps> = ({
 
           {/* Section 2: Calibration Information */}
           <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Calibration Information</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">{t('modals.addInstrument.calibrationInformation')}</h3>
             <div className="max-w-md">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Next Calibration Date <span className="text-red-500">*</span>
+                  {t('modals.addInstrument.nextCalibrationDate')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="date"
@@ -466,12 +482,12 @@ const EditInstrumentPopup: React.FC<EditInstrumentPopupProps> = ({
 
           {/* Section 3: Testing Configuration */}
           <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Testing Configuration</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">{t('modals.addInstrument.testingConfiguration')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Supported Test Type */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Supported Test Type <span className="text-red-500">*</span>
+                  {t('modals.addInstrument.supportedTestType')} <span className="text-red-500">*</span>
                 </label>
                 <select
                   value={formData.supportedTest}
@@ -482,29 +498,29 @@ const EditInstrumentPopup: React.FC<EditInstrumentPopupProps> = ({
                   required
                   disabled={loading.testTypes}
                 >
-                  <option value="">Select a test type</option>
+                  <option value="">{t('modals.addInstrument.selectTestType')}</option>
                   {testTypes.map((testType) => (
                     <option key={testType.id} value={testType.id}>
                       {testType.id} - {testType.name}
                     </option>
                   ))}
                 </select>
-                {loading.testTypes && <p className="text-blue-500 text-xs mt-1">Loading test types...</p>}
+                {loading.testTypes && <p className="text-blue-500 text-xs mt-1">{t('modals.addInstrument.loadingTestTypes')}</p>}
                 {errors.supportedTest && <p className="text-red-500 text-xs mt-1">{errors.supportedTest}</p>}
               </div>
 
               {/* Supported Reagents */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Supported Reagents <span className="text-red-500">*</span>
+                  {t('modals.addInstrument.supportedReagents')} <span className="text-red-500">*</span>
                 </label>
                 <div className={`max-h-48 overflow-y-auto border rounded-md p-3 ${
                   errors.supportedReagents ? 'border-red-500' : 'border-gray-300'
                 } ${loading.reagents ? 'opacity-50' : ''}`}>
                   {loading.reagents ? (
-                    <p className="text-gray-500 text-sm">Loading reagents...</p>
+                    <p className="text-gray-500 text-sm">{t('modals.addInstrument.loadingReagents')}</p>
                   ) : reagents.length === 0 ? (
-                    <p className="text-gray-500 text-sm">No reagents available</p>
+                    <p className="text-gray-500 text-sm">{t('modals.addInstrument.noReagentsAvailable')}</p>
                   ) : (
                     <div className="space-y-2">
                       {reagents.map((reagent) => (
@@ -526,8 +542,8 @@ const EditInstrumentPopup: React.FC<EditInstrumentPopupProps> = ({
                               </span>
                             </div>
                             <div className="text-xs text-gray-600 mt-1 space-y-1">
-                              <div>Lot: {reagent.lot_number} • Mfg: {reagent.manufacturer}</div>
-                              <div>Expires: {formatDate(reagent.expiry_date)} • Storage: {reagent.location}</div>
+                              <div>{t('modals.instrumentDetails.lot')}: {reagent.lot_number} • {t('modals.instrumentDetails.mfg')}: {reagent.manufacturer}</div>
+                              <div>{t('modals.instrumentDetails.expires')}: {formatDate(reagent.expiry_date)} • {t('modals.instrumentDetails.storage')}: {reagent.location}</div>
                             </div>
                           </div>
                         </label>
@@ -540,7 +556,7 @@ const EditInstrumentPopup: React.FC<EditInstrumentPopupProps> = ({
                 )}
                 {formData.supportedReagents.length > 0 && (
                   <p className="text-green-600 text-xs mt-1">
-                    {formData.supportedReagents.length} reagent(s) selected
+                    {t('modals.addInstrument.reagentsSelected', { count: formData.supportedReagents.length })}
                   </p>
                 )}
               </div>
@@ -555,7 +571,7 @@ const EditInstrumentPopup: React.FC<EditInstrumentPopupProps> = ({
             disabled={saving}
             className="px-4 py-2 text-sm text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
           >
-            Cancel
+            {t('common.cancel')}
           </button>
           <button
             onClick={handleSave}
@@ -566,8 +582,8 @@ const EditInstrumentPopup: React.FC<EditInstrumentPopupProps> = ({
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
             )}
             <span>
-              {saving ? 'Saving...' : 
-               loading.testTypes || loading.reagents ? 'Loading Data...' : 'Save Changes'}
+              {saving ? t('modals.editInstrument.saving') : 
+               loading.testTypes || loading.reagents ? t('modals.addInstrument.loadingData') : t('modals.editInstrument.saveChanges')}
             </span>
           </button>
         </div>

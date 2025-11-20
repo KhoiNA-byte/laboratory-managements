@@ -6,6 +6,7 @@ import {
 } from "@heroicons/react/24/outline";
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import NewTest from "./NewTest";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
@@ -16,12 +17,13 @@ import {
 } from "../../store/slices/testResultsSlice";
 
 const MyTestResultsPage: React.FC = () => {
+  const { t } = useTranslation("common");
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch<AppDispatch>();
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab, setActiveTab] = useState("All Results");
+  const [activeTab, setActiveTab] = useState("all");
   const [isNewOpen, setIsNewOpen] = useState(false);
 
   const list = useSelector((s: RootState) => s.testResults.list);
@@ -37,8 +39,8 @@ const MyTestResultsPage: React.FC = () => {
   const filteredRows = useMemo(() => {
     const q = searchTerm.trim().toLowerCase();
     return list.filter((r) => {
-      if (activeTab === "Completed" && r.status !== "Completed") return false;
-      if (activeTab === "In Progress" && r.status !== "In Progress")
+      if (activeTab === "completed" && r.status !== "Completed") return false;
+      if (activeTab === "inProgress" && r.status !== "In Progress")
         return false;
       if (!q) return true;
       return (
@@ -79,7 +81,7 @@ const MyTestResultsPage: React.FC = () => {
   const handleExport = (id: string) => alert(`Exporting ${id} (mock)`);
 
   const handleDelete = (id: string | number) => {
-    if (!window.confirm("Are you sure you want to delete this result?")) return;
+    if (!window.confirm(t("testResultsPage.table.confirmDelete"))) return;
     dispatch(deleteResultRequest(id));
   };
 
@@ -89,15 +91,15 @@ const MyTestResultsPage: React.FC = () => {
       : "bg-orange-100 text-orange-800";
 
   return (
-    <div className="space-y-6">
+      <div className="space-y-6">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Total Tests</p>
+              <p className="text-sm font-medium text-gray-600">{t("testResultsPage.summaryCards.totalTests")}</p>
               <p className="text-3xl font-bold text-gray-900">{total}</p>
-              <p className="text-sm text-gray-500 mt-1">All time</p>
+              <p className="text-sm text-gray-500 mt-1">{t("testResultsPage.summaryCards.totalTestsSubtitle")}</p>
             </div>
             <div className="w-12 h-12 flex items-center justify-center rounded-lg border border-gray-100">
               <DocumentTextIcon className="h-6 w-6 text-gray-600" />
@@ -109,10 +111,10 @@ const MyTestResultsPage: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">
-                Pending Results
+                {t("testResultsPage.summaryCards.pendingResults")}
               </p>
               <p className="text-3xl font-bold text-gray-900">{pending}</p>
-              <p className="text-sm text-gray-500 mt-1">In progress</p>
+              <p className="text-sm text-gray-500 mt-1">{t("testResultsPage.summaryCards.pendingResultsSubtitle")}</p>
             </div>
             <div className="w-12 h-12 flex items-center justify-center rounded-lg border border-gray-100">
               <ExclamationTriangleIcon className="h-6 w-6 text-gray-600" />
@@ -123,9 +125,9 @@ const MyTestResultsPage: React.FC = () => {
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Completed</p>
+              <p className="text-sm font-medium text-gray-600">{t("testResultsPage.summaryCards.completed")}</p>
               <p className="text-3xl font-bold text-gray-900">{completed}</p>
-              <p className="text-sm text-gray-500 mt-1">Available to view</p>
+              <p className="text-sm text-gray-500 mt-1">{t("testResultsPage.summaryCards.completedSubtitle")}</p>
             </div>
             <div className="w-12 h-12 flex items-center justify-center rounded-lg border border-gray-100">
               <CheckCircleIcon className="h-6 w-6 text-gray-600" />
@@ -140,10 +142,10 @@ const MyTestResultsPage: React.FC = () => {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-lg font-semibold text-gray-900">
-                Test Results
+                {t("testResultsPage.title")}
               </h3>
               <p className="text-sm text-gray-600">
-                Your laboratory test results and history
+                {t("testResultsPage.subtitle")}
               </p>
             </div>
 
@@ -172,23 +174,27 @@ const MyTestResultsPage: React.FC = () => {
                 onClick={handleNew}
                 className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center gap-2"
               >
-                + New Test
+                + {t("testResultsPage.filters.newTest")}
               </button>
             </div>
           </div>
 
           <div className="flex space-x-8 mb-4">
-            {["All Results", "In Progress", "Completed"].map((tab) => (
+            {[
+              { key: "all", label: t("testResultsPage.filters.allResults") },
+              { key: "inProgress", label: t("testResultsPage.filters.inProgress") },
+              { key: "completed", label: t("testResultsPage.filters.completed") },
+            ].map((tab) => (
               <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
                 className={`pb-2 text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === tab
+                  activeTab === tab.key
                     ? "border-blue-500 text-blue-600"
                     : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                 }`}
               >
-                {tab}
+                {tab.label}
               </button>
             ))}
           </div>
@@ -198,7 +204,7 @@ const MyTestResultsPage: React.FC = () => {
               <input
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search results..."
+                placeholder={t("testResultsPage.filters.searchPlaceholder")}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -223,28 +229,28 @@ const MyTestResultsPage: React.FC = () => {
         {/* Table */}
         <div className="overflow-x-auto">
           {loading ? (
-            <div className="p-6 text-center text-gray-500">Loading...</div>
+            <div className="p-6 text-center text-gray-500">{t("common.loading")}</div>
           ) : (
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    TestOrder ID
+                    {t("testResultsPage.table.testOrderId")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Patient
+                    {t("testResultsPage.table.patient")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date
+                    {t("testResultsPage.table.date")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Tester
+                    {t("testResultsPage.table.tester")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
+                    {t("testResultsPage.table.status")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
+                    {t("testResultsPage.table.actions")}
                   </th>
                 </tr>
               </thead>
@@ -287,7 +293,7 @@ const MyTestResultsPage: React.FC = () => {
                           onClick={() =>
                             viewDisabled
                               ? window.alert(
-                                  "This test is pending — result not available to view yet."
+                                  t("testResultsPage.table.cannotViewPending")
                                 )
                               : handleView(r.runId ?? r.id)
                           }
@@ -299,23 +305,23 @@ const MyTestResultsPage: React.FC = () => {
                           disabled={viewDisabled}
                           title={
                             viewDisabled
-                              ? "Cannot view pending result"
-                              : "View result"
+                              ? t("testResultsPage.table.cannotViewTitle")
+                              : t("testResultsPage.table.viewResultTitle")
                           }
                         >
-                          View
+                          {t("testResultsPage.table.view")}
                         </button>
                         <button
                           onClick={() => handleExport(r.id)}
                           className="px-3 py-1 border border-gray-200 rounded-md text-sm hover:shadow ml-2"
                         >
-                          Export
+                          {t("testResultsPage.table.export")}
                         </button>
                         <button
                           onClick={() => handleDelete(r.runId ?? r.id)}
                           className="px-3 py-1 border border-red-200 rounded-md text-sm hover:shadow ml-2 text-red-600"
                         >
-                          {deleting ? "Deleting..." : "Delete"}
+                          {deleting ? t("testResultsPage.table.deleting") : t("testResultsPage.table.delete")}
                         </button>
                       </td>
                     </tr>
@@ -328,7 +334,7 @@ const MyTestResultsPage: React.FC = () => {
                       colSpan={6}
                       className="px-6 py-12 text-center text-sm text-gray-500"
                     >
-                      No results found.
+                      {t("testResultsPage.table.noResultsFound")}
                     </td>
                   </tr>
                 )}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "../../components/button";
 import {
   Card,
@@ -10,6 +11,7 @@ import {
   CardTitle,
 } from "../../components/card";
 export function GenerateReport() {
+  const { t } = useTranslation("common");
   const [reportType, setReportType] = useState("");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
@@ -21,18 +23,18 @@ export function GenerateReport() {
   return (
     <Card className="lg:col-span-1">
       <CardHeader>
-        <CardTitle>Generate Report</CardTitle>
-        <CardDescription>Select report type and date range</CardDescription>
+        <CardTitle>{t("reportsPage.generateReport.title")}</CardTitle>
+        <CardDescription>{t("reportsPage.generateReport.subtitle")}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <label className="text-sm font-medium">Report Type</label>
+          <label className="text-sm font-medium">{t("reportsPage.generateReport.reportType")}</label>
           <select
             className="w-full px-3 py-2 border rounded-md mt-1"
             value={reportType}
             onChange={(e) => setReportType(e.target.value)}
           >
-            <option value="">Select report type</option>
+            <option value="">{t("reportsPage.generateReport.selectReportType")}</option>
             <option value="test-orders">Test Orders</option>
             <option value="results">Test Results</option>
             <option value="inventory">Inventory</option>
@@ -41,7 +43,7 @@ export function GenerateReport() {
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-sm font-medium">From Date</label>
+            <label className="text-sm font-medium">{t("reportsPage.generateReport.fromDate")}</label>
             <input
               type="date"
               className="w-full px-3 py-2 border rounded-md mt-1"
@@ -50,7 +52,7 @@ export function GenerateReport() {
             />
           </div>
           <div>
-            <label className="text-sm font-medium">To Date</label>
+            <label className="text-sm font-medium">{t("reportsPage.generateReport.toDate")}</label>
             <input
               type="date"
               className="w-full px-3 py-2 border rounded-md mt-1"
@@ -62,10 +64,10 @@ export function GenerateReport() {
 
         <div className="flex gap-2">
           <Button onClick={handleExport} className="flex-1">
-            Export Excel
+            {t("reportsPage.generateReport.exportExcel")}
           </Button>
           <Button variant="outline" className="flex-1 bg-transparent">
-            Print
+            {t("reportsPage.generateReport.print")}
           </Button>
         </div>
       </CardContent>

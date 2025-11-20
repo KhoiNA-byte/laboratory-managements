@@ -1,5 +1,6 @@
 // components/RolesPage/UpdateRoleModal.tsx
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { PERMISSIONS } from "../../constants/permissions";
 
 interface UpdateRoleModalProps {
@@ -41,6 +42,7 @@ const UpdateRoleModal: React.FC<UpdateRoleModalProps> = ({
   error,
   successMessage,
 }) => {
+  const { t } = useTranslation("common");
   const [validationErrors, setValidationErrors] = useState<{
     [key: string]: string;
   }>({});
@@ -79,7 +81,7 @@ const UpdateRoleModal: React.FC<UpdateRoleModalProps> = ({
     switch (name) {
       case "roleName":
         if (!value || value.trim().length < 2) {
-          errors.roleName = "Role name must be at least 2 characters long";
+          errors.roleName = t("modals.updateRole.validation.roleNameRequired");
         } else {
           delete errors.roleName;
         }
@@ -87,10 +89,9 @@ const UpdateRoleModal: React.FC<UpdateRoleModalProps> = ({
 
       case "roleCode":
         if (!value || value.trim().length < 2) {
-          errors.roleCode = "Role code must be at least 2 characters long";
+          errors.roleCode = t("modals.updateRole.validation.roleCodeRequired");
         } else if (!/^[a-z_]+$/.test(value)) {
-          errors.roleCode =
-            "Role code can only contain lowercase letters and underscores";
+          errors.roleCode = t("modals.updateRole.validation.roleCodeInvalid");
         } else {
           delete errors.roleCode;
         }
@@ -98,7 +99,7 @@ const UpdateRoleModal: React.FC<UpdateRoleModalProps> = ({
 
       case "description":
         if (!value || value.trim().length < 5) {
-          errors.description = "Description must be at least 5 characters long";
+          errors.description = t("modals.updateRole.validation.descriptionRequired");
         } else {
           delete errors.description;
         }
@@ -229,10 +230,10 @@ const UpdateRoleModal: React.FC<UpdateRoleModalProps> = ({
         </button>
 
         <h2 className="text-xl font-semibold text-gray-900 mb-4">
-          Update Role
+          {t("modals.updateRole.title")}
         </h2>
         <p className="text-sm text-gray-500 mb-6">
-          Modify the role's information and permissions
+          {t("modals.updateRole.subtitle")}
         </p>
 
         <form onSubmit={handleFormSubmit} className="space-y-6">
@@ -242,7 +243,7 @@ const UpdateRoleModal: React.FC<UpdateRoleModalProps> = ({
               {/* Role Name */}
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Role Name *
+                  {t("modals.updateRole.roleName")} *
                 </label>
                 <input
                   type="text"
@@ -266,7 +267,7 @@ const UpdateRoleModal: React.FC<UpdateRoleModalProps> = ({
               {/* Role Code */}
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Role Code *
+                  {t("modals.updateRole.roleCode")} *
                 </label>
                 <input
                   type="text"
@@ -286,14 +287,14 @@ const UpdateRoleModal: React.FC<UpdateRoleModalProps> = ({
                   </p>
                 )}
                 <p className="mt-1 text-xs text-gray-500">
-                  Use lowercase letters and underscores only
+                  {t("modals.updateRole.roleCodeHint")}
                 </p>
               </div>
 
               {/* Description */}
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Description *
+                  {t("modals.updateRole.description")} *
                 </label>
                 <textarea
                   name="description"
@@ -317,7 +318,7 @@ const UpdateRoleModal: React.FC<UpdateRoleModalProps> = ({
               {/* Status */}
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Status
+                  {t("modals.updateRole.status")}
                 </label>
                 <select
                   name="status"
@@ -325,8 +326,8 @@ const UpdateRoleModal: React.FC<UpdateRoleModalProps> = ({
                   onChange={handleInputChange}
                   className="mt-1 w-full border border-gray-300 bg-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
+                  <option value="active">{t("common.active")}</option>
+                  <option value="inactive">{t("common.inactive")}</option>
                 </select>
               </div>
             </div>
@@ -334,7 +335,7 @@ const UpdateRoleModal: React.FC<UpdateRoleModalProps> = ({
             {/* Right Column - Permissions */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
-                Permissions
+                {t("modals.updateRole.permissions")}
               </label>
               <div className="border border-gray-200 rounded-lg max-h-96 overflow-y-auto">
                 {Object.entries(groupedPermissions).map(
@@ -380,14 +381,14 @@ const UpdateRoleModal: React.FC<UpdateRoleModalProps> = ({
                             onClick={() => selectAllInModule(module)}
                             className="text-xs text-blue-600 hover:text-blue-800"
                           >
-                            Select All
+                            {t("modals.updateRole.selectAll")}
                           </button>
                           <button
                             type="button"
                             onClick={() => deselectAllInModule(module)}
                             className="text-xs text-red-600 hover:text-red-800"
                           >
-                            Deselect All
+                            {t("modals.updateRole.deselectAll")}
                           </button>
                         </div>
                       </div>
@@ -427,7 +428,7 @@ const UpdateRoleModal: React.FC<UpdateRoleModalProps> = ({
 
               {/* Selected Permissions Count */}
               <div className="mt-3 text-sm text-gray-600">
-                {formData.permission?.length || 0} permissions selected
+                {t("modals.updateRole.permissionsSelected", { count: formData.permission?.length || 0 })}
               </div>
             </div>
           </div>
@@ -456,7 +457,7 @@ const UpdateRoleModal: React.FC<UpdateRoleModalProps> = ({
               type="button"
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
             >
-              Cancel
+              {t("common.cancel")}
             </button>
             <button
               type="submit"
@@ -467,7 +468,7 @@ const UpdateRoleModal: React.FC<UpdateRoleModalProps> = ({
                   : "bg-gray-400 cursor-not-allowed"
               }`}
             >
-              Update Role
+              {t("modals.updateRole.updateRole")}
             </button>
           </div>
         </form>

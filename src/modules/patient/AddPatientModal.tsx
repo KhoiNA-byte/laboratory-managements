@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface AddPatientProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
   onClose,
   onCreate,
 }) => {
+  const { t } = useTranslation("common");
   const [formData, setFormData] = useState({
     name: "",
     dob: "",
@@ -114,7 +116,7 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
 
     onCreate(fullPatientData);
 
-    alert(`Patient ${formData.name} has been added successfully!`);
+    alert(t("modals.addPatient.success", { name: formData.name }));
     console.log("Patient created:", fullPatientData);
 
     onClose();
@@ -135,10 +137,10 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
       <div className="bg-white rounded-2xl shadow-lg w-full max-w-3xl p-8 relative">
         {/* Header */}
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          Patient Information
+          {t("modals.addPatient.title")}
         </h2>
         <p className="text-gray-500 mb-6">
-          Enter the patient's personal and contact details
+          {t("modals.addPatient.subtitle")}
         </p>
 
         {/* Close Button */}
@@ -155,7 +157,7 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
             {/* Full Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Full Name *
+                {t("modals.addPatient.fullName")} *
               </label>
               <input
                 type="text"
@@ -163,12 +165,12 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
                 value={formData.name}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                placeholder="Full name"
+                placeholder={t("modals.addPatient.placeholders.fullName")}
                 required
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                 onInvalid={(e) =>
                   (e.target as HTMLInputElement).setCustomValidity(
-                    "Full name is required"
+                    t("modals.addPatient.validation.nameRequired")
                   )
                 }
                 onInput={(e) =>
@@ -177,7 +179,7 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
               />
               {nameError && (
                 <p className="mt-1 text-red-600 text-sm">
-                  Full name is required
+                  {t("modals.addPatient.validation.nameRequired")}
                 </p>
               )}
             </div>
@@ -185,7 +187,7 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
             {/* Date of Birth */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Date of Birth *
+                {t("modals.addPatient.dateOfBirth")} *
               </label>
               <input
                 type="date"
@@ -197,7 +199,7 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                 onInvalid={(e) =>
                   (e.target as HTMLInputElement).setCustomValidity(
-                    "Valid date of birth is required"
+                    t("modals.addPatient.validation.dobRequired")
                   )
                 }
                 onInput={(e) =>
@@ -206,7 +208,7 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
               />
               {dobError && (
                 <p className="mt-1 text-red-600 text-sm">
-                  Please provide a valid date of birth (not in the future).
+                  {t("modals.addPatient.validation.dobInvalid")}
                 </p>
               )}
             </div>
@@ -214,7 +216,7 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
             {/* Gender */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Gender *
+                {t("modals.addPatient.gender")} *
               </label>
               <select
                 name="gender"
@@ -223,16 +225,16 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
                 onBlur={handleBlur}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
               >
-                <option>Male</option>
-                <option>Female</option>
-                <option>Other</option>
+                <option>{t("modals.addPatient.genderOptions.male")}</option>
+                <option>{t("modals.addPatient.genderOptions.female")}</option>
+                <option>{t("modals.addPatient.genderOptions.other")}</option>
               </select>
             </div>
 
             {/* Phone */}
             <div className="relative">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Phone Number *
+                {t("modals.addPatient.phoneNumber")} *
               </label>
               <input
                 type="tel"
@@ -240,11 +242,12 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
                 value={formData.phone}
                 onChange={(e) => {
                   const value = e.target.value;
+                  const errorMsg = t("modals.addPatient.validation.phoneRequired");
 
                   if (!value) {
-                    e.target.setCustomValidity("Invalid phone number");
+                    e.target.setCustomValidity(errorMsg);
                   } else if (!/^0\d{9}$/.test(value)) {
-                    e.target.setCustomValidity("Invalid phone number");
+                    e.target.setCustomValidity(errorMsg);
                   } else {
                     e.target.setCustomValidity("");
                   }
@@ -252,13 +255,13 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
                   handleChange(e);
                 }}
                 onBlur={handleBlur}
-                placeholder="(10 digits, starts with 0)"
+                placeholder={t("modals.addPatient.placeholders.phoneNumber")}
                 required
                 pattern="0\d{9}"
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                 onInvalid={(e) =>
                   (e.target as HTMLInputElement).setCustomValidity(
-                    "Invalid phone number"
+                    t("modals.addPatient.validation.phoneRequired")
                   )
                 }
                 onInput={(e) =>
@@ -269,12 +272,12 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
               {/* Red error text hiển thị khi invalid */}
               {formData.phone !== "" && !/^0\d{9}$/.test(formData.phone) && (
                 <p className="absolute right-0 mt-1 text-red-600 text-sm">
-                  Invalid phone number
+                  {t("modals.addPatient.validation.phoneRequired")}
                 </p>
               )}
               {touched.phone && phoneError && (
                 <p className="mt-1 text-red-600 text-sm">
-                  Invalid phone number
+                  {t("modals.addPatient.validation.phoneRequired")}
                 </p>
               )}
             </div>
@@ -282,7 +285,7 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
             {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email
+                {t("modals.addPatient.email")}
               </label>
               <input
                 type="email"
@@ -290,12 +293,12 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
                 value={formData.email}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                placeholder="example@email.com"
+                placeholder={t("modals.addPatient.placeholders.email")}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
               />
               {emailError && (
                 <p className="mt-1 text-red-600 text-sm">
-                  Invalid email address
+                  {t("modals.addPatient.validation.emailInvalid")}
                 </p>
               )}
             </div>
@@ -345,7 +348,7 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
             {/* Address */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Address *
+                {t("modals.addPatient.address")} *
               </label>
               <input
                 type="text"
@@ -353,12 +356,12 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
                 value={formData.address}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                placeholder="123 Main St, City, State, ZIP"
+                placeholder={t("modals.addPatient.placeholders.address")}
                 required
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                 onInvalid={(e) =>
                   (e.target as HTMLInputElement).setCustomValidity(
-                    "Address is required"
+                    t("modals.addPatient.validation.addressRequired")
                   )
                 }
                 onInput={(e) =>
@@ -366,7 +369,9 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
                 }
               />
               {addressError && (
-                <p className="mt-1 text-red-600 text-sm">Address is required</p>
+                <p className="mt-1 text-red-600 text-sm">
+                  {t("modals.addPatient.validation.addressRequired")}
+                </p>
               )}
             </div>
           </div>
@@ -378,13 +383,13 @@ const AddPatientModal: React.FC<AddPatientProps> = ({
               onClick={onClose}
               className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"
             >
-              Cancel
+              {t("common.cancel")}
             </button>
             <button
               type="submit"
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
             >
-              Create Patient
+              {t("modals.addPatient.createPatient")}
             </button>
           </div>
         </form>
