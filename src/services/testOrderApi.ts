@@ -103,7 +103,7 @@ export const createUserId = async (): Promise<string> => {
   try {
     // Get current highest user ID
     const currentId = await getCurrentUserId();
-    
+      
     // Simply increment by 1
     const nextId = currentId + 1;
     

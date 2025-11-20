@@ -12,8 +12,10 @@ import { AppDispatch, RootState } from "../../store";
 import {
   fetchListRequest,
   deleteResultRequest,
+  fetchDetailRequest,
   ListRow,
 } from "../../store/slices/testResultsSlice";
+import { TestParameter } from "../../types/testResult";
 
 const MyTestResultsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -23,6 +25,9 @@ const MyTestResultsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("All Results");
   const [isNewOpen, setIsNewOpen] = useState(false);
+  const [fetchingRowId, setFetchingRowId] = useState<string | number | null>(
+    null
+  );
 
   const list = useSelector((s: RootState) => s.testResults.list);
   const loading = useSelector((s: RootState) => s.testResults.loadingList);
@@ -65,15 +70,42 @@ const MyTestResultsPage: React.FC = () => {
   };
 
   // IMPORTANT: only navigate if we actually have a runId (result ready)
-  const handleView = (orderNumber?: string | number) => {
+  const handleView = async (row: ListRow) => {
+    const orderNumber = row.runId ?? row.id;
     if (!orderNumber) {
       // defensive: shouldn't happen if button is disabled in UI
       window.alert("Cannot view: this test is still pending (no result yet).");
       return;
     }
-    navigate(`/admin/test-results/${String(orderNumber)}`, {
-      state: { background: location },
-    });
+
+    try {
+      // Set loading state
+      setFetchingRowId(row.id);
+
+      // Fetch detail để lấy parameters
+      dispatch(fetchDetailRequest(String(orderNumber)));
+
+      // Wait for detail in saga then get from store
+      // For now, navigate immediately and let TestResultDetailPage handle the fetch
+      // But we'll pass empty parameters first, then TestResultDetailPage will use its own fetch
+
+      navigate(`/admin/test-results/${String(orderNumber)}`, {
+        state: {
+          background: location,
+          testOrderId: String(row.id),
+          patient: row.patientName,
+          date: row.date,
+          tester: row.tester,
+          status: row.status,
+          runId: orderNumber,
+        },
+      });
+    } catch (error) {
+      console.error("Failed to navigate:", error);
+      window.alert("Failed to open test details. Please try again.");
+    } finally {
+      setFetchingRowId(null);
+    }
   };
 
   const handleExport = (id: string) => alert(`Exporting ${id} (mock)`);
@@ -252,6 +284,7 @@ const MyTestResultsPage: React.FC = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredRows.map((r) => {
                   const viewDisabled = r.status === "In Progress" || !r.runId;
+                  const isFetching = fetchingRowId === r.id;
                   return (
                     <tr
                       key={`${r.source}-${r.id}`}
@@ -289,21 +322,48 @@ const MyTestResultsPage: React.FC = () => {
                               ? window.alert(
                                   "This test is pending — result not available to view yet."
                                 )
-                              : handleView(r.runId ?? r.id)
+                              : handleView(r)
                           }
                           className={`px-3 py-1 border border-gray-200 rounded-md text-sm ${
-                            viewDisabled
+                            viewDisabled || isFetching
                               ? "opacity-50 cursor-not-allowed bg-gray-50 text-gray-400"
                               : "hover:shadow bg-white"
                           }`}
-                          disabled={viewDisabled}
+                          disabled={viewDisabled || isFetching}
                           title={
                             viewDisabled
                               ? "Cannot view pending result"
+                              : isFetching
+                              ? "Loading..."
                               : "View result"
                           }
                         >
-                          View
+                          {isFetching ? (
+                            <span className="flex items-center gap-1">
+                              <svg
+                                className="animate-spin h-3 w-3"
+                                viewBox="0 0 24 24"
+                              >
+                                <circle
+                                  className="opacity-25"
+                                  cx="12"
+                                  cy="12"
+                                  r="10"
+                                  stroke="currentColor"
+                                  strokeWidth="4"
+                                  fill="none"
+                                />
+                                <path
+                                  className="opacity-75"
+                                  fill="currentColor"
+                                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                />
+                              </svg>
+                              Loading
+                            </span>
+                          ) : (
+                            "View"
+                          )}
                         </button>
                         <button
                           onClick={() => handleExport(r.id)}

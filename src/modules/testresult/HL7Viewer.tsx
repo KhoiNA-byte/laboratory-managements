@@ -5,6 +5,8 @@ import {
   ArrowLeftIcon,
   DocumentDuplicateIcon,
 } from "@heroicons/react/24/outline";
+import { TestParameter } from "../../types/testResult";
+import { exportFile } from "../../utils/exportFile";
 
 function detectObxFlag(line: string): "High" | "Low" | "Normal" {
   // Simple heuristics:
@@ -17,11 +19,28 @@ function detectObxFlag(line: string): "High" | "Low" | "Normal" {
 }
 
 export default function HL7Viewer({
+  // Basic info
+  testOrderId,
+  patient,
+  date,
+  tester,
+  status,
+  sex,
   orderNumber,
+  // Parameters
+  parameters,
+  // HL7
   rawHL7,
   onClose,
 }: {
+  testOrderId: string;
+  patient: string;
+  date: string;
+  tester: string;
+  status: string;
+  sex: string;
   orderNumber: string;
+  parameters: TestParameter[];
   rawHL7: string;
   onClose: () => void;
 }) {
@@ -66,15 +85,29 @@ export default function HL7Viewer({
   };
 
   const downloadHL7 = () => {
-    const blob = new Blob([rawHL7], { type: "text/plain;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${orderNumber || "message"}.hl7`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
+    // Gọi exportFile với đầy đủ data
+    exportFile({
+      testOrderId,
+      patient,
+      date,
+      tester,
+      status,
+      sex,
+      parameters,
+      hl7_raw: rawHL7,
+    });
+
+    // Download file HL7
+
+    // const blob = new Blob([rawHL7], { type: "text/plain;charset=utf-8" });
+    // const url = URL.createObjectURL(blob);
+    // const a = document.createElement("a");
+    // a.href = url;
+    // a.download = `${orderNumber || "message"}.hl7`;
+    // document.body.appendChild(a);
+    // a.click();
+    // a.remove();
+    // URL.revokeObjectURL(url);
   };
 
   return (
@@ -82,34 +115,60 @@ export default function HL7Viewer({
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-5xl mx-auto overflow-hidden">
         {/* header */}
-        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
+        <div className="px-6 py-4 border-b border-gray-100">
+          <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold text-gray-900">
                 HL7 Message Viewer
               </h3>
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-gray-600 mt-1 space-y-1">
+                <div className="flex gap-4">
+                  <span>
+                    <strong>Test Order:</strong> {testOrderId}
+                  </span>
+                  <span>
+                    <strong>Patient:</strong> {patient}
+                  </span>
+                  <span>
+                    <strong>Sex:</strong> {sex}
+                  </span>
+                  <span>
+                    <strong>Date:</strong> {date}
+                  </span>
+                </div>
+                <div className="flex gap-4">
+                  <span>
+                    <strong>Tester:</strong> {tester}
+                  </span>
+                  <span>
+                    <strong>Status:</strong> {status}
+                  </span>
+                  <span>
+                    <strong>Run ID:</strong> {orderNumber}
+                  </span>
+                </div>
+              </div>
+              <div className="text-sm text-gray-500 mt-2">
                 OBX total: {parsed.filter((p) => p.isObx).length} — High:{" "}
                 {parsed.filter((p) => p.flag === "High").length} — Low:{" "}
                 {parsed.filter((p) => p.flag === "Low").length}
               </div>
             </div>
-          </div>
 
-          <div className="flex items-center gap-3">
-            <button
-              onClick={copyToClipboard}
-              className="inline-flex items-center gap-2 px-3 py-1 border rounded-md text-sm hover:shadow"
-            >
-              <DocumentDuplicateIcon className="h-4 w-4" /> Copy
-            </button>
-            <button
-              onClick={downloadHL7}
-              className="px-3 py-1 border rounded-md text-sm hover:shadow"
-            >
-              Download
-            </button>
-            {/* View button kept for parity with your screenshot */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={copyToClipboard}
+                className="inline-flex items-center gap-2 px-3 py-1 border rounded-md text-sm hover:shadow"
+              >
+                <DocumentDuplicateIcon className="h-4 w-4" /> Copy
+              </button>
+              <button
+                onClick={downloadHL7}
+                className="px-3 py-1 border rounded-md text-sm hover:shadow"
+              >
+                Download
+              </button>
+            </div>
           </div>
         </div>
 

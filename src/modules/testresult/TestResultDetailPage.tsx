@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { XMarkIcon, ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import Comments from "./CommentsPage";
 import HL7Viewer from "./HL7Viewer";
@@ -13,12 +13,26 @@ import {
   CommentItem,
   TestResultDetail,
 } from "../../store/slices/testResultsSlice";
-
+import { TestParameter } from "../../types/testResult";
 
 export default function TestResultDetailPage(): JSX.Element {
   const { orderNumber } = useParams<{ orderNumber: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch<AppDispatch>();
+
+  // Nhận basic info từ MyTestResultsPage (nếu có)
+  const stateData = location.state as
+    | {
+        background?: Location;
+        testOrderId: string;
+        patient: string;
+        date: string;
+        tester: string;
+        status: string;
+        runId: string | number;
+      }
+    | undefined;
 
   const detail = useSelector((s: RootState) => s.testResults.detail);
   const loadingDetail = useSelector(
@@ -345,7 +359,29 @@ export default function TestResultDetailPage(): JSX.Element {
 
       {isHL7Open && detail?.hl7_raw !== undefined && (
         <HL7Viewer
+          // Basic info - ưu tiên từ stateData, fallback về detail
+          testOrderId={
+            stateData?.testOrderId ?? String(detail.run_id ?? orderNumber)
+          }
+          patient={stateData?.patient ?? detail.patientName ?? "Unknown"}
+          date={stateData?.date ?? detail.collected ?? ""}
+          tester={stateData?.tester ?? "Unknown"}
+          status={stateData?.status ?? "Completed"}
           orderNumber={String(detail.run_id ?? orderNumber)}
+          sex={detail.sex ?? "Unknown"}
+          // Parameters từ rowsState
+          parameters={rowsState.map(
+            (r): TestParameter => ({
+              parameter: r.parameter || "",
+              result: r.result || "",
+              unit: r.unit || "",
+              referenceRange: r.referenceRange || "",
+              deviation: r.deviation || "",
+              flag: r.flag || "Normal",
+              appliedEvaluate: r.appliedEvaluate,
+            })
+          )}
+          // Raw HL7
           rawHL7={detail.hl7_raw ?? ""}
           onClose={() => setIsHL7Open(false)}
         />
