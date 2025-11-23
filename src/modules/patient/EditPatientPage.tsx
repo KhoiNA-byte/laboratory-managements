@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "react-i18next"; // <--- THÊM IMPORT NÀY
 import { getPatientById } from "../../services/patientApi";
 
 import {
@@ -16,6 +17,7 @@ export const EditPatientPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { t } = useTranslation("common"); // <--- THÊM DÒNG NÀY
 
   // 3. Lấy state từ Redux
   const {
@@ -49,15 +51,14 @@ export const EditPatientPage = () => {
     switch (name) {
       case "name":
         if (!stringValue) {
-          errors.name = "Name is required";
+          errors.name = t("editPatientPage.nameRequired"); // Dùng khóa dịch
         } else if (
           !/^[a-zA-Z\sàáãạảăắằặẳẵâấầậẩẫèéẽẹẻêếềệểễìíĩịỉòóõọỏôốồộổỗơớờợởỡùúũụủưứừựửữỳýỹỵỷĐđ]+$/i.test(
             stringValue
           )
         ) {
           // Regex cho phép chữ cái (cả tiếng Việt), và khoảng trắng. Không cho phép số/ký tự đặc biệt.
-          errors.name =
-            "Full Name cannot contain numbers or special characters";
+          errors.name = t("editPatientPage.nameInvalid"); // Dùng khóa dịch
         } else {
           delete errors.name;
         }
@@ -65,34 +66,36 @@ export const EditPatientPage = () => {
       case "email":
         // Bỏ required. Chỉ kiểm tra format nếu có giá trị.
         if (stringValue && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(stringValue))
-          errors.email = "Invalid email format";
+          errors.email = t("editPatientPage.emailInvalid"); // Dùng khóa dịch
         else delete errors.email;
         break;
       case "phone":
         if (!stringValue) {
-          errors.phone = "Phone is required";
+          errors.phone = t("editPatientPage.phoneRequired"); // Dùng khóa dịch
         } else if (!/^0\d{9}$/.test(stringValue)) {
           // Format: Bắt đầu bằng 0, tổng cộng 10 số.
-          errors.phone = "Phone number must be 10 digits and start with 0";
+          errors.phone = t("editPatientPage.phoneInvalid"); // Dùng khóa dịch
         } else {
           delete errors.phone;
         }
         break;
       case "age":
         if (!stringValue) {
-          errors.age = "Age is required";
+          errors.age = t("editPatientPage.ageRequired"); // Dùng khóa dịch
         } else if (isNaN(Number(stringValue)) || Number(stringValue) <= 0) {
-          errors.age = "Age must be a positive number";
+          errors.age = t("editPatientPage.ageInvalid"); // Dùng khóa dịch
         } else {
           delete errors.age;
         }
         break;
       case "address":
-        if (!stringValue) errors.address = "Address is required";
+        if (!stringValue) errors.address = t("editPatientPage.addressRequired");
+        // Dùng khóa dịch
         else delete errors.address;
         break;
       case "gender":
-        if (!stringValue) errors.gender = "Gender is required";
+        if (!stringValue)
+          errors.gender = t("editPatientPage.genderRequired"); // Dùng khóa dịch
         else delete errors.gender;
         break;
       default:
@@ -151,38 +154,52 @@ export const EditPatientPage = () => {
 
             switch (key) {
               case "name":
-                if (!stringValue) tempErrors.name = "Name is required";
+                if (!stringValue)
+                  tempErrors.name = t("editPatientPage.nameRequired");
                 else if (
                   !/^[a-zA-Z\sàáãạảăắằặẳẵâấầậẩẫèéẽẹẻêếềệểễìíĩịỉòóõọỏôốồộổỗơớờợởỡùúũụủưứừựửữỳýỹỵỷĐđ]+$/i.test(
                     stringValue
                   )
                 )
-                  tempErrors.name =
-                    "Full Name cannot contain numbers or special characters";
+                  tempErrors.name = t("editPatientPage.nameInvalid");
                 break;
               case "email":
                 if (
                   stringValue &&
                   !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(stringValue)
                 )
-                  tempErrors.email = "Invalid email format";
+                  tempErrors.email = t("editPatientPage.emailInvalid");
                 break;
               case "phone":
-                if (!stringValue) tempErrors.phone = "Phone is required";
+                if (!stringValue)
+                  tempErrors.phone = t("editPatientPage.phoneRequired");
                 else if (!/^0\d{9}$/.test(stringValue))
-                  tempErrors.phone =
-                    "Phone number must be 10 digits and start with 0";
+                  tempErrors.phone = t("editPatientPage.phoneInvalid");
                 break;
               case "age":
-                if (!stringValue) tempErrors.age = "Age is required";
-                else if (isNaN(Number(stringValue)) || Number(stringValue) <= 0)
-                  tempErrors.age = "Age must be a positive number";
+                if (!stringValue) {
+                  tempErrors.age = t("editPatientPage.ageRequired");
+                } else {
+                  const num = Number(stringValue);
+                  if (
+                    isNaN(num) ||
+                    !Number.isInteger(num) ||
+                    num <= 0 ||
+                    num > 120
+                  ) {
+                    tempErrors.age = t("editPatientPage.ageInvalid");
+                  } else {
+                    delete tempErrors.age;
+                  }
+                }
                 break;
               case "address":
-                if (!stringValue) tempErrors.address = "Address is required";
+                if (!stringValue)
+                  tempErrors.address = t("editPatientPage.addressRequired");
                 break;
               case "gender":
-                if (!stringValue) tempErrors.gender = "Gender is required";
+                if (!stringValue)
+                  tempErrors.gender = t("editPatientPage.genderRequired");
                 break;
               default:
                 break;
@@ -194,7 +211,7 @@ export const EditPatientPage = () => {
 
         setValidationErrors(initialErrors);
       } catch (err) {
-        setPageError("Failed to load patient data. Patient not found.");
+        setPageError(t("editPatientPage.loadError")); // Dùng khóa dịch
       } finally {
         setPageLoading(false);
       }
@@ -206,7 +223,7 @@ export const EditPatientPage = () => {
     return () => {
       dispatch(clearMessages());
     };
-  }, [id, navigate, dispatch]);
+  }, [id, navigate, dispatch, t]); // <--- THÊM t VÀO DEPENDENCY ARRAY
 
   // 7. Xử lý tự động điều hướng khi cập nhật thành công
   useEffect(() => {
@@ -268,7 +285,7 @@ export const EditPatientPage = () => {
   if (pageLoading) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">Loading patient data...</p>
+        <p className="text-gray-500">{t("editPatientPage.loadingData")}</p>
       </div>
     );
   }
@@ -277,14 +294,17 @@ export const EditPatientPage = () => {
   if (pageError) {
     return (
       <div className="text-center py-12">
-        <h3 className="mt-2 text-sm font-medium text-gray-900">Error</h3>
+        <h3 className="mt-2 text-sm font-medium text-gray-900">
+          {t("common.error")}
+        </h3>{" "}
+        // Dùng khóa dịch
         <p className="mt-1 text-sm text-gray-500">{pageError}</p>
         <div className="mt-4">
           <Link
             to="/admin/patients"
             className="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium"
           >
-            Back to Patients
+            {t("editPatientPage.backToPatients")} // Dùng khóa dịch
           </Link>
         </div>
       </div>
@@ -303,7 +323,7 @@ export const EditPatientPage = () => {
                 to="/admin/patients"
                 className="text-gray-500 hover:text-blue-600"
               >
-                Patients
+                {t("patientsPage.title")} {/* Sử dụng khóa dịch chung */}
               </Link>
               {/* ... (icon) */}
             </li>
@@ -313,17 +333,19 @@ export const EditPatientPage = () => {
                 to={`/admin/patients/${id}`}
                 className="text-gray-500 hover:text-blue-600"
               >
-                {formData.name || "Patient Details"}
+                {formData.name || t("editPatientPage.patientDetails")}{" "}
+                {/* Dùng khóa dịch */}
               </Link>
             </li>
             <li className="flex items-center">
               <span className="text-gray-400 mx-2">/</span>
-              <span className="text-gray-700">Edit</span>
+              <span className="text-gray-700">{t("common.edit")}</span>{" "}
+              {/* Dùng khóa dịch */}
             </li>
           </ol>
         </nav>
         <h1 className="text-3xl font-bold text-gray-900 mt-2">
-          Edit Patient Information
+          {t("editPatientPage.title")} {/* Dùng khóa dịch */}
         </h1>
       </div>
 
@@ -334,7 +356,7 @@ export const EditPatientPage = () => {
       >
         <div className="p-6 space-y-6">
           <h2 className="text-lg font-semibold text-gray-900">
-            Personal Details
+            {t("editPatientPage.personalDetails")} {/* Dùng khóa dịch */}
           </h2>
           {/* CÁC TRƯỜNG CỦA FORM */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -344,7 +366,8 @@ export const EditPatientPage = () => {
                 htmlFor="name"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Full Name
+                {t("patientsPage.table.name")}{" "}
+                {/* Sử dụng khóa dịch từ PatientsPage */}
               </label>
               <input
                 type="text"
@@ -367,7 +390,7 @@ export const EditPatientPage = () => {
                 htmlFor="email"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Email (Optional)
+                {t("editPatientPage.email")} ({t("editPatientPage.optional")}){" "}
               </label>
               <input
                 type="email"
@@ -390,7 +413,8 @@ export const EditPatientPage = () => {
                 htmlFor="phone"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Phone
+                {t("patientsPage.table.phone")}{" "}
+                {/* Sử dụng khóa dịch từ PatientsPage */}
               </label>
               <input
                 type="tel"
@@ -413,7 +437,7 @@ export const EditPatientPage = () => {
                 htmlFor="age"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Age
+                {t("editPatientPage.age")}{" "}
               </label>
               <input
                 type="number"
@@ -436,7 +460,7 @@ export const EditPatientPage = () => {
                 htmlFor="gender"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Gender
+                {t("editPatientPage.gender")}{" "}
               </label>
               <select
                 id="gender"
@@ -446,11 +470,11 @@ export const EditPatientPage = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="" disabled>
-                  Select gender
+                  {t("editPatientPage.selectGender")} {/* Dùng khóa dịch */}
                 </option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
+                <option value="Male">{t("usersPage.filters.male")}</option>
+                <option value="Female">{t("usersPage.filters.female")}</option>
+                <option value="Other">{t("editPatientPage.other")}</option>{" "}
               </select>
             </div>
 
@@ -460,7 +484,7 @@ export const EditPatientPage = () => {
                 htmlFor="address"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Address
+                {t("editPatientPage.address")}{" "}
               </label>
               <input
                 type="text"
@@ -497,7 +521,7 @@ export const EditPatientPage = () => {
             disabled={updateLoading}
             className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
           >
-            Cancel
+            {t("common.cancel")} {/* Dùng khóa dịch */}
           </button>
           <button
             type="submit"
@@ -508,7 +532,10 @@ export const EditPatientPage = () => {
                 : "bg-blue-600 hover:bg-blue-700"
             } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
           >
-            {updateLoading ? "Saving..." : "Save Changes"}
+            {updateLoading
+              ? t("common.saving")
+              : t("editPatientPage.saveChanges")}{" "}
+            {/* Dùng khóa dịch */}
           </button>
         </div>
       </form>

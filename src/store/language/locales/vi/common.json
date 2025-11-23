@@ -852,5 +852,81 @@
       "searchPlaceholder": "Tìm theo tên, email hoặc MRN...",
       "addPatient": "Thêm bệnh nhân"
     }
+  },
+  "editPatientPage": {
+    "title": "Chỉnh sửa hồ sơ bệnh nhân",
+    "subtitle": "Cập nhật thông tin cá nhân và liên hệ của bệnh nhân",
+    "personalInfo": "Thông tin cá nhân",
+    "contactInfo": "Thông tin liên hệ",
+    "fullName": "Họ và tên",
+    "dateOfBirth": "Ngày sinh",
+    "gender": "Giới tính",
+    "phoneNumber": "Số điện thoại",
+    "email": "Email",
+    "address": "Địa chỉ",
+    "age": "Tuổi",
+    "optional": "Tùy chọn",
+    "saveChanges": "Lưu thay đổi",
+    "selectGender": "Chọn giới tính", 
+    "nameRequired": "Họ và tên là bắt buộc",
+    "nameInvalid": "Họ và tên không được chứa ký tự đặc biệt",
+    "dobRequired": "Ngày sinh hợp lệ là bắt buộc",
+    "dobInvalid": "Vui lòng cung cấp ngày sinh hợp lệ",
+    "phoneRequired": "Số điện thoại là bắt buộc",
+    "phoneInvalid": "Số điện thoại không hợp lệ",
+    "emailInvalid": "Địa chỉ email không hợp lệ",
+    "addressRequired": "Địa chỉ là bắt buộc",
+    "ageRequired": "Tuổi là bắt buộc",
+    "other": "Khác",
+    "ageInvalid": "Tuổi không hợp lệ",
+    "loadingData": "Đang tải dữ liệu bệnh nhân...",
+    "personalDetails": "Thông tin chi tiết "
+  },
+
+  "patientDetails": {
+    "title": "Chi tiết bệnh nhân",
+    "subtitle": "Xem hồ sơ và lịch sử xét nghiệm của bệnh nhân",
+    "notFoundTitle": "Không tìm thấy bệnh nhân",
+    "notFoundDesc": "Không tìm thấy bệnh nhân có ID \"{{id}}\".",
+    "noTestHistoryTitle": "Không có lịch sử xét nghiệm",
+    "noTestHistoryDesc": "Bệnh nhân này chưa có lịch sử xét nghiệm.",
+    "personalInfo": "Thông tin cá nhân",
+    "contactInfo": "Thông tin liên hệ",
+    "fullName": "Họ và tên",
+    "dateOfBirth": "Ngày sinh",
+    "age": "Tuổi",
+    "editPatient": "Chỉnh sửa bệnh nhân",
+    "tabs": {
+      "overview": "Tổng quan",
+      "testHistory": "Lịch sử xét nghiệm"
+    },
+    "recentActivity": "Hoạt động gần đây",
+    "latestTestOrders": "Đơn xét nghiệm mới nhất",
+    "summaryCards": {
+      "totalTests":"Tổng số xét nghiệm",
+      "pending": "Chờ xử lý",
+      "lastVisit": "Lần khám cuối"
+    },
+    "table": {
+      "headers":{
+        "testType":"Loại xét nghiệm",
+        "orderedAt": "Tạo lúc",
+        "status":"Trạng thái",
+        "tester":"Người xét nghiệm",
+        "note":"Ghi chú",
+        "testId": "Mã đơn"
+      }
+    },
+    "genderOptions": {
+        "Male": "Nam",
+        "Female": "Nữ",
+        "Other": "Khác"
+    },
+    "statusOptions": {
+        "Pending": "Chờ xử lý",
+        "In Progress": "Đang xử lý",
+        "Completed": "Hoàn thành",
+        "Reviewed": "Đã xem xét"
+    }
   }
 }

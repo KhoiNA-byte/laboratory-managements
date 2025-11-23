@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { getPatientById } from "../../services/patientApi";
 import type { Patient, TestOrder } from "../../services/patientApi";
+import { useTranslation } from "react-i18next"; // <--- thêm
 
 export const PatientDetailsPage = () => {
+  const { t } = useTranslation("common"); // <--- thêm
   const { id } = useParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState("overview");
   const navigate = useNavigate();
@@ -40,44 +42,20 @@ export const PatientDetailsPage = () => {
       <div className="space-y-6">
         <div className="text-center py-12">
           <div className="text-gray-500">
-            <svg
-              className="mx-auto h-12 w-12 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
-              />
-            </svg>
+            {/* svg icon */}
             <h3 className="mt-2 text-sm font-medium text-gray-900">
-              Patient Not Found
+              {t("patientDetails.notFoundTitle")}
             </h3>
             <p className="mt-1 text-sm text-gray-500">
-              The patient with ID "{id}" could not be found.
+              {t("patientDetails.notFoundDesc", { id })}
             </p>
             <div className="mt-4">
               <Link
                 to="/admin/patients"
                 className="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium"
               >
-                <svg
-                  className="h-4 w-4 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-                Back to Patients
+                {/* back icon */}
+                {t("patientsPage.title")}
               </Link>
             </div>
           </div>
@@ -260,22 +238,21 @@ export const PatientDetailsPage = () => {
       (order) => order.status === "In Progress" || order.status === "Pending"
     ).length;
 
-    // Lấy "Last Visit" từ patient.updatedAt và định dạng nó
     const lastVisitValue = formatDateTime(patient.updatedAt);
 
     return [
       {
-        title: "Total Tests",
+        title: t("patientDetails.summaryCards.totalTests"),
         value: totalTests.toString(),
         icon: "document",
       },
       {
-        title: "Pending",
+        title: t("patientDetails.summaryCards.pending"),
         value: pendingTests.toString(),
         icon: "clock",
       },
       {
-        title: "Last Visit",
+        title: t("patientDetails.summaryCards.lastVisit"),
         value: lastVisitValue,
       },
     ];
@@ -335,10 +312,10 @@ export const PatientDetailsPage = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 mb-1">
-              Patient Details
+              {t("patientDetails.title")}
             </h1>
             <p className="text-gray-600 text-sm">
-              View and manage patient information
+              {t("patientDetails.subtitle")}
             </p>
           </div>
         </div>
@@ -349,20 +326,8 @@ export const PatientDetailsPage = () => {
             to="/admin/patients"
             className="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium"
           >
-            <svg
-              className="h-4 w-4 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-            Back to Patients
+            {/* back icon */}
+            {t("patientsPage.title")}
           </Link>
         </div>
       </div>
@@ -391,7 +356,8 @@ export const PatientDetailsPage = () => {
               <div className="flex items-center">
                 {getIcon("person")}
                 <span className="ml-3 text-gray-700 text-sm">
-                  {patient.age} years / {patient.gender}
+                  {patient.age} {t("patientDetails.age")} /{" "}
+                  {t(`patientDetails.genderOptions.${patient.gender}`)}
                 </span>
               </div>
               <div className="flex items-center">
@@ -403,9 +369,7 @@ export const PatientDetailsPage = () => {
               <div className="flex items-center">
                 {getIcon("email")}
                 <span className="ml-3 text-gray-700 text-sm">
-                  {patient.email && patient.email.trim()
-                    ? patient.email
-                    : "_No email_"}
+                  {patient.email && patient.email.trim() ? patient.email : "--"}
                 </span>
               </div>
               <div className="flex items-center">
@@ -421,20 +385,8 @@ export const PatientDetailsPage = () => {
               onClick={() => navigate(`/admin/patients/${patient.id}/edit`)}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
             >
-              <svg
-                className="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                />
-              </svg>
-              Edit Patient
+              {/* edit icon */}
+              {t("patientDetails.editPatient")}
             </button>
           </div>
         </div>
@@ -446,9 +398,11 @@ export const PatientDetailsPage = () => {
             <div className="border-b border-gray-200">
               <nav className="flex space-x-6 px-6">
                 {[
-                  { id: "overview", label: "Overview" },
-                  { id: "test-history", label: "Test History" },
-                  // { id: "documents", label: "Documents" },
+                  { id: "overview", label: t("patientDetails.tabs.overview") },
+                  {
+                    id: "test-history",
+                    label: t("patientDetails.tabs.testHistory"),
+                  },
                 ].map((tab) => (
                   <button
                     key={tab.id}
@@ -471,10 +425,10 @@ export const PatientDetailsPage = () => {
                   {/* Recent Activity */}
                   <div>
                     <h3 className="text-base font-semibold text-gray-900 mb-1">
-                      Recent Activity
+                      {t("patientDetails.recentActivity")}
                     </h3>
                     <p className="text-sm text-gray-600 mb-4">
-                      Latest test orders and results
+                      {t("patientDetails.latestTestOrders")}
                     </p>
 
                     <div className="space-y-2">
@@ -502,7 +456,9 @@ export const PatientDetailsPage = () => {
                                 activity.status
                               )}`}
                             >
-                              {activity.status}
+                              {t(
+                                `patientDetails.statusOptions.${activity.status}`
+                              )}
                             </span>
                             <span className="text-sm text-gray-600">
                               {activity.note}
@@ -541,128 +497,81 @@ export const PatientDetailsPage = () => {
 
               {activeTab === "test-history" && (
                 <div>
-                  {/* 1. Kiểm tra nếu không có test_orders hoặc mảng rỗng */}
                   {!patient.test_orders || patient.test_orders.length === 0 ? (
-                    // 1a. Hiển thị thông báo "Không có dữ liệu"
                     <div className="text-center py-12">
                       <div className="text-gray-500">
-                        {/* Biểu tượng (Icon) */}
-                        <svg
-                          className="mx-auto h-12 w-12 text-gray-400"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          aria-hidden="true"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                          />
-                        </svg>
+                        {/* icon */}
                         <h3 className="mt-2 text-sm font-medium text-gray-900">
-                          No Test History
+                          {t("patientDetails.noTestHistoryTitle")}
                         </h3>
                         <p className="mt-1 text-sm text-gray-500">
-                          This patient does not have any test orders yet.
+                          {t("patientDetails.noTestHistoryDesc")}
                         </p>
                       </div>
                     </div>
                   ) : (
-                    // 1b. Hiển thị bảng nếu có dữ liệu
                     <div className="flow-root">
-                      <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                        <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                          <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-                            <table className="min-w-full divide-y divide-gray-300">
-                              {/* 2. Tiêu đề bảng (Header) */}
-                              <thead className="bg-gray-50">
-                                <tr>
-                                  <th
-                                    scope="col"
-                                    className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
-                                  >
-                                    Test Type
-                                  </th>
-                                  <th
-                                    scope="col"
-                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                                  >
-                                    Ordered At
-                                  </th>
-                                  <th
-                                    scope="col"
-                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                                  >
-                                    Status
-                                  </th>
-                                  <th
-                                    scope="col"
-                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                                  >
-                                    Tester
-                                  </th>
-                                  <th
-                                    scope="col"
-                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                                  >
-                                    Note
-                                  </th>
-                                  <th
-                                    scope="col"
-                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                                  >
-                                    Test ID
-                                  </th>
+                      {/* table headers use i18n */}
+                      <table className="min-w-full divide-y divide-gray-300">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th>
+                              {t("patientDetails.table.headers.testType")}
+                            </th>
+                            <th>
+                              {t("patientDetails.table.headers.orderedAt")}
+                            </th>
+                            <th>{t("patientDetails.table.headers.status")}</th>
+                            <th>{t("patientDetails.table.headers.tester")}</th>
+                            <th>{t("patientDetails.table.headers.note")}</th>
+                            <th>{t("patientDetails.table.headers.testId")}</th>
+                          </tr>
+                        </thead>
+                        {/* 3. Nội dung bảng (Body) */}
+                        <tbody className="divide-y divide-gray-200 bg-white">
+                          {
+                            // Sắp xếp: test mới nhất lên đầu
+                            [...patient.test_orders]
+                              .sort(
+                                (a, b) =>
+                                  new Date(b.orderedAt).getTime() -
+                                  new Date(a.orderedAt).getTime()
+                              )
+                              .map((order) => (
+                                <tr key={order.id}>
+                                  <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                                    {order.testType}
+                                  </td>
+                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                    {/* Dùng hàm formatDateTime */}
+                                    {formatDateTime(order.orderedAt)}
+                                  </td>
+                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                    {/* Dùng hàm getStatusBadgeColor */}
+                                    <span
+                                      className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeColor(
+                                        order.status
+                                      )}`}
+                                    >
+                                      {t(
+                                        `patientDetails.statusOptions.${order.status}`
+                                      )}
+                                    </span>
+                                  </td>
+                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                    {order.tester || "N/A"}
+                                  </td>
+                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                    {order.note || "N/A"}
+                                  </td>
+                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                    {order.id}
+                                  </td>
                                 </tr>
-                              </thead>
-                              {/* 3. Nội dung bảng (Body) */}
-                              <tbody className="divide-y divide-gray-200 bg-white">
-                                {
-                                  // Sắp xếp: test mới nhất lên đầu
-                                  [...patient.test_orders]
-                                    .sort(
-                                      (a, b) =>
-                                        new Date(b.orderedAt).getTime() -
-                                        new Date(a.orderedAt).getTime()
-                                    )
-                                    .map((order) => (
-                                      <tr key={order.id}>
-                                        <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                                          {order.testType}
-                                        </td>
-                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                          {/* Dùng hàm formatDateTime */}
-                                          {formatDateTime(order.orderedAt)}
-                                        </td>
-                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                          {/* Dùng hàm getStatusBadgeColor */}
-                                          <span
-                                            className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeColor(
-                                              order.status
-                                            )}`}
-                                          >
-                                            {order.status}
-                                          </span>
-                                        </td>
-                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                          {order.tester || "N/A"}
-                                        </td>
-                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                          {order.note || "N/A"}
-                                        </td>
-                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                          {order.id}
-                                        </td>
-                                      </tr>
-                                    ))
-                                }
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      </div>
+                              ))
+                          }
+                        </tbody>
+                      </table>
                     </div>
                   )}
                 </div>

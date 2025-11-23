@@ -147,7 +147,11 @@ export const PatientsPage = () => {
 
   // Add error state handling
   if (error) {
-    return <div className="text-center text-red-600 py-4">{t("common.error")}: {error}</div>;
+    return (
+      <div className="text-center text-red-600 py-4">
+        {t("common.error")}: {error}
+      </div>
+    );
   }
 
   // Format time
@@ -165,9 +169,7 @@ export const PatientsPage = () => {
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
           {t("patientsPage.title")}
         </h1>
-        <p className="text-gray-600">
-          {t("patientsPage.subtitle")}
-        </p>
+        <p className="text-gray-600">{t("patientsPage.subtitle")}</p>
       </div>
 
       {/* Summary Cards */}
@@ -182,7 +184,9 @@ export const PatientsPage = () => {
               <p className="text-3xl font-bold text-gray-900">
                 {patients.length}
               </p>
-              <p className="text-sm text-gray-500 mt-1">{t("patientsPage.summaryCards.activeRecords")}</p>
+              <p className="text-sm text-gray-500 mt-1">
+                {t("patientsPage.summaryCards.activeRecords")}
+              </p>
             </div>
             <div className="w-12 h-12 flex items-center justify-center">
               <svg
@@ -210,7 +214,11 @@ export const PatientsPage = () => {
                 {t("patientsPage.summaryCards.newThisMonth")}
               </p>
               <p className="text-3xl font-bold text-gray-900">12</p>
-              <p className="text-sm text-green-600 mt-1">{t("patientsPage.summaryCards.growthFromLastMonth", { percentage: 8 })}</p>
+              <p className="text-sm text-green-600 mt-1">
+                {t("patientsPage.summaryCards.growthFromLastMonth", {
+                  percentage: 8,
+                })}
+              </p>
             </div>
             <div className="w-12 h-12 flex items-center justify-center">
               <svg
@@ -238,7 +246,9 @@ export const PatientsPage = () => {
                 {t("patientsPage.summaryCards.pendingTests")}
               </p>
               <p className="text-3xl font-bold text-gray-900">47</p>
-              <p className="text-sm text-orange-600 mt-1">{t("patientsPage.summaryCards.awaitingResults")}</p>
+              <p className="text-sm text-orange-600 mt-1">
+                {t("patientsPage.summaryCards.awaitingResults")}
+              </p>
             </div>
             <div className="w-12 h-12 flex items-center justify-center">
               <svg
@@ -266,7 +276,9 @@ export const PatientsPage = () => {
                 {t("patientsPage.summaryCards.completedToday")}
               </p>
               <p className="text-3xl font-bold text-gray-900">23</p>
-              <p className="text-sm text-blue-600 mt-1">{t("patientsPage.summaryCards.testResults")}</p>
+              <p className="text-sm text-blue-600 mt-1">
+                {t("patientsPage.summaryCards.testResults")}
+              </p>
             </div>
             <div className="w-12 h-12 flex items-center justify-center">
               <svg
@@ -437,14 +449,19 @@ export const PatientsPage = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap w-[120px]">
                     <div className="text-sm text-gray-900">
-                      {patient.age} {t("common.years")} / {patient.gender === "Male" ? t("usersPage.filters.male") : patient.gender === "Female" ? t("usersPage.filters.female") : patient.gender}
+                      {patient.age} {t("common.years")} /{" "}
+                      {patient.gender === "Male"
+                        ? t("usersPage.filters.male")
+                        : patient.gender === "Female"
+                        ? t("usersPage.filters.female")
+                        : patient.gender}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap w-[200px]">
                     <div className="text-sm text-gray-900">
                       <div>{patient.phone}</div>
                       <div className="text-gray-500">
-                        {patient.email ? patient.email : "--null--"}
+                        {patient.email ? patient.email : "--"}
                       </div>
                     </div>
                   </td>
