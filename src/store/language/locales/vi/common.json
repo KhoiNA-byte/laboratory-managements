@@ -819,7 +819,9 @@
   },
   "patientsPage": {
     "table": {
-      "lastVisit": "Lần khám cuối"
+      "lastVisit": "Lần khám cuối",
+      "name": "Tên"
+    
     }
   }
 }
