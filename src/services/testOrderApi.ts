@@ -175,14 +175,50 @@ export const getTestOrders = async (): Promise<TestOrdersResponse> => {
   }
 };
 
+export const getTestOrdersByUserId = async (userId: string) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/user/${userId}/test_orders`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const testOrders: TestOrder[] = await response.json();
+    
+    return {
+      data: testOrders,
+      success: true,
+    };
+  } catch (error) {
+    console.error('Error fetching test orders:', error);
+    return {
+      data: [],
+      success: false,
+      message: error instanceof Error ? error.message : 'Unknown error occurred',
+    };
+  }
+};
+
 /**
  * Fetch test orders with user data populated
  * @returns Promise containing array of test orders with user names
  */
-export const getListTestOrder = async (): Promise<TestOrderListResponse> => {
+export const getListTestOrder = async (role: string , userId: string): Promise<TestOrderListResponse> => {
   try {
+    let testOrdersResponse: TestOrdersResponse;
     // Get test orders from API
-    const testOrdersResponse = await getTestOrders();
+    if(role === "normal_user"){
+      testOrdersResponse = await getTestOrdersByUserId(userId);
+    }
+    else{
+    testOrdersResponse = await getTestOrders();
+
+    }
     
     if (!testOrdersResponse.success) {
       return {
