@@ -2,10 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { TestOrderFormData } from "../../types/testOrder";
-import {
-  addTestOrder,
-  getUserByPhoneNumber,
-} from "../../services/testOrderApi";
+import { addTestOrder } from "../../services/testOrderApi";
+import { getUserByPhoneNumber } from "../../services/userApi";
 import { ReturningPatientOrderPage } from "./ReturningPatientOrderPage";
 import {
   validatePhoneNumber,
@@ -165,7 +163,9 @@ const NewTestOrderPage: React.FC = () => {
 
         console.log("User found and data filled:", userData);
         console.log("Saved userId:", userData.userId);
-        alert(t("modals.testOrder.validation.patientFound", { name: userData.name }));
+        alert(
+          t("modals.testOrder.validation.patientFound", { name: userData.name })
+        );
       } else {
         // User not found - clear saved userId
         setFoundUserId(null);
@@ -219,7 +219,9 @@ const NewTestOrderPage: React.FC = () => {
             <h1 className="text-2xl font-bold text-gray-900">
               {t("modals.testOrder.title")}
             </h1>
-            <p className="text-gray-600 mt-1">{t("modals.testOrder.subtitle")}</p>
+            <p className="text-gray-600 mt-1">
+              {t("modals.testOrder.subtitle")}
+            </p>
           </div>
 
           {/* Form Content */}

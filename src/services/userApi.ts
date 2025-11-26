@@ -1,6 +1,11 @@
 // Use environment variables
 import { USERS_ENDPOINT } from "./apiConfig";
 import { apiClient } from "./apiClient";
+import { API_BASE_URL } from "./apiConfig";
+import { TestOrder } from "../types/testOrder";
+
+
+export type {TestOrder};
 
 export interface User {
   id: string;
@@ -144,3 +149,128 @@ export const getUserIdFromId = async (id: string): Promise<string | null> => {
     return null;
   }
 };
+
+
+//=======================
+
+/**
+ * Get the highest userId from the API
+ * @returns Promise containing the highest userId number
+ */
+export const getCurrentUserId = async (): Promise<number> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/user?sortBy=userId&order=desc&limit=1`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const users: User[] = await response.json();
+    
+    // Return the userId of the first (highest) item in the array
+    if (users.length > 0) {
+      return parseInt(users[0].userId) || 0;
+    }
+    
+    return 0;
+  } catch (error) {
+    console.error('Error fetching current user ID:', error);
+    return 0;
+  }
+};
+
+/**
+ * Create new userId based on current highest ID
+ * @returns Promise containing new userId number as string
+ */
+export const createUserId = async (): Promise<string> => {
+  try {
+    // Get current highest user ID
+    const currentId = await getCurrentUserId();
+      
+    // Simply increment by 1
+    const nextId = currentId + 1;
+    
+    return nextId.toString();
+    
+  } catch (error) {
+    console.error('Error creating user ID:', error);
+    // Fallback: return "1"
+    return "1";
+  }
+};
+
+/**
+ * Fetch user by phone number from the API
+ * @param phoneNumber - Phone number to search for
+ * @returns Promise containing user data or null if not found
+ */
+export const getUserByPhoneNumber = async (phoneNumber: string): Promise<User | null> => {
+  try {
+    const response = await fetch(`${USERS_ENDPOINT}?phone=${phoneNumber}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const users: User[] = await response.json();
+    
+    // Return the first user found with matching phone number
+    if (users.length > 0) {
+      const user = users[0];
+      
+      // Normalize gender to capitalize first letter (male -> Male, female -> Female)
+      if (user.gender) {
+        user.gender = user.gender.charAt(0).toUpperCase() + user.gender.slice(1).toLowerCase();
+      }
+      
+      return user;
+    }
+    
+    return null;
+  } catch (error) {
+    console.error(`Error fetching user by phone ${phoneNumber}:`, error);
+    return null;
+  }
+};
+
+export const getTestOrdersByUserId = async (userId: string) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/user/${userId}/test_orders`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const testOrders: TestOrder[] = await response.json();
+    
+    return {
+      data: testOrders,
+      success: true,
+    };
+  } catch (error) {
+    console.error('Error fetching test orders:', error);
+    return {
+      data: [],
+      success: false,
+      message: error instanceof Error ? error.message : 'Unknown error occurred',
+    };
+  }
+};
+
+
