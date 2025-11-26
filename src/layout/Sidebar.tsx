@@ -109,12 +109,6 @@ export const Sidebar = () => {
       icon: "user",
       requiredPermissions: [],
     },
-    {
-      path: "/admin/settings",
-      label: t('sidebar:settings'),
-      icon: "cog",
-      requiredPermissions: [],
-    },
   ];
 
   // Filter menu items based on user permissions
@@ -122,8 +116,8 @@ export const Sidebar = () => {
     if (item.requiredPermissions.length === 0) {
       return true;
     }
-    
-    return item.requiredPermissions.some(permission => 
+
+    return item.requiredPermissions.some(permission =>
       permissions.includes(permission)
     );
   });
@@ -205,18 +199,17 @@ export const Sidebar = () => {
             {t("layout:appName")}
           </span>
         </div>
-  
+
         {/* Navigation */}
         <nav className="space-y-1">
           {filteredMenuItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}
-              className={`flex items-center px-4 py-3 rounded-lg transition-colors ${
-                location.pathname === item.path
-                  ? "bg-blue-100 text-blue-800 border-l-4 border-blue-600"
-                  : "text-white hover:bg-gray-700"
-              }`}
+              className={`flex items-center px-4 py-3 rounded-lg transition-colors ${location.pathname === item.path
+                ? "bg-blue-100 text-blue-800 border-l-4 border-blue-600"
+                : "text-white hover:bg-gray-700"
+                }`}
             >
               <span className="mr-3">{getIcon(item.icon)}</span>
               <span className="font-medium">{item.label}</span>
@@ -224,7 +217,7 @@ export const Sidebar = () => {
           ))}
         </nav>
       </div>
-  
+
       {/* User Profile - FIXED ở bottom thực sự */}
       <div className="flex-shrink-0 w-full mt-auto">
         <div className="relative w-full">
@@ -244,9 +237,8 @@ export const Sidebar = () => {
               </div>
             </div>
             <svg
-              className={`h-4 w-4 transition-transform ${
-                showUserDropdown ? "rotate-180" : ""
-              }`}
+              className={`h-4 w-4 transition-transform ${showUserDropdown ? "rotate-180" : ""
+                }`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -254,7 +246,7 @@ export const Sidebar = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </button>
-  
+
           {/* Dropdown Menu với Language Switcher */}
           {showUserDropdown && (
             <div className="absolute bottom-full left-0 right-0 w-full bg-white rounded-t-lg shadow-lg border border-gray-200 overflow-hidden">
