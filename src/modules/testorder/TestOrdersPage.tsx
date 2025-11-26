@@ -330,9 +330,10 @@ const DropdownMenu = styled.div`
   width: 12rem;
   background: white;
   border-radius: 0.375rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   z-index: 10;
   border: 1px solid #e5e7eb;
+  overflow: hidden;
 `;
 
 const DropdownContent = styled.div`
@@ -343,22 +344,30 @@ const DropdownItem = styled.button<{ $danger?: boolean }>`
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 0.5rem 1rem;
+  padding: 0.625rem 1rem;
   font-size: 0.875rem;
+  font-weight: 400;
   color: ${(props) => (props.$danger ? "#dc2626" : "#374151")};
   background: none;
   border: none;
   text-align: left;
   cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
 
   &:hover {
     background-color: #f9fafb;
   }
 
+  &:active {
+    background-color: #f3f4f6;
+  }
+
   svg {
-    height: 1rem;
-    width: 1rem;
+    height: 1.125rem;
+    width: 1.125rem;
     margin-right: 0.75rem;
+    flex-shrink: 0;
+    color: ${(props) => (props.$danger ? "#dc2626" : "#374151")};
   }
 `;
 const FiltersContainer = styled.div`
@@ -403,6 +412,26 @@ export const TestOrdersPage = () => {
 
     fetchTestOrders();
   }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (showActionsDropdown) {
+        const target = event.target as HTMLElement;
+        if (!target.closest('[data-dropdown-container]')) {
+          setShowActionsDropdown(null);
+        }
+      }
+    };
+
+    if (showActionsDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showActionsDropdown]);
 
   const handleViewDetails = (orderNumber: string) => {
     console.log("View Details clicked for:", orderNumber);
@@ -706,7 +735,7 @@ export const TestOrdersPage = () => {
                       <OrderDate>{order.ordered}</OrderDate>
                     </TableCell>
                     <TableCell>
-                      <ActionsContainer>
+                      <ActionsContainer data-dropdown-container>
                         <ActionsButton
                           onClick={() =>
                             setShowActionsDropdown(
@@ -722,7 +751,7 @@ export const TestOrdersPage = () => {
                         </ActionsButton>
 
                         {showActionsDropdown === order.orderNumber && (
-                          <DropdownMenu>
+                          <DropdownMenu data-dropdown-container>
                             <DropdownContent>
                               <DropdownItem
                                 onClick={() =>
@@ -747,7 +776,7 @@ export const TestOrdersPage = () => {
                                     d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                                   />
                                 </svg>
-                                {t("testOrdersPage.table.viewDetails")}
+                                <span>{t("testOrdersPage.table.viewDetails")}</span>
                               </DropdownItem>
                               <DropdownItem
                                 onClick={() =>
@@ -766,7 +795,7 @@ export const TestOrdersPage = () => {
                                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
                                   />
                                 </svg>
-                                {t("testOrdersPage.table.updateTestOrder")}
+                                <span>{t("testOrdersPage.table.updateTestOrder")}</span>
                               </DropdownItem>
                               <DropdownItem
                                 $danger
@@ -786,7 +815,7 @@ export const TestOrdersPage = () => {
                                     d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                                   />
                                 </svg>
-                                {t("testOrdersPage.table.deleteTestOrder")}
+                                <span>{t("testOrdersPage.table.deleteTestOrder")}</span>
                               </DropdownItem>
                             </DropdownContent>
                           </DropdownMenu>
