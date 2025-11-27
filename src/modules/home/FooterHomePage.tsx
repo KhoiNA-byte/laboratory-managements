@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { useTranslation } from "react-i18next";
 
 const Footer = styled.footer`
   background-color: #eff6ff;
@@ -131,6 +132,14 @@ const MadeWithLove = styled.p`
 `;
 
 const FooterHomePage = () => {
+  const { t } = useTranslation("home");
+  const quickLinks = t("footer.quickLinks", {
+    returnObjects: true,
+  }) as string[];
+  const supportLinks = t("footer.supportLinks", {
+    returnObjects: true,
+  }) as string[];
+
   return (
     <Footer>
       <Container>
@@ -141,47 +150,37 @@ const FooterHomePage = () => {
               <LogoIcon>
                 <LogoText>L</LogoText>
               </LogoIcon>
-              <CompanyName>Laboratory Management</CompanyName>
+              <CompanyName>{t("footer.companyName")}</CompanyName>
             </LogoSection>
-            <Description>
-              Hệ thống quản lý phòng thí nghiệm toàn diện, giúp tối ưu hóa quy
-              trình xét nghiệm và nâng cao chất lượng dịch vụ y tế.
-            </Description>
+            <Description>{t("footer.description")}</Description>
             <RatingContainer>
               <Stars>
                 {[...Array(5)].map((_, i) => (
                   <span key={i}>★</span>
                 ))}
               </Stars>
-              <RatingText>4.9/5</RatingText>
+              <RatingText>{t("footer.ratingText")}</RatingText>
             </RatingContainer>
-            <UserCount>500+ người dùng</UserCount>
+            <UserCount>{t("footer.userCount")}</UserCount>
           </Column>
 
           {/* Middle Column */}
           <Column>
-            <ColumnTitle>Liên kết nhanh</ColumnTitle>
+            <ColumnTitle>{t("footer.quickLinksTitle")}</ColumnTitle>
             <LinksList>
-              {["Trang chủ", "Tính năng", "Tài nguyên", "Liên hệ"].map(
-                (link) => (
-                  <LinkItem key={link}>
-                    <FooterLink href="#">{link}</FooterLink>
-                  </LinkItem>
-                )
-              )}
+              {quickLinks.map((link) => (
+                <LinkItem key={link}>
+                  <FooterLink href="#">{link}</FooterLink>
+                </LinkItem>
+              ))}
             </LinksList>
           </Column>
 
           {/* Right Column */}
           <Column>
-            <ColumnTitle>Hỗ trợ</ColumnTitle>
+            <ColumnTitle>{t("footer.supportTitle")}</ColumnTitle>
             <LinksList>
-              {[
-                "Trung tâm trợ giúp",
-                "Tài liệu hướng dẫn",
-                "Liên hệ hỗ trợ",
-                "Báo lỗi",
-              ].map((support) => (
+              {supportLinks.map((support) => (
                 <LinkItem key={support}>
                   <FooterLink href="#">{support}</FooterLink>
                 </LinkItem>
@@ -191,10 +190,8 @@ const FooterHomePage = () => {
         </GridContainer>
 
         <BottomSection>
-          <CopyrightText>
-            &copy; 2024 Lab Management System. All rights reserved.
-          </CopyrightText>
-          <MadeWithLove>Made with ❤️ in Vietnam</MadeWithLove>
+          <CopyrightText>{t("footer.copyright")}</CopyrightText>
+          <MadeWithLove>{t("footer.madeWithLove")}</MadeWithLove>
         </BottomSection>
       </Container>
     </Footer>

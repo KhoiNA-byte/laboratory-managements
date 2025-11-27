@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { useTranslation } from "react-i18next";
 
 const Section = styled.section`
   padding: 10rem 10rem;
@@ -115,43 +116,34 @@ const FeatureDescription = styled.p`
   font-size: 0.875rem;
 `;
 
+const featureItems = [
+  { icon: "🧪", key: "testManagement" },
+  { icon: "📊", key: "dataAnalysis" },
+  { icon: "🔍", key: "qualityControl" },
+  { icon: "👥", key: "community" },
+];
+
 const AboutHomePage = () => {
+  const { t } = useTranslation("home");
+
   return (
     <Section>
       <Container>
         <HeaderSection>
-          <MainTitle>Quản lý phân tích huyết học là gì?</MainTitle>
-          <MainDescription>
-            Quản lý phân tích huyết học là quy trình toàn diện từ tiếp nhận mẫu
-            đến trả kết quả, đảm bảo chất lượng và độ chính xác cao nhất.
-          </MainDescription>
+          <MainTitle>{t("about.mainTitle")}</MainTitle>
+          <MainDescription>{t("about.mainDescription")}</MainDescription>
         </HeaderSection>
 
         <GridContainer>
           {/* Left Column */}
           <LeftColumn>
-            <SectionTitle>
-              Giải pháp toàn diện cho phòng lab hiện đại
-            </SectionTitle>
-            <Description>
-              Hệ thống tích hợp đầy đủ các chức năng cần thiết cho việc quản lý
-              phòng thí nghiệm huyết học, từ quản lý bệnh nhân, mẫu bệnh phẩm
-              đến tự động hóa quy trình xét nghiệm.
-            </Description>
-            <Description>
-              Với công nghệ tiên tiến và giao diện thân thiện, hệ thống giúp
-              tăng hiệu quả làm việc và giảm thiểu sai sót trong quá trình xét
-              nghiệm.
-            </Description>
+            <SectionTitle>{t("about.sectionTitle")}</SectionTitle>
+            <Description>{t("about.descriptionOne")}</Description>
+            <Description>{t("about.descriptionTwo")}</Description>
 
             {/* Certification badges */}
             <CertificationContainer>
-              {[
-                "ISO 9001",
-                "CAP Certified",
-                "CLIA Compliant",
-                "HIPAA Secure",
-              ].map((cert) => (
+              {["ISO 9001", "CAP Certified", "CLIA Compliant", "HIPAA Secure"].map((cert) => (
                 <CertificationBadge key={cert}>{cert}</CertificationBadge>
               ))}
             </CertificationContainer>
@@ -160,33 +152,16 @@ const AboutHomePage = () => {
           {/* Right Column */}
           <RightColumn>
             <FeatureList>
-              {[
-                {
-                  icon: "🧪",
-                  title: "Quản lý xét nghiệm",
-                  desc: "Theo dõi và quản lý toàn bộ vòng đời mẫu",
-                },
-                {
-                  icon: "📊",
-                  title: "Phân tích dữ liệu",
-                  desc: "Tối ưu hóa và chuẩn hóa các bước xét nghiệm",
-                },
-                {
-                  icon: "🔍",
-                  title: "Kiểm soát chất lượng",
-                  desc: "Kết nối với các thiết bị phân tích hiện đại",
-                },
-                {
-                  icon: "👥",
-                  title: "Cộng đồng chuyên gia",
-                  desc: "Tạo báo cáo chi tiết và phân tích xu hướng",
-                },
-              ].map((item, index) => (
+              {featureItems.map((item, index) => (
                 <FeatureItem key={index}>
                   <FeatureIcon>{item.icon}</FeatureIcon>
                   <FeatureContent>
-                    <FeatureTitle>{item.title}</FeatureTitle>
-                    <FeatureDescription>{item.desc}</FeatureDescription>
+                    <FeatureTitle>
+                      {t(`about.featureList.${item.key}.title`)}
+                    </FeatureTitle>
+                    <FeatureDescription>
+                      {t(`about.featureList.${item.key}.desc`)}
+                    </FeatureDescription>
                   </FeatureContent>
                 </FeatureItem>
               ))}

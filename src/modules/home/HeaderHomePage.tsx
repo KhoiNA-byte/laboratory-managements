@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router";
 import styled from "styled-components";
+import { useTranslation, Trans } from "react-i18next";
 
 const HeroSection = styled.section`
   background-color: #eff6ff;
@@ -146,30 +147,28 @@ const RatingText = styled.span`
 
 const HeaderHomePage = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation("home");
 
   return (
     <HeroSection>
       <Container>
         {/* Green tag */}
-        <GreenTag>Hệ thống quản lý phòng thí nghiệm hàng đầu Việt Nam</GreenTag>
+        <GreenTag>{t("hero.badge")}</GreenTag>
 
         <MainHeading>
-          Quản lý phân tích <BlueSpan>huyết học</BlueSpan> thông minh và hiệu
-          quả
+          <Trans i18nKey="home:hero.title" components={{ highlight: <BlueSpan /> }} />
         </MainHeading>
         <Description>
-          Nền tảng toàn diện giúp các phòng thí nghiệm y tế quản lý quy trình
-          xét nghiệm, theo dõi thiết bị, kiểm soát chất lượng và kết nối với
-          cộng đồng chuyên gia.
+          {t("hero.description")}
         </Description>
 
         {/* CTA Buttons */}
         <ButtonContainer>
           <CTAButton onClick={() => navigate("/login")}>
-            Vào Dashboard
+            {t("hero.primaryCta")}
           </CTAButton>
           <CTAButtonSeccond onClick={() => navigate("/community")}>
-            Cộng đồng
+            {t("hero.secondaryCta")}
           </CTAButtonSeccond>
         </ButtonContainer>
 
@@ -180,14 +179,14 @@ const HeaderHomePage = () => {
               <Avatar key={item}></Avatar>
             ))}
           </AvatarGroup>
-          <UserCount>500+ người dùng</UserCount>
+          <UserCount>{t("hero.userCount")}</UserCount>
           <RatingContainer>
             <Stars>
               {[...Array(5)].map((_, i) => (
                 <span key={i}>★</span>
               ))}
             </Stars>
-            <RatingText>4.9/5</RatingText>
+            <RatingText>{t("hero.ratingText")}</RatingText>
           </RatingContainer>
         </StatsContainer>
       </Container>

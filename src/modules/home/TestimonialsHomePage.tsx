@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { useTranslation, Trans } from "react-i18next";
 
 const Section = styled.section`
   padding: 5rem 0;
@@ -106,38 +107,25 @@ const BlueSpan = styled.span`
 `;
 
 const TestimonialsHomePage = () => {
+  const { t } = useTranslation("home");
+  const testimonials = t("testimonials.items", {
+    returnObjects: true,
+  }) as { name: string; role: string; quote: string }[];
+
   return (
     <Section>
       <Container>
         <HeaderSection>
           <MainTitle>
-            Được tin dùng bởi<BlueSpan> hàng trăm chuyên gia</BlueSpan>
+            <Trans
+              i18nKey="home:testimonials.title"
+              components={{ highlight: <BlueSpan /> }}
+            />
           </MainTitle>
         </HeaderSection>
 
         <GridContainer>
-          {[
-            {
-              name: "Nguyễn Văn A",
-              role: "Trưởng phòng xét nghiệm",
-              quote: "Hệ thống giúp chúng tôi tăng hiệu quả làm việc lên 40%",
-            },
-            {
-              name: "Trần Thị B",
-              role: "Kỹ thuật viên",
-              quote: "Giao diện thân thiện, dễ sử dụng và rất tiện lợi",
-            },
-            {
-              name: "Lê Văn C",
-              role: "Bác sĩ chuyên khoa",
-              quote: "Kết quả chính xác và báo cáo chi tiết, rất hài lòng",
-            },
-            {
-              name: "Phạm Thị D",
-              role: "Quản lý phòng lab",
-              quote: "Tích hợp tốt với các thiết bị hiện có của chúng tôi",
-            },
-          ].map((testimonial, index) => (
+          {testimonials.map((testimonial, index) => (
             <TestimonialCard key={index}>
               <StarsContainer>
                 {[...Array(5)].map((_, i) => (
