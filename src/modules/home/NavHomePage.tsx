@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router";
 import styled from "styled-components";
 import Down_Arrow from "../../assets/icons/Down_Arrow.png";
+import { LanguageSwitcher } from "../../components/LanguageSwitcher";
 
 const Container = styled.div``;
 
@@ -151,6 +152,7 @@ const NavHomePage = () => {
                 <SubNavLink>Tài nguyên</SubNavLink>{" "}
                 <NavIcon src={Down_Arrow} alt="Down Arrow" />
               </NavLink>
+              <LanguageSwitcher variant="pill" />
             </Navigation>
 
             {/* Right side icons and login */}

@@ -42,7 +42,7 @@ export const EditPatientPage = () => {
   const [pageLoading, setPageLoading] = useState<boolean>(true);
   const [pageError, setPageError] = useState<string | null>(null);
 
-  // 5. Logic validation (Đã cập nhật theo yêu cầu)
+  // 5. Logic validation
   const validateField = (name: string, value: string | number) => {
     const errors: { [key: string]: string } = { ...validationErrors };
     // Đảm bảo value là string để xử lý trim/regex
@@ -50,52 +50,47 @@ export const EditPatientPage = () => {
 
     switch (name) {
       case "name":
-        if (!stringValue) {
-          errors.name = t("editPatientPage.nameRequired"); // Dùng khóa dịch
-        } else if (
-          !/^[a-zA-Z\sàáãạảăắằặẳẵâấầậẩẫèéẽẹẻêếềệểễìíĩịỉòóõọỏôốồộổỗơớờợởỡùúũụủưứừựửữỳýỹỵỷĐđ]+$/i.test(
-            stringValue
-          )
-        ) {
-          // Regex cho phép chữ cái (cả tiếng Việt), và khoảng trắng. Không cho phép số/ký tự đặc biệt.
-          errors.name = t("editPatientPage.nameInvalid"); // Dùng khóa dịch
-        } else {
-          delete errors.name;
+        {
+          const normalized = stringValue.normalize("NFC");
+          if (!normalized) {
+            errors.name = t("editPatientPage.nameRequired");
+          } else if (!/^[\p{L}\s'\-]+$/u.test(normalized)) {
+            errors.name = t("editPatientPage.nameInvalid");
+          } else {
+            delete errors.name;
+          }
         }
         break;
       case "email":
         // Bỏ required. Chỉ kiểm tra format nếu có giá trị.
         if (stringValue && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(stringValue))
-          errors.email = t("editPatientPage.emailInvalid"); // Dùng khóa dịch
+          errors.email = t("editPatientPage.emailInvalid");
         else delete errors.email;
         break;
       case "phone":
         if (!stringValue) {
-          errors.phone = t("editPatientPage.phoneRequired"); // Dùng khóa dịch
+          errors.phone = t("editPatientPage.phoneRequired");
         } else if (!/^0\d{9}$/.test(stringValue)) {
-          // Format: Bắt đầu bằng 0, tổng cộng 10 số.
-          errors.phone = t("editPatientPage.phoneInvalid"); // Dùng khóa dịch
+          errors.phone = t("editPatientPage.phoneInvalid");
         } else {
           delete errors.phone;
         }
         break;
       case "age":
         if (!stringValue) {
-          errors.age = t("editPatientPage.ageRequired"); // Dùng khóa dịch
+          errors.age = t("editPatientPage.ageRequired");
         } else if (isNaN(Number(stringValue)) || Number(stringValue) <= 0) {
-          errors.age = t("editPatientPage.ageInvalid"); // Dùng khóa dịch
+          errors.age = t("editPatientPage.ageInvalid");
         } else {
           delete errors.age;
         }
         break;
       case "address":
         if (!stringValue) errors.address = t("editPatientPage.addressRequired");
-        // Dùng khóa dịch
         else delete errors.address;
         break;
       case "gender":
-        if (!stringValue)
-          errors.gender = t("editPatientPage.genderRequired"); // Dùng khóa dịch
+        if (!stringValue) errors.gender = t("editPatientPage.genderRequired");
         else delete errors.gender;
         break;
       default:
@@ -137,7 +132,7 @@ export const EditPatientPage = () => {
         // Set dữ liệu cho form (chuyển đổi các giá trị về string)
         const initialData = {
           name: patient.name,
-          email: patient.email || "", // Đảm bảo không null
+          email: patient.email || "",
           phone: patient.phone,
           gender: patient.gender,
           age: patient.age.toString(),
@@ -154,14 +149,13 @@ export const EditPatientPage = () => {
 
             switch (key) {
               case "name":
-                if (!stringValue)
-                  tempErrors.name = t("editPatientPage.nameRequired");
-                else if (
-                  !/^[a-zA-Z\sàáãạảăắằặẳẵâấầậẩẫèéẽẹẻêếềệểễìíĩịỉòóõọỏôốồộổỗơớờợởỡùúũụủưứừựửữỳýỹỵỷĐđ]+$/i.test(
-                    stringValue
-                  )
-                )
-                  tempErrors.name = t("editPatientPage.nameInvalid");
+                {
+                  const normalized = stringValue.normalize("NFC");
+                  if (!normalized)
+                    tempErrors.name = t("editPatientPage.nameRequired");
+                  else if (!/^[\p{L}\s'\-]+$/u.test(normalized))
+                    tempErrors.name = t("editPatientPage.nameInvalid");
+                }
                 break;
               case "email":
                 if (
@@ -211,7 +205,7 @@ export const EditPatientPage = () => {
 
         setValidationErrors(initialErrors);
       } catch (err) {
-        setPageError(t("editPatientPage.loadError")); // Dùng khóa dịch
+        setPageError(t("editPatientPage.loadError"));
       } finally {
         setPageLoading(false);
       }
@@ -297,14 +291,13 @@ export const EditPatientPage = () => {
         <h3 className="mt-2 text-sm font-medium text-gray-900">
           {t("common.error")}
         </h3>{" "}
-        // Dùng khóa dịch
         <p className="mt-1 text-sm text-gray-500">{pageError}</p>
         <div className="mt-4">
           <Link
             to="/admin/patients"
             className="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium"
           >
-            {t("editPatientPage.backToPatients")} // Dùng khóa dịch
+            {t("editPatientPage.backToPatients")}
           </Link>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { TestOrderFormData } from "../../types/testOrder";
-import { getTestTypes, TestType } from "../../services/testOrderApi";
+import { getTestTypes } from "../../services/testTypeApi";
+import { TestType } from "../../types/testType";
 
 interface NewPatientOrderPageProps {
   formData: TestOrderFormData;
@@ -201,7 +202,7 @@ export const NewPatientOrderPage: React.FC<NewPatientOrderPageProps> = ({
               onChange={(e) => handleInputChange("testType", e.target.value)}
               disabled={loadingTestTypes}
               size={1}
-              style={{ maxHeight: '200px', overflowY: 'auto' }}
+              style={{ maxHeight: "200px", overflowY: "auto" }}
               className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white ${
                 errors.testType ? "border-red-500" : "border-gray-300"
               } ${loadingTestTypes ? "opacity-50 cursor-not-allowed" : ""}`}

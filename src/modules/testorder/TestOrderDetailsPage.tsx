@@ -60,9 +60,6 @@ const TestOrderDetailsPage: React.FC = () => {
         <div className="max-w-4xl mx-auto px-4">
           <div className="bg-white rounded-lg shadow-sm border p-6">
             <div className="text-center">
-              <div className="text-lg font-medium text-gray-900 mb-2">
-                Loading...
-              </div>
               <div className="text-sm text-gray-500">
                 Loading test order details...
               </div>

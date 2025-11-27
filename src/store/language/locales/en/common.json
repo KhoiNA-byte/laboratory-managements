@@ -818,8 +818,120 @@
     "noResults": "No results found"
   },
   "patientsPage": {
-    "table": {
-      "lastVisit": "Last Visit"
-    }
+  "title": "Patient Records",
+  "subtitle": "Manage patient records and information",
+  "summaryCards": {
+    "totalPatients": "Total Patients",
+    "activeRecords": "Active Records",
+    "newThisMonth": "New This Month",
+    "growthFromLastMonth": "+{{percentage}}% compared to last month",
+    "pendingTests": "Pending Tests",
+    "awaitingResults": "Awaiting Results",
+    "completedToday": "Completed Today",
+    "testResults": "Test Results"
+  },
+  "allPatients": {
+    "title": "All Patients",
+    "subtitle": "View and manage patient records"
+  },
+  "filters": {
+    "searchPlaceholder": "Search by name, email, or MRN...",
+    "addPatient": "Add Patient"
+  },
+  "table": {
+    "mrn": "MRN",
+    "name": "Name",
+    "ageGender": "Age / Gender",
+    "dateOfBirth": "Date of Birth",
+    "gender": "Gender",
+    "phone": "Phone",
+    "email": "Email",
+    "contact": "Contact",
+    "lastVisit": "Last Visit",
+    "actions": "Actions",
+    "viewDetails": "View Details",
+    "editRecord": "Edit Record",
+    "deletePatient": "Delete Patient",
+    "noPatientsFound": "No patients found.",
+    "confirmDelete": "Are you sure you want to delete patient {{mrn}}? This action cannot be undone."
   }
+},
+"patientDetails": {
+  "title": "Patient Details",
+  "subtitle": "View the patient's record and test history",
+  "notFoundTitle": "Patient Not Found",
+  "notFoundDesc": "No patient found with ID \"{{id}}\".",
+  "noTestHistoryTitle": "No Test History",
+  "noTestHistoryDesc": "This patient has no test history.",
+  "personalInfo": "Personal Information",
+  "contactInfo": "Contact Information",
+  "fullName": "Full Name",
+  "dateOfBirth": "Date of Birth",
+  "age": "Ages",
+  "editPatient": "Edit Patient",
+  "tabs": {
+    "overview": "Overview",
+    "testHistory": "Test History"
+  },
+  "recentActivity": "Recent Activity",
+  "latestTestOrders": "Latest Test Orders",
+  "summaryCards": {
+    "totalTests": "Total Tests",
+    "pending": "Pending",
+    "lastVisit": "Last Visit"
+  },
+  "table": {
+    "headers": {
+      "testType": "Test Type",
+      "orderedAt": "Ordered At",
+      "status": "Status",
+      "tester": "Tester",
+      "note": "Note",
+      "testId": "Test ID"
+    }
+  },
+  "genderOptions": {
+    "Male": "Male",
+    "Female": "Female",
+    "Other": "Other"
+  },
+  "statusOptions": {
+    "Pending": "Pending",
+    "In Progress": "In Progress",
+    "Completed": "Completed",
+    "Reviewed": "Reviewed"
+  }
+},
+"editPatientPage": {
+  "title": "Edit Patient Record",
+  "subtitle": "Update the patient's personal and contact information",
+  "personalInfo": "Personal Information",
+  "contactInfo": "Contact Information",
+  "fullName": "Full Name",
+  "dateOfBirth": "Date of Birth",
+  "gender": "Gender",
+  "phoneNumber": "Phone Number",
+  "email": "Email",
+  "address": "Address",
+  "age": "Age",
+  "optional": "Optional",
+  "saveChanges": "Save Changes",
+  "selectGender": "Select Gender",
+  "nameRequired": "Full name is required",
+  "nameInvalid": "Full name must not contain special characters",
+  "dobRequired": "A valid date of birth is required",
+  "dobInvalid": "Please provide a valid date of birth",
+  "phoneRequired": "Phone number is required",
+  "phoneInvalid": "Invalid phone number",
+  "emailInvalid": "Invalid email address",
+  "addressRequired": "Address is required",
+  "ageRequired": "Age is required",
+  "other": "Other",
+  "ageInvalid": "Invalid age",
+  "loadingData": "Loading patient data...",
+  "personalDetails": "Detailed Information"
+}
+
+
+
 }

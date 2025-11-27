@@ -8,15 +8,10 @@ import {
   TestOrderDetailResponse,
   TestOrderFormData 
 } from "../types/testOrder";
+import { createUserId, getTestOrdersByUserId } from "./userApi";
 import { User } from "../types/user";
 
-/**
- * Test Type interface
- */
-export interface TestType {
-  id: string;
-  name: string;
-}
+
 
 /**
  * Response type for create operations
@@ -31,116 +26,7 @@ interface CreateResponse {
 // Re-export types for backward compatibility
 export type { TestOrder, TestOrderWithUser, TestOrderDetail, TestOrderDetailResponse };
 
-/**
- * Fetch all test types from the API
- * @returns Promise containing array of test types
- */
-export const getTestTypes = async (): Promise<{ success: boolean; data: TestType[]; message?: string }> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/test_type`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const testTypes: TestType[] = await response.json();
-    
-    return {
-      success: true,
-      data: testTypes,
-    };
-  } catch (error) {
-    console.error('Error fetching test types:', error);
-    return {
-      success: false,
-      data: [],
-      message: error instanceof Error ? error.message : 'Unknown error occurred',
-    };
-  }
-};
-
-/**
- * Get the highest userId from the API
- * @returns Promise containing the highest userId number
- */
-export const getCurrentUserId = async (): Promise<number> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/user?sortBy=userId&order=desc&limit=1`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const users: User[] = await response.json();
-    
-    // Return the userId of the first (highest) item in the array
-    if (users.length > 0) {
-      return parseInt(users[0].userId) || 0;
-    }
-    
-    return 0;
-  } catch (error) {
-    console.error('Error fetching current user ID:', error);
-    return 0;
-  }
-};
-
-/**
- * Create new userId based on current highest ID
- * @returns Promise containing new userId number as string
- */
-export const createUserId = async (): Promise<string> => {
-  try {
-    // Get current highest user ID
-    const currentId = await getCurrentUserId();
-      
-    // Simply increment by 1
-    const nextId = currentId + 1;
-    
-    return nextId.toString();
-    
-  } catch (error) {
-    console.error('Error creating user ID:', error);
-    // Fallback: return "1"
-    return "1";
-  }
-};
-
-/**
- * Fetch user by ID from the API
- * @param userId - User ID to fetch
- * @returns Promise containing user data
- */
-export const getUserById = async (userId: string): Promise<User | null> => {
-  try {
-    const response = await fetch(`${USERS_ENDPOINT}/${userId}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const user: User = await response.json();
-    return user;
-  } catch (error) {
-    console.error(`Error fetching user ${userId}:`, error);
-    return null;
-  }
-};
 
 /**
  * Fetch all test orders from the API
@@ -175,34 +61,6 @@ export const getTestOrders = async (): Promise<TestOrdersResponse> => {
   }
 };
 
-export const getTestOrdersByUserId = async (userId: string) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/user/${userId}/test_orders`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const testOrders: TestOrder[] = await response.json();
-    
-    return {
-      data: testOrders,
-      success: true,
-    };
-  } catch (error) {
-    console.error('Error fetching test orders:', error);
-    return {
-      data: [],
-      success: false,
-      message: error instanceof Error ? error.message : 'Unknown error occurred',
-    };
-  }
-};
 
 /**
  * Fetch test orders with user data populated
@@ -391,65 +249,13 @@ export const addTestOrder = async (
   try {
     console.log('Creating new test order...');
     
-    let userIdToUse: string;
-    
-    // Only create new user if no existing userId provided
+    // Use existingUserId if provided, otherwise throw error
     if (!existingUserId) {
-      console.log('No existing user found, creating new user...');
-      
-      const nextUserId = await createUserId();
-      console.log('Generated nextUserId:', nextUserId);
-      
-      const nowIso = new Date().toISOString();
-      
-      // BUILD USER
-      const userObj = {
-        // Do NOT set 'id' field - let MockAPI auto-generate
-        userId: nextUserId, // Use the generated userId
-        name: formData.patientName || "",
-        email: "",
-        phone: formData.phoneNumber || "",
-        gender: formData.gender || "",
-        role: "user",
-        age: formData.age ? Number(formData.age) : 0,
-        address: "",
-        status: "waiting",
-        lastLogin: nowIso,
-        createdAt: nowIso,
-        updatedAt: nowIso,
-        password: "AdminSecure2024!"
-      };
-
-      console.log('Creating user with userId:', nextUserId);
-
-      // Create user
-      try {
-        const createUserRes = await fetch(`${USERS_ENDPOINT}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(userObj)
-        });
-
-        if (!createUserRes.ok && createUserRes.status !== 409) {
-          const errText = await createUserRes.text();
-          throw new Error(`Failed to create user: ${createUserRes.status} ${errText}`);
-        }
-        
-        if (createUserRes.ok) {
-          const createdUser = await createUserRes.json();
-          console.log('Created user response:', createdUser);
-          console.log('User auto-generated ID:', createdUser.id);
-          console.log('User userId field:', createdUser.userId);
-        }
-      } catch (error) {
-        console.error("Error creating user:", error);
-      }
-      
-      userIdToUse = nextUserId;
-    } else {
-      console.log('Using existing userId:', existingUserId);
-      userIdToUse = existingUserId;
+      throw new Error('User ID is required. Please search for an existing user first.');
     }
+    
+    const userIdToUse = existingUserId;
+    console.log('Using existing userId:', existingUserId);
 
     const nowIso = new Date().toISOString();
     
@@ -466,7 +272,8 @@ export const addTestOrder = async (
       isDeleted: false,
       updatedAt: nowIso,
       note: formData.note || "",
-      orderedAt: nowIso
+      orderedAt: nowIso,
+      runByUserId: ""
     };
 
     console.log('Creating test order with userId:', userIdToUse);
@@ -484,9 +291,6 @@ export const addTestOrder = async (
     }
 
     const createdTestOrder = await createOrderRes.json();
-    console.log('Created test order response:', createdTestOrder);
-    console.log('Test order auto-generated ID:', createdTestOrder.id);
-    console.log('Test order userId field:', createdTestOrder.userId);
 
     return {
       success: true,
@@ -500,45 +304,6 @@ export const addTestOrder = async (
       success: false,
       error
     };
-  }
-};
-
-/**
- * Fetch user by phone number from the API
- * @param phoneNumber - Phone number to search for
- * @returns Promise containing user data or null if not found
- */
-export const getUserByPhoneNumber = async (phoneNumber: string): Promise<User | null> => {
-  try {
-    const response = await fetch(`${USERS_ENDPOINT}?phone=${phoneNumber}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const users: User[] = await response.json();
-    
-    // Return the first user found with matching phone number
-    if (users.length > 0) {
-      const user = users[0];
-      
-      // Normalize gender to capitalize first letter (male -> Male, female -> Female)
-      if (user.gender) {
-        user.gender = user.gender.charAt(0).toUpperCase() + user.gender.slice(1).toLowerCase();
-      }
-      
-      return user;
-    }
-    
-    return null;
-  } catch (error) {
-    console.error(`Error fetching user by phone ${phoneNumber}:`, error);
-    return null;
   }
 };
 

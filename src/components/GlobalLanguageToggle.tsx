@@ -5,8 +5,9 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 export const GlobalLanguageToggle: React.FC = () => {
   const location = useLocation();
   const isInAdminLayout = location.pathname.startsWith("/admin");
+  const isHomePage = location.pathname === "/" || location.pathname === "/landing" || location.pathname === "/home";
 
-  if (isInAdminLayout) {
+  if (isInAdminLayout || isHomePage) {
     return null;
   }
 
