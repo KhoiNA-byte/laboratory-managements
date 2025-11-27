@@ -1,54 +1,95 @@
-// instrumentService.ts
-import { Instrument } from '../store/types';
+// services/instruments.ts
+import { Instrument } from '../types';
 
 const BASE_URL = import.meta.env.VITE_MOCKAPI_BASE_URL;
-const ENDPOINT = import.meta.env.VITE_MOCKAPI_INSTRUMENTS_ENDPOINT;
+const INSTRUMENTS_ENDPOINT = import.meta.env.VITE_MOCKAPI_INSTRUMENTS_ENDPOINT;
+const FULL_URL = `${BASE_URL}${INSTRUMENTS_ENDPOINT}`;
 
-export const getInstruments = async (): Promise<Instrument[]> => {
-  const response = await fetch(`${BASE_URL}${ENDPOINT}`);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch instruments: ${response.status}`);
+class InstrumentService {
+  async getInstruments(): Promise<Instrument[]> {
+    console.log('🔄 Fetching instruments from:', FULL_URL);
+    
+    try {
+      const response = await fetch(FULL_URL);
+      console.log('📡 Response status:', response.status);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const instruments = await response.json();
+      console.log('✅ Instruments fetched:', instruments);
+      return instruments;
+    } catch (error) {
+      console.error('❌ Error fetching instruments:', error);
+      throw error;
+    }
   }
-  return response.json();
-};
 
-export const getInstrumentById = async (id: string): Promise<Instrument> => {
-  const response = await fetch(`${BASE_URL}${ENDPOINT}/${id}`);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch instrument with id ${id}`);
+  async createInstrument(instrumentData: Omit<Instrument, 'id'>): Promise<Instrument> {
+    console.log('🔄 Creating instrument:', instrumentData);
+    
+    try {
+      const response = await fetch(FULL_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(instrumentData)
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const newInstrument = await response.json();
+      console.log('✅ Instrument created:', newInstrument);
+      return newInstrument;
+    } catch (error) {
+      console.error('❌ Error creating instrument:', error);
+      throw error;
+    }
   }
-  return response.json();
-};
 
-export const createInstrument = async (instrument: Instrument): Promise<Instrument> => {
-  const response = await fetch(`${BASE_URL}${ENDPOINT}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(instrument),
-  });
-  if (!response.ok) {
-    throw new Error('Failed to create instrument');
+  async updateInstrument(instrument: Instrument): Promise<Instrument> {
+    console.log('🔄 Updating instrument:', instrument);
+    
+    try {
+      const response = await fetch(`${FULL_URL}/${instrument.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(instrument)
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const updatedInstrument = await response.json();
+      console.log('✅ Instrument updated:', updatedInstrument);
+      return updatedInstrument;
+    } catch (error) {
+      console.error('❌ Error updating instrument:', error);
+      throw error;
+    }
   }
-  return response.json();
-};
 
-export const updateInstrument = async (id: string, instrument: Partial<Instrument>): Promise<Instrument> => {
-  const response = await fetch(`${BASE_URL}${ENDPOINT}/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(instrument),
-  });
-  if (!response.ok) {
-    throw new Error('Failed to update instrument');
+  async deleteInstrument(id: string): Promise<void> {
+    console.log('🔄 Deleting instrument ID:', id);
+    
+    try {
+      const response = await fetch(`${FULL_URL}/${id}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      console.log('✅ Instrument deleted:', id);
+    } catch (error) {
+      console.error('❌ Error deleting instrument:', error);
+      throw error;
+    }
   }
-  return response.json();
-};
+}
 
-export const deleteInstrument = async (id: string): Promise<void> => {
-  const response = await fetch(`${BASE_URL}${ENDPOINT}/${id}`, {
-    method: 'DELETE',
-  });
-  if (!response.ok) {
-    throw new Error('Failed to delete instrument');
-  }
-};
+export const instrumentService = new InstrumentService();

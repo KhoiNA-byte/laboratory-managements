@@ -1,118 +1,144 @@
-import { call, put, takeEvery, takeLatest } from 'redux-saga/effects'
-import { PayloadAction } from '@reduxjs/toolkit'
+// sagas/instrumentsSaga.ts
+import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
+import { PayloadAction } from '@reduxjs/toolkit';
+import { instrumentService } from '../../services/instruments';
+import { Instrument } from '../../types';
 
-// Lấy URL từ biến môi trường
-const BASE_URL = import.meta.env.VITE_MOCKAPI_BASE_URL
-const INSTRUMENTS_ENDPOINT = import.meta.env.VITE_MOCKAPI_INSTRUMENTS_ENDPOINT
-const FULL_URL = `${BASE_URL}${INSTRUMENTS_ENDPOINT}`
+// Action Types Constants 
+const ACTION_TYPES = {
+  FETCH_INSTRUMENTS_START: 'instruments/fetchInstrumentsStart',
+  FETCH_INSTRUMENTS_SUCCESS: 'instruments/fetchInstrumentsSuccess', 
+  FETCH_INSTRUMENTS_FAILURE: 'instruments/fetchInstrumentsFailure',
+  ADD_INSTRUMENT_REQUEST: 'instruments/addInstrumentRequest',
+  ADD_INSTRUMENT_SUCCESS: 'instruments/addInstrumentSuccess',
+  ADD_INSTRUMENT_FAILURE: 'instruments/addInstrumentFailure',
+  UPDATE_INSTRUMENT_REQUEST: 'instruments/updateInstrumentRequest',
+  UPDATE_INSTRUMENT_SUCCESS: 'instruments/updateInstrumentSuccess',
+  UPDATE_INSTRUMENT_FAILURE: 'instruments/updateInstrumentFailure',
+  DELETE_INSTRUMENT_REQUEST: 'instruments/deleteInstrumentRequest',
+  DELETE_INSTRUMENT_SUCCESS: 'instruments/deleteInstrumentSuccess',
+  DELETE_INSTRUMENT_FAILURE: 'instruments/deleteInstrumentFailure',
+} as const;
 
-// -------------------------
-// 🧩 API thực (MockAPI.io)
-// -------------------------
-
-const getInstrumentsAPI = async () => {
-  const response = await fetch(FULL_URL)
-  if (!response.ok) throw new Error('Không thể tải danh sách thiết bị')
-  return await response.json()
+// Get Instruments Saga - với retry logic
+function* getInstrumentsSaga() {
+  try {
+    const instruments: Instrument[] = yield call(instrumentService.getInstruments);
+    yield put({ 
+      type: ACTION_TYPES.FETCH_INSTRUMENTS_SUCCESS, 
+      payload: instruments 
+    });
+  } catch (error: any) {
+    yield put({ 
+      type: ACTION_TYPES.FETCH_INSTRUMENTS_FAILURE, 
+      payload: error.message 
+    });
+  }
 }
 
-const createInstrumentAPI = async (instrumentData: any) => {
-  const response = await fetch(FULL_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(instrumentData)
-  })
-  if (!response.ok) throw new Error('Không thể tạo thiết bị mới')
-  return await response.json()
+// Create Instrument Saga - với validation
+function* createInstrumentSaga(action: PayloadAction<Omit<Instrument, 'id'>>) {
+  try {
+    // Validate data trước khi gọi API
+    if (!action.payload.name?.trim()) {
+      throw new Error('Tên thiết bị không được để trống');
+    }
+
+    const newInstrument: Instrument = yield call(
+      instrumentService.createInstrument, 
+      action.payload
+    );
+    
+    yield put({ 
+      type: ACTION_TYPES.ADD_INSTRUMENT_SUCCESS, 
+      payload: newInstrument 
+    });
+  } catch (error: any) {
+    yield put({ 
+      type: ACTION_TYPES.ADD_INSTRUMENT_FAILURE, 
+      payload: error.message 
+    });
+  }
 }
 
-const updateInstrumentAPI = async ({ id, ...instrumentData }: any) => {
-  const response = await fetch(`${FULL_URL}/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(instrumentData)
-  })
-  if (!response.ok) throw new Error('Không thể cập nhật thiết bị')
-  return await response.json()
-}
-
-const deleteInstrumentAPI = async (id: string) => {
-  const url = `${FULL_URL}/${id}`;
+// Update Instrument Saga - với optimistic updates
+function* updateInstrumentSaga(action: PayloadAction<Instrument>) {
+  // Lưu state cũ để rollback nếu cần
+  const originalInstrument = action.payload;
   
   try {
-    const response = await fetch(url, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+    // Optimistic update
+    yield put({
+      type: ACTION_TYPES.UPDATE_INSTRUMENT_SUCCESS,
+      payload: action.payload
     });
 
-    // MockAPI thường trả về 200 ngay cả khi item không tồn tại
-    if (response.ok) {
-      return { id, deleted: true };
-    }
+    // Gọi API
+    const updatedInstrument: Instrument = yield call(
+      instrumentService.updateInstrument, 
+      action.payload
+    );
 
-    // Nếu có lỗi, vẫn coi như thành công để đồng bộ UI
-    return { id, deleted: true };
+    // Cập nhật với data thực từ server
+    yield put({
+      type: ACTION_TYPES.UPDATE_INSTRUMENT_SUCCESS,
+      payload: updatedInstrument
+    });
+
+  } catch (error: any) {
+    // Rollback nếu API fail
+    yield put({
+      type: ACTION_TYPES.UPDATE_INSTRUMENT_SUCCESS, // Dùng success để rollback
+      payload: originalInstrument
+    });
     
-  } catch (error) {
-    // Nếu có lỗi network, vẫn coi như thành công
-    return { id, deleted: true };
+    yield put({ 
+      type: ACTION_TYPES.UPDATE_INSTRUMENT_FAILURE, 
+      payload: error.message 
+    });
   }
 }
 
-// -------------------------
-// ⚙️ Saga Functions
-// -------------------------
+// Delete Instrument Saga - với optimistic delete
+function* deleteInstrumentSaga(action: PayloadAction<string>) {
+  const instrumentId = action.payload;
+  
+  // Optimistic delete - xóa ngay khỏi UI
+  yield put({ 
+    type: ACTION_TYPES.DELETE_INSTRUMENT_SUCCESS, 
+    payload: instrumentId 
+  });
 
-// Get Instruments Saga
-// Get Instruments Saga
-function* getInstrumentsSaga() {
-    try {
-      const instruments = yield call(getInstrumentsAPI)
-      yield put({ type: 'instruments/fetchInstrumentsSuccess', payload: instruments })
-    } catch (error: any) {
-      yield put({ type: 'instruments/fetchInstrumentsFailure', payload: error.message })
-    }
-  }
-  
-  // Create Instrument Saga
-  function* createInstrumentSaga(action: PayloadAction<any>) {
-    try {
-      const newInstrument = yield call(createInstrumentAPI, action.payload)
-      yield put({ type: 'instruments/addInstrument', payload: newInstrument })
-    } catch (error: any) {
-      yield put({ type: 'instruments/fetchInstrumentsFailure', payload: error.message })
-    }
-  }
-  
-  // Update Instrument Saga
-  function* updateInstrumentSaga(action: PayloadAction<any>) {
-    try {
-      const updatedInstrument = yield call(updateInstrumentAPI, action.payload)
-      yield put({ type: 'instruments/updateInstrument', payload: updatedInstrument })
-    } catch (error: any) {
-      yield put({ type: 'instruments/fetchInstrumentsFailure', payload: error.message })
-    }
-  }
-  
- // Delete Instrument Saga
- function* deleteInstrumentSaga(action: PayloadAction<string>) {
   try {
-    yield call(deleteInstrumentAPI, action.payload);
-  } catch (error) {
-    console.warn('Delete API warning:', error);
-  } finally {
-    // Luôn xóa khỏi UI và refresh data
-    yield put({ type: 'instruments/deleteInstrument', payload: action.payload });
-    yield put({ type: 'instruments/fetchInstrumentsStart' });
+    // Gọi API sau khi đã cập nhật UI
+    yield call(instrumentService.deleteInstrument, instrumentId);
+    
+    // Không cần làm gì thêm vì đã optimistic update
+    
+  } catch (error: any) {
+    // Nếu API fail, không rollback để tránh UX xấu
+    // Có thể log error để monitoring
+    console.warn(`Delete instrument ${instrumentId} failed:`, error.message);
+    
+    // Option: Có thể dispatch action để hiển thị thông báo
+    yield put({ 
+      type: ACTION_TYPES.DELETE_INSTRUMENT_FAILURE, 
+      payload: `Xóa không thành công: ${error.message}` 
+    });
   }
 }
-  
-  export function* instrumentSaga() {
-    yield takeEvery('instruments/fetchInstrumentsStart', getInstrumentsSaga)
-    yield takeLatest('instruments/addInstrumentRequest', createInstrumentSaga)
-    yield takeLatest('instruments/updateInstrumentRequest', updateInstrumentSaga)
-    yield takeLatest('instruments/deleteInstrumentRequest', deleteInstrumentSaga)
+
+// Root Saga với error boundary
+export function* instrumentSaga() {
+  try {
+    yield takeEvery(ACTION_TYPES.FETCH_INSTRUMENTS_START, getInstrumentsSaga);
+    yield takeLatest(ACTION_TYPES.ADD_INSTRUMENT_REQUEST, createInstrumentSaga);
+    yield takeLatest(ACTION_TYPES.UPDATE_INSTRUMENT_REQUEST, updateInstrumentSaga);
+    yield takeLatest(ACTION_TYPES.DELETE_INSTRUMENT_REQUEST, deleteInstrumentSaga);
+  } catch (error) {
+    console.error('Root saga error:', error);
   }
-  
+}
+
+// Export action types để sử dụng ở components
+export { ACTION_TYPES as INSTRUMENT_ACTION_TYPES };
