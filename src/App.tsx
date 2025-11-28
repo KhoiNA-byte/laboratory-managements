@@ -51,10 +51,9 @@ import { QuarantinePage } from "./modules/monitoring/QuarantinePage";
 import { InstrumentLogsPage } from "./modules/monitoring/InstrumentLogsPage";
 
 // Patient Module
-import { PatientsPage } from "./modules/patient/PatientsPage";
-import { PatientDetailsPage } from "./modules/patient/PatientDetailsPage";
-import { EditPatientPage } from "./modules/patient/EditPatientPage";
-
+import { PatientsPage } from "./modules/patient/patientPage";
+import { PatientDetailsPage } from "./modules/patient/patientDetails";
+import { EditPatientPage } from "./modules/patient/editPatient";
 // Audit Module
 import { AuditLogsPage } from "./modules/audit/AuditLogsPage";
 import { ReportsPage } from "./modules/audit/ReportsPage";
@@ -215,7 +214,7 @@ function AppRoutesInner() {
               </ProtectedRoute>
             }
           />
-          
+
           <Route
             path="flagging-rules"
             element={
@@ -273,7 +272,7 @@ function AppRoutesInner() {
               </ProtectedRoute>
             }
           />
-          
+
           <Route
             path="my-test-results"
             element={

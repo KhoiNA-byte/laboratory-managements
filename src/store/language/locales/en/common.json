@@ -134,7 +134,7 @@
       "subtitle": "View and manage patient medical records"
     },
     "filters": {
-      "searchPlaceholder": "Search by name, email, or MRN...",
+      "searchPlaceholder": "Search by name or MRN",
       "addPatient": "Add Patient"
     },
     "table": {
@@ -835,7 +835,7 @@
     "subtitle": "View and manage patient records"
   },
   "filters": {
-    "searchPlaceholder": "Search by name, email, or MRN...",
+    "searchPlaceholder": "Search by name or MRN",
     "addPatient": "Add Patient"
   },
   "table": {

@@ -1,17 +1,6 @@
 const PATIENTS_ENDPOINT = "https://69085724b49bea95fbf32f71.mockapi.io/user";
 
 export interface Patient {
-  // [x: string]: any;
-  // id?: string; // ID tự sinh từ mockapi (nếu có)
-  // patientMRN: string;
-  // patientName: string;
-  // patientAge: number;
-  // patientGender: string;
-  // patientPhone: string;
-  // patientEmail: string;
-  // patientLastVisit: string;
-  // createdAt?: string;
-  // updatedAt?: string;
   userId: string;
   name: string;
   email: string;
@@ -28,13 +17,13 @@ export interface Patient {
 }
 
 export interface TestOrder {
-  id: string; // ID do MockAPI tự sinh (chuẩn nhất)
+  id: string;
   testOrderId: string;
-  userId: string; // Parent ID
+  userId: string;
   testType: string;
-  status: "Completed" | "In Progress" | "Pending" | string; // Dùng string để linh hoạt
+  status: "Completed" | "In Progress" | "Pending" | string;
   createdAt: string;
-  createdByUserId: string; // Nên dùng string cho ID
+  createdByUserId: string;
   isDeleted: boolean;
   updatedAt: string;
   note: string;
@@ -121,10 +110,9 @@ export const updatePatientAPI = async (patientData: Patient): Promise<Patient> =
 // Get patient details and test orders by ID
 export const getPatientById = async (id: string): Promise<Patient> => {
   try {
-    // Sử dụng Promise.all để gọi song song 2 API
     const [patientResponse, ordersResponse] = await Promise.all([
       fetch(`${PATIENTS_ENDPOINT}/${id}`),
-      fetch(`${PATIENTS_ENDPOINT}/${id}/test_orders`), // Endpoint từ image_cff558.png
+      fetch(`${PATIENTS_ENDPOINT}/${id}/test_orders`),
     ]);
 
     if (!patientResponse.ok) {
@@ -138,7 +126,7 @@ export const getPatientById = async (id: string): Promise<Patient> => {
     if (ordersResponse.ok) {
       test_orders = await ordersResponse.json();
     } else {
-      // Nếu API test_orders lỗi cũng không sao, trả về mảng rỗng
+      // Nếu API test_orders lỗi -> trả về mảng rỗng
       console.warn(`Could not fetch test_orders: ${ordersResponse.status}`);
     }
 
