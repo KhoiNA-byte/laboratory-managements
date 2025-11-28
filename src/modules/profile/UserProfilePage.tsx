@@ -1,8 +1,6 @@
 import { useTranslation } from "react-i18next";
 import ProfileHeader from "./ProfileHeader";
 import ProfileInfo from "./ProfileInfo";
-import ProfileStats from "./ProfileStat";
-import RecentActivity from "./RecentActivity";
 
 export default function UserProfilePage() {
   const { t } = useTranslation("common");
@@ -19,11 +17,7 @@ export default function UserProfilePage() {
           </p>
         </div>
         <ProfileHeader />
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
-          <ProfileInfo />
-          <RecentActivity />
-        </div>
-        <ProfileStats />
+        <ProfileInfo />
       </div>
     </div>
   );
