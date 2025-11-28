@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { RootState } from "../../store";
-import AddPatientModal from "./AddPatientModal";
+import AddPatientModal from "./addPatient/AddPatientModal";
 
 export const PatientsPage = () => {
   const navigate = useNavigate();
@@ -18,9 +18,8 @@ export const PatientsPage = () => {
 
   // Add effect to fetch patients when component mounts
   useEffect(() => {
-    console.log("Component mounted - Fetching patients");
     dispatch({ type: "patients/getPatientsRequest" });
-  }, []); // Empty dependency array means this runs once on mount
+  }, []); // This runs once on mount
 
   // Separate effect for handling success messages
   useEffect(() => {
@@ -36,12 +35,12 @@ export const PatientsPage = () => {
     }
   }, [successMessage, dispatch]);
 
-  // New create patient handler using Redux
+  // Create patient handler
   const handleCreatePatient = (data: any) => {
     dispatch({ type: "patients/createPatientRequest", payload: data });
   };
 
-  // New delete handler using Redux
+  // Delete handler
   const handleDeletePatient = (mrn: string) => {
     setOpenDropdown(null);
     const confirmed = window.confirm(
@@ -114,7 +113,6 @@ export const PatientsPage = () => {
     }
   };
 
-  // Lọc dựa trên query chứ không phải searchTerm
   const filteredPatients = patients.filter((patient) =>
     query === ""
       ? true

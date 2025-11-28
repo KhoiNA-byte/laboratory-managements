@@ -134,7 +134,7 @@
       "subtitle": "Xem và quản lý hồ sơ bệnh nhân"
     },
     "filters": {
-      "searchPlaceholder": "Tìm theo tên, email hoặc MRN...",
+      "searchPlaceholder": "Tìm theo tên hoặc MRN",
       "addPatient": "Thêm bệnh nhân"
     },
     "table": {
@@ -849,7 +849,7 @@
       "noPatientsFound": "Không tìm thấy bệnh nhân nào."
     },
     "filters": {
-      "searchPlaceholder": "Tìm theo tên, email hoặc MRN...",
+      "searchPlaceholder": "Tìm theo tên hoặc MRN",
       "addPatient": "Thêm bệnh nhân"
     }
   },
