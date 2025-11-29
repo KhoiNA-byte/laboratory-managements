@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { AppDispatch, RootState } from "../../store";
 import { runTestRequest,UsedReagentLocal } from "../../store/slices/testResultsSlice";
 import {
@@ -24,6 +25,7 @@ export default function NewTest({
   onClose: () => void;
   onCreated?: (runIdOrResultId: string | number) => void;
 }) {
+  const { t } = useTranslation("common");
   const dispatch = useDispatch<AppDispatch>();
   const runState = useSelector((s: RootState) => s.testResults);
   const running = runState.running;
@@ -197,8 +199,8 @@ export default function NewTest({
 
   // dispatch action to create test
   const handleCreateTest = () => {
-    if (!selectedOrderId) return alert("Chọn test order trước");
-    if (!selectedInstrumentId) return alert("Chọn instrument để chạy test");
+    if (!selectedOrderId) return alert(t("modals.createTest.validation.selectOrder"));
+    if (!selectedInstrumentId) return alert(t("modals.createTest.validation.selectInstrument"));
 
     // build usedReagents payload
     const used = resolvedReagents.map((r) => ({
@@ -245,21 +247,21 @@ export default function NewTest({
       <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-auto">
         <div className="flex items-center justify-between p-6 border-b">
           <div>
-            <h2 className="text-xl font-semibold">Create New Test</h2>
+            <h2 className="text-xl font-semibold">{t("modals.createTest.title")}</h2>
             <p className="text-sm text-gray-600">
-              Auto-generate results from reagents & instrument
+              {t("modals.createTest.subtitle")}
             </p>
           </div>
 
           <div className="flex items-center gap-3">
-            <label className="text-sm">Sex</label>
+            <label className="text-sm">{t("modals.createTest.sex")}</label>
             <select
               value={sex}
               onChange={(e) => setSex(e.target.value as any)}
               className="border rounded px-2 py-1 text-sm"
             >
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
+              <option value="Male">{t("modals.createUser.genderOptions.male")}</option>
+              <option value="Female">{t("modals.createUser.genderOptions.female")}</option>
             </select>
             <button
               onClick={() => {
@@ -269,7 +271,7 @@ export default function NewTest({
               }}
               className="px-3 py-1 text-sm border rounded"
             >
-              Close
+              {t("common.close")}
             </button>
           </div>
         </div>
@@ -277,13 +279,13 @@ export default function NewTest({
         <div className="p-6 space-y-4">
           <div>
             <label className="text-sm font-medium block mb-2">
-              Select Test Order (no run_id yet)
+              {t("modals.createTest.selectTestOrder")}
             </label>
             {loading ? (
-              <div className="text-sm text-gray-500">Loading...</div>
+              <div className="text-sm text-gray-500">{t("modals.createTest.loading")}</div>
             ) : availableOrders.length === 0 ? (
               <div className="text-sm text-gray-500">
-                No test orders available (all have run_id/results).
+                {t("modals.createTest.noOrdersAvailable")}
               </div>
             ) : (
               <select
@@ -303,11 +305,11 @@ export default function NewTest({
 
           <div>
             <label className="text-sm font-medium block mb-2">
-              Choose Instrument (supports this order's testType)
+              {t("modals.createTest.chooseInstrument")}
             </label>
             {suggestedInstruments.length === 0 ? (
               <div className="text-sm text-gray-500">
-                No instrument matched — cannot create test
+                {t("modals.createTest.noInstrumentMatched")}
               </div>
             ) : (
               <div>
@@ -316,7 +318,7 @@ export default function NewTest({
                   onChange={(e) => setSelectedInstrumentId(e.target.value)}
                   className="w-full border rounded px-3 py-2 text-sm"
                 >
-                  <option value="">-- Select instrument --</option>
+                  <option value="">{t("modals.createTest.selectInstrument")}</option>
                   {suggestedInstruments.map((it) => (
                     <option key={String(it.id)} value={String(it.id)}>
                       {it.name ?? String(it.id)}
@@ -325,7 +327,7 @@ export default function NewTest({
                 </select>
 
                 <div className="text-xs text-gray-500 mt-2">
-                  Using reagents:{" "}
+                  {t("modals.createTest.usingReagents")}{" "}
                   {resolvedReagents.length
                     ? resolvedReagents.map((r) => r.name ?? r.id).join(", ")
                     : "—"}
@@ -338,7 +340,7 @@ export default function NewTest({
           {resolvedReagents.length > 0 && (
             <div>
               <label className="text-sm font-medium block mb-2">
-                Reagents & Usage (editable)
+                {t("modals.createTest.reagentsUsage")}
               </label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {resolvedReagents.map((r) => (
@@ -350,12 +352,12 @@ export default function NewTest({
                           {r.unit ?? "-"}
                         </div>
                         <div className="text-xs text-gray-500">
-                          Default usage: {r.usage_per_run ?? 0} {r.unit ?? ""}
+                          {t("modals.createTest.defaultUsage", { amount: r.usage_per_run ?? 0, unit: r.unit ?? "" })}
                         </div>
                       </div>
                       <div className="w-32">
                         <label className="text-xs text-gray-600">
-                          Amount to use
+                          {t("modals.createTest.amountToUse")}
                         </label>
                         <input
                           type="number"
@@ -388,14 +390,14 @@ export default function NewTest({
                 }}
                 className="px-4 py-2 border rounded"
               >
-                Cancel
+                {t("common.cancel")}
               </button>
               <button
                 onClick={handleCreateTest}
                 disabled={running || !selectedOrderId || !selectedInstrumentId}
                 className="px-4 py-2 bg-blue-600 text-white rounded"
               >
-                {running ? "Creating..." : "Create Test"}
+                {running ? t("modals.createTest.creating") : t("modals.createTest.createTest")}
               </button>
             </div>
           </div>

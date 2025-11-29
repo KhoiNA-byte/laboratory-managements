@@ -1,11 +1,946 @@
 {
-    "welcome": "Welcome",
-    "login": "Login",
-    "logout": "Logout",
-    "profile": "Profile",
-    "settings": "Settings",
-    "dashboard": "Dashboard",
-    "users": "Users",
-    "roles": "Roles",
-    "history": "History"
+  "welcome": "Welcome",
+  "login": "Login",
+  "logout": "Logout",
+  "profile": "Profile",
+  "settings": "Settings",
+  "dashboard": "Dashboard",
+  "users": "Users",
+  "roles": "Roles",
+  "history": "History",
+  "pages": {
+    "users": {
+      "title": "User Directory",
+      "subtitle": "Manage every account, role, and lifecycle state"
+    },
+    "roles": {
+      "title": "Roles Management",
+      "subtitle": "Manage user roles and permissions"
+    },
+    "patients": {
+      "title": "Patient Records",
+      "subtitle": "Manage patient medical records and information"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "subtitle": "Overview of laboratory operations and statistics"
+    },
+    "testOrders": {
+      "title": "Test Orders",
+      "subtitle": "Manage laboratory test orders"
+    },
+    "instruments": {
+      "title": "Instruments",
+      "subtitle": "Manage laboratory instruments and equipment"
+    },
+    "warehouse": {
+      "title": "Warehouse",
+      "subtitle": "Manage reagents and laboratory supplies"
+    },
+    "monitoring": {
+      "title": "System Monitoring",
+      "subtitle": "Monitor system health, event logs, and performance metrics"
+    }
+  },
+  "usersPage": {
+    "summaryCards": {
+      "totalUsers": "Total users",
+      "activeRecords": "Active records in the system",
+      "newThisMonth": "New this month",
+      "growthFromLastMonth": "Growth from last month: {{percentage}}%"
+    },
+    "allUsers": {
+      "title": "All users",
+      "subtitle": "Filter by role, status, or demographic data"
+    },
+    "filters": {
+      "allGenders": "All genders",
+      "allAges": "All ages",
+      "allRoles": "All roles",
+      "male": "Male",
+      "female": "Female",
+      "searchPlaceholder": "Search by name, email, or phone",
+      "newUser": "Add user"
+    },
+    "table": {
+      "userName": "User name",
+      "ageGender": "Age / gender",
+      "contact": "Contact",
+      "role": "Role",
+      "status": "Status",
+      "actions": "Actions",
+      "years": "years",
+      "active": "Active",
+      "inactive": "Inactive",
+      "viewProfile": "View profile",
+      "editUser": "Edit user",
+      "deactivateUser": "Deactivate",
+      "activateUser": "Activate",
+      "noUsersFound": "No users available in the system.",
+      "noUsersMatch": "No users match the current filters.",
+      "tryAdjusting": "Try adjusting the filters or search keywords.",
+      "showing": "Showing {{count}} of {{total}} users"
+    },
+    "confirm": {
+      "deactivateUser": "Deactivate {{name}}?",
+      "activateUser": "Activate {{name}}?"
+    }
+  },
+  "rolesPage": {
+    "title": "Roles Management",
+    "subtitle": "Manage user roles and permissions",
+    "filters": {
+      "allStatus": "All Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "searchPlaceholder": "Search by role name, code, or description",
+      "addRole": "Add Role"
+    },
+    "table": {
+      "roleName": "Role Name",
+      "roleCode": "Role Code",
+      "description": "Description",
+      "status": "Status",
+      "actions": "Actions",
+      "loading": "Loading roles...",
+      "noRolesFound": "No roles found.",
+      "editRole": "Edit Role",
+      "deleteRole": "Delete Role",
+      "activateRole": "Activate",
+      "deactivateRole": "Deactivate",
+      "showing": "Showing {{count}} of {{total}} roles"
+    },
+    "confirm": {
+      "deleteRole": "Are you sure you want to delete role \"{{name}}\"?",
+      "activateRole": "Are you sure you want to activate role {{name}}?",
+      "deactivateRole": "Are you sure you want to deactivate role {{name}}?"
+    }
+  },
+  "patientsPage": {
+    "title": "Patient Records",
+    "subtitle": "Manage patient medical records and information",
+    "summaryCards": {
+      "totalPatients": "Total Patients",
+      "activeRecords": "Active records",
+      "newThisMonth": "New This Month",
+      "growthFromLastMonth": "+{{percentage}}% from last month",
+      "pendingTests": "Pending Tests",
+      "awaitingResults": "Awaiting results",
+      "completedToday": "Completed Today",
+      "testResults": "Test results"
+    },
+    "allPatients": {
+      "title": "All Patients",
+      "subtitle": "View and manage patient medical records"
+    },
+    "filters": {
+      "searchPlaceholder": "Search by name or MRN",
+      "addPatient": "Add Patient"
+    },
+    "table": {
+      "mrn": "MRN",
+      "name": "Name",
+      "ageGender": "Age / Gender",
+      "dateOfBirth": "Date of Birth",
+      "gender": "Gender",
+      "phone": "Phone",
+      "email": "Email",
+      "contact": "Contact",
+      "lastVisit": "Last Visit",
+      "actions": "Actions",
+      "viewDetails": "View Details",
+      "editRecord": "Edit Record",
+      "deletePatient": "Delete Patient",
+      "noPatientsFound": "No patients found.",
+      "confirmDelete": "Are you sure you want to delete patient {{mrn}}? This action cannot be undone."
+    }
+  },
+  "dashboardPage": {
+    "stats": {
+      "totalPatients": "Total Patients",
+      "fromLastMonth": "+{{percentage}}% from last month",
+      "pendingTests": "Pending Tests",
+      "fromYesterday": "+{{count}} from yesterday",
+      "activeInstruments": "Active Instruments",
+      "underMaintenance": "{{count}} under maintenance",
+      "alerts": "Alerts",
+      "criticalWarnings": "{{critical}} critical, {{warnings}} warnings"
+    },
+    "recentTestOrders": {
+      "title": "Recent Test Orders",
+      "subtitle": "Latest test orders requiring attention",
+      "status": {
+        "pending": "pending",
+        "inProgress": "in progress",
+        "completed": "completed"
+      },
+      "timeAgo": {
+        "minutes": "{{count}} minutes ago",
+        "hours": "{{count}} hours ago"
+      }
+    },
+    "systemAlerts": {
+      "title": "System Alerts",
+      "subtitle": "Important notifications and warnings",
+      "alerts": {
+        "lowReagentStock": {
+          "title": "Low Reagent Stock",
+          "description": "CBC Reagent Kit below 20%"
+        },
+        "calibrationDue": {
+          "title": "Calibration Due",
+          "description": "Hematology Analyzer needs calibration"
+        },
+        "instrumentMaintenance": {
+          "title": "Instrument Maintenance",
+          "description": "Chemistry Analyzer scheduled maintenance"
+        },
+        "qualityControlAlert": {
+          "title": "Quality Control Alert",
+          "description": "QC results out of range for Glucose test"
+        }
+      }
+    }
+  },
+  "testOrdersPage": {
+    "title": "Test Orders",
+    "subtitle": "Manage laboratory test orders",
+    "summaryCards": {
+      "totalOrders": "Total Orders",
+      "pendingOrders": "Pending Orders",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "pending": "Pending",
+      "pendingSubtitle": "Awaiting processing",
+      "inProgressSubtitle": "Being processed",
+      "completedSubtitle": "Ready for review",
+      "reviewed": "Reviewed",
+      "reviewedSubtitle": "Finalized"
+    },
+    "allOrders": {
+      "title": "All Test Orders",
+      "subtitle": "View and manage laboratory test orders."
+    },
+    "filters": {
+      "searchPlaceholder": "Search orders...",
+      "newOrder": "New Order",
+      "allStatus": "All Status",
+      "allOrders": "All Orders",
+      "pending": "Pending",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "reviewed": "Reviewed"
+    },
+    "table": {
+      "orderNumber": "Order Number",
+      "patient": "Patient",
+      "testType": "Test Type",
+      "test": "Test",
+      "priority": "Priority",
+      "status": "Status",
+      "ordered": "Ordered",
+      "date": "Date",
+      "actions": "Actions",
+      "viewDetails": "View Details",
+      "updateTestOrder": "Update Test Order",
+      "deleteTestOrder": "Delete Test Order",
+      "loading": "Loading test orders...",
+      "noOrdersFound": "No test orders found",
+      "error": "Error",
+      "confirmDelete": "Are you sure you want to delete test order {{orderNumber}}? This action cannot be undone."
+    }
+  },
+  "instrumentsPage": {
+    "title": "Instruments",
+    "subtitle": "Manage laboratory instruments and equipment",
+    "filters": {
+      "searchPlaceholder": "Search instruments...",
+      "addInstrument": "Add Instrument",
+      "syncInstruments": "Sync Instruments"
+    },
+    "table": {
+      "name": "Name",
+      "model": "Model",
+      "serialNumber": "Serial Number",
+      "status": "Status",
+      "actions": "Actions",
+      "viewDetails": "View Details",
+      "editInstrument": "Edit Instrument",
+      "deleteInstrument": "Delete Instrument",
+      "confirmDelete": "Are you sure you want to delete \"{{name}}\"?",
+      "noInstrumentsFound": "No instruments found."
+    }
+  },
+  "warehousePage": {
+    "title": "Warehouse",
+    "subtitle": "Manage reagents and laboratory supplies",
+    "summaryCards": {
+      "total": "Total",
+      "lowStock": "Low stock",
+      "expiringSoon": "Expiring soon",
+      "expiredOut": "Expired/Out"
+    },
+    "inventory": {
+      "title": "Reagents Inventory",
+      "subtitle": "Manage laboratory reagents and supplies"
+    },
+    "filters": {
+      "searchPlaceholder": "Search...",
+      "addReagent": "Add Reagent",
+      "allItems": "All Items",
+      "inStock": "In Stock",
+      "lowStock": "Low Stock",
+      "expired": "Expired",
+      "outOfStock": "Out of Stock"
+    },
+    "table": {
+      "name": "Name",
+      "lot": "Lot",
+      "manufacturer": "Manufacturer",
+      "quantity": "Quantity",
+      "expiry": "Expiry",
+      "location": "Location",
+      "action": "Action",
+      "viewDetail": "View Detail",
+      "noReagentsFound": "No reagent found."
+    },
+    "confirmDelete": "Are you sure you want to delete this reagent?"
+  },
+  "testResultsPage": {
+    "title": "Test Results",
+    "subtitle": "Your test results history",
+    "summaryCards": {
+      "totalTests": "Total Tests",
+      "totalTestsSubtitle": "All time",
+      "pendingResults": "Pending Results",
+      "pendingResultsSubtitle": "In progress",
+      "completed": "Completed",
+      "completedSubtitle": "Available to view"
+    },
+    "filters": {
+      "allResults": "All Results",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "searchPlaceholder": "Search results...",
+      "newTest": "New Test"
+    },
+    "table": {
+      "testOrderId": "TestOrder ID",
+      "patient": "Patient",
+      "date": "Date",
+      "tester": "Tester",
+      "status": "Status",
+      "actions": "Actions",
+      "view": "View",
+      "export": "Export",
+      "delete": "Delete",
+      "deleting": "Deleting...",
+      "noResultsFound": "No results found.",
+      "confirmDelete": "Are you sure you want to delete this result?",
+      "cannotViewPending": "This test is pending — result not available to view yet.",
+      "cannotViewTitle": "Cannot view pending result",
+      "viewResultTitle": "View result"
+    }
+  },
+  "instrumentsPage": {
+    "title": "Instruments",
+    "subtitle": "Manage laboratory instruments and equipment",
+    "summaryCards": {
+      "totalInstruments": "Total Instruments",
+      "active": "Active",
+      "maintenance": "Maintenance",
+      "calibrationDue": "Calibration Due"
+    },
+    "allInstruments": {
+      "title": "All Instruments",
+      "subtitle": "View and manage laboratory equipment"
+    },
+    "filters": {
+      "searchPlaceholder": "Search instruments...",
+      "addInstrument": "Add Instrument",
+      "syncInstruments": "Sync-up",
+      "refreshing": "Refreshing..."
+    },
+    "table": {
+      "name": "Name",
+      "model": "Model",
+      "serialNumber": "Serial Number",
+      "status": "Status",
+      "location": "Location",
+      "manufacturer": "Manufacturer",
+      "nextCalibration": "Next Calibration",
+      "actions": "Actions",
+      "viewDetails": "View Details",
+      "editInstrument": "Edit Instrument",
+      "deleteInstrument": "Delete Instrument",
+      "deleting": "Deleting...",
+      "noInstrumentsFound": "No instruments found",
+      "noInstrumentsAvailable": "No instruments available",
+      "confirmDelete": "Are you sure you want to delete \"{{name}}\"?",
+      "calibrationDueSoon": "Calibration due soon"
+    }
+  },
+  "monitoringPage": {
+    "title": "System Monitoring",
+    "subtitle": "Monitor system health, event logs, and performance metrics",
+    "tabs": {
+      "overview": "Overview",
+      "logs": "Event Logs"
+    },
+    "metrics": {
+      "activeUsers": "Active Users",
+      "activeUsersSubtitle": "Registered users",
+      "testsToday": "Tests Today",
+      "testsTodaySubtitle": "Completed today",
+      "activeInstruments": "Active Instruments",
+      "activeInstrumentsSubtitle": "Currently operational",
+      "totalEvents": "Total Events",
+      "successEvents": "Success Events",
+      "warningEvents": "Warning Events",
+      "errorEvents": "Error Events"
+    },
+    "recentEvents": {
+      "title": "Recent Events",
+      "subtitle": "Latest system events and activities",
+      "viewAll": "View All →"
+    },
+    "eventLogs": {
+      "title": "Event Logs",
+      "subtitle": "{{count}} events found",
+      "searchPlaceholder": "Search events...",
+      "allTypes": "All Types",
+      "success": "Success",
+      "info": "Info",
+      "warning": "Warning",
+      "error": "Error",
+      "noEventsFound": "No events found matching your filters",
+      "loading": "Loading real system metrics..."
+    }
+  },
+  "profilePage": {
+    "title": "Personal Profile",
+    "subtitle": "View and update information",
+    "header": {
+      "title": "Profile",
+      "subtitle": "View and manage information",
+      "searchPlaceholder": "Search..."
+    },
+    "profileInfo": {
+      "noUserData": "No user data available",
+      "userId": "User ID",
+      "ageGender": "Age / Gender",
+      "lastLogin": "Last Login",
+      "role": "Role",
+      "status": "Status",
+      "years": "years"
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "subtitle": "Latest test orders and results",
+      "completed": "Completed",
+      "inProgress": "In Progress",
+      "normal": "Normal"
+    },
+    "stats": {
+      "totalTests": "Total Tests",
+      "totalTestsSubtext": "All time",
+      "pending": "Pending",
+      "pendingSubtext": "In progress",
+      "lastVisit": "Last Visit",
+      "lastVisitSubtext": "ago"
+    }
+  },
+  "reportsPage": {
+    "title": "Reports",
+    "subtitle": "Generate reports and export data",
+    "sectionTitle": "Reports",
+    "sectionSubtitle": "Generate and export laboratory reports",
+    "generateReport": {
+      "title": "Generate Report",
+      "subtitle": "Select report type and date range",
+      "reportType": "Report Type",
+      "selectReportType": "Select report type",
+      "fromDate": "From Date",
+      "toDate": "To Date",
+      "datePlaceholder": "dd/mm/yyyy",
+      "exportExcel": "Export Excel",
+      "print": "Print"
+    },
+    "quickReports": {
+      "title": "Quick Reports",
+      "subtitle": "Generate commonly used reports",
+      "todaysTestOrders": "Today's Test Orders",
+      "pendingTestResults": "Pending Test Results",
+      "instrumentStatusReport": "Instrument Status Report",
+      "lowStockReagents": "Low Stock Reagents",
+      "userActivityLog": "User Activity Log"
+    },
+    "scheduledReports": {
+      "title": "Scheduled Reports",
+      "subtitle": "Automatically generated reports sent via email",
+      "dailyTestSummary": "Daily Test Summary",
+      "dailyTestSummaryDesc": "Sent every day at 6:00 PM",
+      "configure": "Configure"
+    }
+  },
+  "modals": {
+    "createUser": {
+      "title": "Create New User",
+      "subtitle": "Fill in the required information to create a new user account",
+      "fullName": "Full Name",
+      "email": "Email",
+      "phoneNumber": "Phone Number",
+      "identityNumber": "Identity Number",
+      "gender": "Gender",
+      "role": "Role",
+      "age": "Age",
+      "address": "Address",
+      "password": "Password",
+      "selectRole": "Select a role",
+      "noActiveRoles": "No active roles available. Please create roles first.",
+      "activeRolesAvailable": "{{count}} active role(s) available",
+      "createUser": "Create User",
+      "genderOptions": {
+        "male": "Male",
+        "female": "Female",
+        "other": "Other",
+        "preferNotToSay": "Prefer not to say"
+      },
+      "validation": {
+        "nameRequired": "Name must be at least 2 characters long",
+        "emailRequired": "Please enter a valid email address",
+        "phoneRequired": "Please enter a valid phone number",
+        "idRequired": "Identity number is required",
+        "ageRequired": "Age must be between 1 and 120",
+        "addressRequired": "Address must be at least 5 characters long",
+        "passwordRequired": "Password must be at least 6 characters long"
+      }
+    },
+    "updateUser": {
+      "title": "Update User",
+      "fullName": "Full Name",
+      "email": "Email",
+      "phoneNumber": "Phone Number",
+      "identityNumber": "Identity Number",
+      "identityNumberReadOnly": "Identity number cannot be changed",
+      "gender": "Gender",
+      "role": "Role",
+      "age": "Age",
+      "address": "Address",
+      "status": "Status",
+      "selectRole": "Select a role",
+      "noActiveRoles": "No active roles available",
+      "activeRolesAvailable": "{{count}} active role(s) available",
+      "updateUser": "Update User",
+      "genderOptions": {
+        "male": "Male",
+        "female": "Female",
+        "other": "Other",
+        "preferNotToSay": "Prefer not to say"
+      },
+      "validation": {
+        "nameRequired": "Name must be at least 2 characters long",
+        "emailRequired": "Please enter a valid email address",
+        "phoneRequired": "Please enter a valid phone number",
+        "ageRequired": "Age must be between 1 and 120",
+        "addressRequired": "Address must be at least 5 characters long"
+      }
+    },
+    "createRole": {
+      "title": "Create New Role",
+      "subtitle": "Define a new role with its permissions and access levels",
+      "roleName": "Role Name",
+      "roleCode": "Role Code",
+      "description": "Description",
+      "status": "Status",
+      "permissions": "Permissions",
+      "permissionsSelected": "{{count}} permissions selected",
+      "selectAll": "Select All",
+      "deselectAll": "Deselect All",
+      "selectAllPermissions": "Select All Permissions",
+      "clearAllPermissions": "Clear All Permissions",
+      "createRole": "Create Role",
+      "roleNamePlaceholder": "e.g., Administrator, Lab Manager",
+      "roleCodePlaceholder": "e.g., admin, lab_manager",
+      "descriptionPlaceholder": "Describe the role's responsibilities and permissions...",
+      "roleCodeHint": "Use lowercase letters and underscores only",
+      "validation": {
+        "roleNameRequired": "Role name must be at least 2 characters long",
+        "roleCodeRequired": "Role code must be at least 2 characters long",
+        "roleCodeInvalid": "Role code can only contain lowercase letters and underscores",
+        "descriptionRequired": "Description must be at least 5 characters long"
+      }
+    },
+    "updateRole": {
+      "title": "Update Role",
+      "subtitle": "Modify the role's information and permissions",
+      "roleName": "Role Name",
+      "roleCode": "Role Code",
+      "description": "Description",
+      "status": "Status",
+      "permissions": "Permissions",
+      "permissionsSelected": "{{count}} permissions selected",
+      "selectAll": "Select All",
+      "deselectAll": "Deselect All",
+      "updateRole": "Update Role",
+      "roleCodeHint": "Use lowercase letters and underscores only",
+      "validation": {
+        "roleNameRequired": "Role name must be at least 2 characters long",
+        "roleCodeRequired": "Role code must be at least 2 characters long",
+        "roleCodeInvalid": "Role code can only contain lowercase letters and underscores",
+        "descriptionRequired": "Description must be at least 5 characters long"
+      }
+    },
+    "addPatient": {
+      "title": "Patient Information",
+      "subtitle": "Enter the patient's personal and contact details",
+      "fullName": "Full Name",
+      "dateOfBirth": "Date of Birth",
+      "gender": "Gender",
+      "phoneNumber": "Phone Number",
+      "email": "Email",
+      "address": "Address",
+      "createPatient": "Create Patient",
+      "genderOptions": {
+        "male": "Male",
+        "female": "Female",
+        "other": "Other"
+      },
+      "validation": {
+        "nameRequired": "Full name is required",
+        "dobRequired": "Valid date of birth is required",
+        "dobInvalid": "Please provide a valid date of birth (not in the future).",
+        "phoneRequired": "Invalid phone number",
+        "emailInvalid": "Invalid email address",
+        "addressRequired": "Address is required"
+      },
+      "placeholders": {
+        "fullName": "Full name",
+        "phoneNumber": "(10 digits, starts with 0)",
+        "email": "example@email.com",
+        "address": "123 Main St, City, State, ZIP"
+      },
+      "success": "Patient {{name}} has been added successfully!"
+    },
+    "testOrder": {
+      "title": "Test Order Information",
+      "subtitle": "Add the test order details",
+      "phoneNumber": "Phone Number",
+      "patientName": "Patient Name",
+      "age": "Age",
+      "gender": "Gender",
+      "status": "Status",
+      "testType": "Test Type",
+      "note": "Note",
+      "runDate": "Run Date",
+      "search": "Search",
+      "selectTestType": "Select test type",
+      "enterNote": "Enter note (optional)",
+      "create": "Create",
+      "validation": {
+        "phoneRequired": "Please enter a phone number",
+        "patientInactive": "This patient account is inactive and cannot be used",
+        "patientFound": "Patient found: {{name}}",
+        "patientNotFound": "No patient found with this phone number",
+        "searchError": "An error occurred while searching. Please try again.",
+        "saveError": "Failed to create test order. Please try again.",
+        "runDateRequired": "Run date is required",
+        "runDateInvalid": "Please enter complete date in MM/DD/YYYY format"
+      }
+    },
+    "createTest": {
+      "title": "Create New Test",
+      "subtitle": "Auto-generate results from reagents & instrument",
+      "sex": "Sex",
+      "selectTestOrder": "Select Test Order (no run_id yet)",
+      "chooseInstrument": "Choose Instrument (supports this order's testType)",
+      "usingReagents": "Using reagents:",
+      "reagentsUsage": "Reagents & Usage (editable)",
+      "amountToUse": "Amount to use",
+      "defaultUsage": "Default usage: {{amount}} {{unit}}",
+      "noOrdersAvailable": "No test orders available (all have run_id/results).",
+      "noInstrumentMatched": "No instrument matched — cannot create test",
+      "selectInstrument": "-- Select instrument --",
+      "createTest": "Create Test",
+      "creating": "Creating...",
+      "loading": "Loading...",
+      "validation": {
+        "selectOrder": "Chọn test order trước",
+        "selectInstrument": "Chọn instrument để chạy test"
+      }
+    },
+    "addInstrument": {
+      "title": "Add New Instrument",
+      "subtitle": "Create a new laboratory instrument",
+      "basicInformation": "Basic Information",
+      "calibrationInformation": "Calibration Information",
+      "testingConfiguration": "Testing Configuration",
+      "instrumentName": "Instrument Name",
+      "model": "Model",
+      "serialNumber": "Serial Number",
+      "manufacturer": "Manufacturer",
+      "status": "Status",
+      "location": "Location",
+      "nextCalibrationDate": "Next Calibration Date",
+      "supportedTestType": "Supported Test Type",
+      "supportedReagents": "Supported Reagents",
+      "selectLocation": "Select a location",
+      "selectTestType": "Select a test type",
+      "reagentsSelected": "{{count}} reagent(s) selected",
+      "noReagentsAvailable": "No reagents available",
+      "createInstrument": "Create Instrument",
+      "creating": "Creating...",
+      "loadingData": "Loading Data...",
+      "loadingTestTypes": "Loading test types...",
+      "loadingReagents": "Loading reagents...",
+      "placeholders": {
+        "instrumentName": "Enter instrument name",
+        "model": "Enter model",
+        "serialNumber": "Enter serial number",
+        "manufacturer": "Enter manufacturer"
+      },
+      "validation": {
+        "nameRequired": "Instrument name is required",
+        "nameSpecialChars": "Instrument name cannot contain special characters",
+        "nameMinLength": "Instrument name must be at least 2 characters",
+        "modelRequired": "Model is required",
+        "modelSpecialChars": "Model cannot contain special characters",
+        "serialRequired": "Serial number is required",
+        "serialSpecialChars": "Serial number cannot contain special characters",
+        "manufacturerRequired": "Manufacturer is required",
+        "manufacturerSpecialChars": "Manufacturer cannot contain special characters",
+        "locationRequired": "Location is required",
+        "calibrationRequired": "Next calibration date is required",
+        "calibrationFuture": "Next calibration must be in the future",
+        "testTypeRequired": "Supported test is required",
+        "reagentsRequired": "At least one reagent must be selected",
+        "fixErrors": "Please fix all validation errors before saving",
+        "cancelConfirm": "Are you sure you want to cancel? All changes will be lost.",
+        "errorCreating": "Error creating instrument"
+      }
+    },
+    "addReagent": {
+      "title": "Add Reagent",
+      "subtitle": "Enter reagent details",
+      "name": "Name",
+      "lotNumber": "Lot number",
+      "manufacturer": "Manufacturer",
+      "quantity": "Quantity",
+      "unit": "Unit",
+      "expiryDate": "Expiry date",
+      "location": "Location",
+      "usagePerRun": "Usage per run (µL)",
+      "minStock": "Min stock",
+      "maxStock": "Max stock",
+      "cost": "Cost (per unit)",
+      "selectLocation": "Select...",
+      "addReagent": "Add Reagent",
+      "adding": "Adding...",
+      "placeholders": {
+        "name": "Reagent Name",
+        "lotNumber": "LOT-2025-...",
+        "manufacturer": "Manufacturer",
+        "usagePerRun": "e.g., 50",
+        "cost": "e.g., 12.50"
+      },
+      "validation": {
+        "fillRequired": "Please fill required fields. Ensure min stock ≤ max stock and required fields are not empty."
+      }
+    },
+    "instrumentDetails": {
+      "title": "Instrument Details",
+      "subtitle": "Complete information about {{name}}",
+      "basicInformation": "Basic Information",
+      "calibrationInformation": "Calibration Information",
+      "testingConfiguration": "Testing Configuration",
+      "instrumentName": "Instrument Name",
+      "model": "Model",
+      "serialNumber": "Serial Number",
+      "status": "Status",
+      "location": "Location",
+      "manufacturer": "Manufacturer",
+      "nextCalibration": "Next Calibration",
+      "calibrationStatus": "Calibration Status",
+      "dueSoon": "Due Soon",
+      "onTrack": "On Track",
+      "daysRemaining": "{{days}} days remaining",
+      "supportedTestType": "Supported Test Type",
+      "supportedReagents": "Supported Reagents ({{count}})",
+      "loadingTestType": "Loading test type...",
+      "loadingReagents": "Loading reagents...",
+      "noTestTypeSelected": "No test type selected",
+      "noReagentsSelected": "No reagents selected",
+      "testType": "Test Type",
+      "lot": "Lot",
+      "mfg": "Mfg",
+      "expires": "Expires",
+      "storage": "Storage",
+      "calibrationDue": "Calibration Due!",
+      "calibrationDueSoon": "Calibration due soon",
+      "nextCalibrationLabel": "Next calibration:",
+      "instrumentId": "Instrument ID",
+      "invalidDate": "Invalid Date",
+      "maintenance": "Maintenance",
+
+      "temperature": "Operating Temperature",
+      "sampleVolume": "Sample Volume",
+      "firmwareVersion": "Firmware Version",
+      "port": "Port",
+      "encryption": "Encryption",
+      "ipAddress": "IP Address",
+      "technicalSpecifications":"Technical Specifications"
+    },
+    "editInstrument": {
+      "title": "Edit Instrument",
+      "subtitle": "Update instrument information",
+      "id": "ID",
+      "saving": "Saving...",
+      "saveChanges": "Save Changes",
+      "errorSaving": "Error saving instrument"
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "actions": "Actions",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "maintenance":"Maintenance",
+    "yes": "Yes",
+    "no": "No",
+    "confirm": "Confirm",
+    "close": "Close",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {{current}} of {{total}}",
+    "years": "years",
+    "noResults": "No results found"
+  },
+  "patientsPage": {
+  "title": "Patient Records",
+  "subtitle": "Manage patient records and information",
+  "summaryCards": {
+    "totalPatients": "Total Patients",
+    "activeRecords": "Active Records",
+    "newThisMonth": "New This Month",
+    "growthFromLastMonth": "+{{percentage}}% compared to last month",
+    "pendingTests": "Pending Tests",
+    "awaitingResults": "Awaiting Results",
+    "completedToday": "Completed Today",
+    "testResults": "Test Results"
+  },
+  "allPatients": {
+    "title": "All Patients",
+    "subtitle": "View and manage patient records"
+  },
+  "filters": {
+    "searchPlaceholder": "Search by name or MRN",
+    "addPatient": "Add Patient"
+  },
+  "table": {
+    "mrn": "MRN",
+    "name": "Name",
+    "ageGender": "Age / Gender",
+    "dateOfBirth": "Date of Birth",
+    "gender": "Gender",
+    "phone": "Phone",
+    "email": "Email",
+    "contact": "Contact",
+    "lastVisit": "Last Visit",
+    "actions": "Actions",
+    "viewDetails": "View Details",
+    "editRecord": "Edit Record",
+    "deletePatient": "Delete Patient",
+    "noPatientsFound": "No patients found.",
+    "confirmDelete": "Are you sure you want to delete patient {{mrn}}? This action cannot be undone."
   }
+},
+"patientDetails": {
+  "title": "Patient Details",
+  "subtitle": "View the patient's record and test history",
+  "notFoundTitle": "Patient Not Found",
+  "notFoundDesc": "No patient found with ID \"{{id}}\".",
+  "noTestHistoryTitle": "No Test History",
+  "noTestHistoryDesc": "This patient has no test history.",
+  "personalInfo": "Personal Information",
+  "contactInfo": "Contact Information",
+  "fullName": "Full Name",
+  "dateOfBirth": "Date of Birth",
+  "age": "Ages",
+  "editPatient": "Edit Patient",
+  "tabs": {
+    "overview": "Overview",
+    "testHistory": "Test History"
+  },
+  "recentActivity": "Recent Activity",
+  "latestTestOrders": "Latest Test Orders",
+  "summaryCards": {
+    "totalTests": "Total Tests",
+    "pending": "Pending",
+    "lastVisit": "Last Visit"
+  },
+  "table": {
+    "headers": {
+      "testType": "Test Type",
+      "orderedAt": "Ordered At",
+      "status": "Status",
+      "tester": "Tester",
+      "note": "Note",
+      "testId": "Test ID"
+    }
+  },
+  "genderOptions": {
+    "Male": "Male",
+    "Female": "Female",
+    "Other": "Other"
+  },
+  "statusOptions": {
+    "Pending": "Pending",
+    "In Progress": "In Progress",
+    "Completed": "Completed",
+    "Reviewed": "Reviewed"
+  }
+},
+"editPatientPage": {
+  "title": "Edit Patient Record",
+  "subtitle": "Update the patient's personal and contact information",
+  "personalInfo": "Personal Information",
+  "contactInfo": "Contact Information",
+  "fullName": "Full Name",
+  "dateOfBirth": "Date of Birth",
+  "gender": "Gender",
+  "phoneNumber": "Phone Number",
+  "email": "Email",
+  "address": "Address",
+  "age": "Age",
+  "optional": "Optional",
+  "saveChanges": "Save Changes",
+  "selectGender": "Select Gender",
+  "nameRequired": "Full name is required",
+  "nameInvalid": "Full name must not contain special characters",
+  "dobRequired": "A valid date of birth is required",
+  "dobInvalid": "Please provide a valid date of birth",
+  "phoneRequired": "Phone number is required",
+  "phoneInvalid": "Invalid phone number",
+  "emailInvalid": "Invalid email address",
+  "addressRequired": "Address is required",
+  "ageRequired": "Age is required",
+  "other": "Other",
+  "ageInvalid": "Invalid age",
+  "loadingData": "Loading patient data...",
+  "personalDetails": "Detailed Information"
+}
+
+
+
+}

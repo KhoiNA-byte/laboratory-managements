@@ -10,6 +10,7 @@ import WorkHomePage from "./WorkHomePage";
 import TestimonialsHomePage from "./TestimonialsHomePage";
 import FooterHomePage from "./FooterHomePage";
 import HeaderHomePageLoggin from "./HeaderHomePageLoggin";
+import { LanguageSwitcher } from "../../components/LanguageSwitcher";
 
 export const HomePageLoggedIn = () => {
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ export const HomePageLoggedIn = () => {
             </div>
 
             {/* Navigation */}
-            <nav className="hidden md:flex space-x-8">
+            <nav className="hidden md:flex items-center space-x-8">
               <a
                 href="#"
                 className="text-gray-700 hover:text-blue-600 font-medium"
@@ -56,6 +57,7 @@ export const HomePageLoggedIn = () => {
               >
                 Tài nguyên
               </a>
+              <LanguageSwitcher variant="pill" />
             </nav>
 
             {/* Right side icons and user info */}

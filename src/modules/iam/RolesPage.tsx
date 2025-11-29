@@ -1,6 +1,7 @@
 // modules/iam/RolesPage.tsx
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { RootState } from "../../store";
 import {
   clearMessages,
@@ -13,6 +14,7 @@ import UpdateRoleModal from "../../components/RolesPage/UpdateRoleModal";
 import RolesHeader from "../../components/RolesPage/RolesHeader";
 
 export const RolesPage = () => {
+  const { t } = useTranslation("common");
   const {
     roles,
     loading,
@@ -25,7 +27,7 @@ export const RolesPage = () => {
 
   const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All Status");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -59,7 +61,7 @@ export const RolesPage = () => {
         role.roleCode.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesStatus =
-        statusFilter === "All Status" || role.status === statusFilter;
+        statusFilter === "all" || role.status === statusFilter;
 
       return matchesSearch && matchesStatus;
     });
@@ -130,9 +132,9 @@ export const RolesPage = () => {
       const newStatus = role.status === "active" ? "inactive" : "active";
 
       const confirmed = window.confirm(
-        `Are you sure you want to ${
-          role.status === "active" ? "deactivate" : "activate"
-        } role ${role.roleName}?`
+        role.status === "active"
+          ? t("rolesPage.confirm.deactivateRole", { name: role.roleName })
+          : t("rolesPage.confirm.activateRole", { name: role.roleName })
       );
 
       if (confirmed) {
@@ -152,7 +154,7 @@ export const RolesPage = () => {
     const role = roles.find((r) => r.roleCode === roleCode);
     if (
       role &&
-      window.confirm(`Are you sure you want to delete role "${role.roleName}"?`)
+      window.confirm(t("rolesPage.confirm.deleteRole", { name: role.roleName }))
     ) {
       dispatch({ type: "roles/deleteRoleRequest", payload: roleCode });
     }
@@ -218,7 +220,7 @@ export const RolesPage = () => {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        <span className="ml-4 text-gray-600">Loading roles...</span>
+        <span className="ml-4 text-gray-600">{t("rolesPage.table.loading")}</span>
       </div>
     );
   }
@@ -311,9 +313,9 @@ export const RolesPage = () => {
 
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Roles Management
+          {t("rolesPage.title")}
         </h1>
-        <p className="text-gray-600">Manage user roles and permissions</p>
+        <p className="text-gray-600">{t("rolesPage.subtitle")}</p>
       </div>
 
       {/* All Roles Section */}
@@ -334,19 +336,19 @@ export const RolesPage = () => {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-6">
-                  Role Name
+                  {t("rolesPage.table.roleName")}
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-6">
-                  Role Code
+                  {t("rolesPage.table.roleCode")}
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-6">
-                  Description
+                  {t("rolesPage.table.description")}
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-6">
-                  Status
+                  {t("rolesPage.table.status")}
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-6">
-                  Actions
+                  {t("rolesPage.table.actions")}
                 </th>
               </tr>
             </thead>
@@ -355,12 +357,7 @@ export const RolesPage = () => {
                 <tr>
                   <td colSpan={5} className="px-4 py-8 text-center sm:px-6">
                     <div className="text-gray-500 text-sm">
-                      {roles.length === 0
-                        ? "No roles found"
-                        : "No roles match your filters"}
-                    </div>
-                    <div className="text-gray-400 text-xs mt-1">
-                      Try adjusting your search or filters
+                      {t("rolesPage.table.noRolesFound")}
                     </div>
                   </td>
                 </tr>
@@ -388,7 +385,7 @@ export const RolesPage = () => {
                           role.status || "active"
                         )}`}
                       >
-                        {role.status === "active" ? "Active" : "Inactive"}
+                        {role.status === "active" ? t("common.active") : t("common.inactive")}
                       </span>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm font-medium relative sm:px-6">
@@ -429,7 +426,7 @@ export const RolesPage = () => {
                                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
                                   />
                                 </svg>
-                                Edit Role
+                                {t("rolesPage.table.editRole")}
                               </button>
 
                               <button
@@ -465,8 +462,8 @@ export const RolesPage = () => {
                                   )}
                                 </svg>
                                 {role.status === "active"
-                                  ? "Deactivate Role"
-                                  : "Activate Role"}
+                                  ? t("rolesPage.table.deactivateRole")
+                                  : t("rolesPage.table.activateRole")}
                               </button>
 
                               <button
@@ -486,7 +483,7 @@ export const RolesPage = () => {
                                     d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                                   />
                                 </svg>
-                                Delete Role
+                                {t("rolesPage.table.deleteRole")}
                               </button>
                             </div>
                           </div>
@@ -503,7 +500,7 @@ export const RolesPage = () => {
         {/* Results count */}
         <div className="px-4 py-4 border-t border-gray-200 bg-gray-50 sm:px-6">
           <div className="text-sm text-gray-600">
-            Showing {filteredRoles.length} of {roles.length} roles
+            {t("rolesPage.table.showing", { count: filteredRoles.length, total: roles.length })}
           </div>
         </div>
       </div>

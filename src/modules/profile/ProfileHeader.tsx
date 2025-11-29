@@ -1,9 +1,12 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import { ChevronLeft, Search, Bell } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function ProfileHeader() {
+  const { t } = useTranslation("common");
+  
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
@@ -11,9 +14,9 @@ export default function ProfileHeader() {
           <ChevronLeft className="w-5 h-5 text-muted-foreground" />
         </Link>
         <div>
-          <h1 className="text-2xl font-semibold">Profile</h1>
+          <h1 className="text-2xl font-semibold">{t("profilePage.header.title")}</h1>
           <p className="text-sm text-muted-foreground">
-            View and manage information
+            {t("profilePage.header.subtitle")}
           </p>
         </div>
       </div>
@@ -22,7 +25,7 @@ export default function ProfileHeader() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
             type="text"
-            placeholder="Search..."
+            placeholder={t("profilePage.header.searchPlaceholder")}
             className="pl-10 pr-4 py-2 bg-muted border border-border rounded-lg text-sm outline-none"
           />
         </div>

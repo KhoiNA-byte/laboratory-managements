@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { RootState } from "../../store";
 
 interface User {
@@ -37,6 +38,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
   error,
   successMessage,
 }) => {
+  const { t } = useTranslation("common");
   const [validationErrors, setValidationErrors] = useState<{
     [key: string]: string;
   }>({});
@@ -75,7 +77,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
     switch (name) {
       case "name":
         if (!value || value.toString().trim().length < 2) {
-          errors.name = "Name must be at least 2 characters long";
+          errors.name = t("modals.updateUser.validation.nameRequired");
         } else {
           delete errors.name;
         }
@@ -84,7 +86,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
       case "email":
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!value || !emailRegex.test(value.toString())) {
-          errors.email = "Please enter a valid email address";
+          errors.email = t("modals.updateUser.validation.emailRequired");
         } else {
           delete errors.email;
         }
@@ -93,7 +95,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
       case "phone":
         const phoneRegex = /^[0-9+\-\s()]{10,}$/;
         if (!value || !phoneRegex.test(value.toString().replace(/\s/g, ""))) {
-          errors.phone = "Please enter a valid phone number";
+          errors.phone = t("modals.updateUser.validation.phoneRequired");
         } else {
           delete errors.phone;
         }
@@ -102,7 +104,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
       case "age":
         const ageNum = Number(value);
         if (!value || ageNum < 1 || ageNum > 120) {
-          errors.age = "Age must be between 1 and 120";
+          errors.age = t("modals.updateUser.validation.ageRequired");
         } else {
           delete errors.age;
         }
@@ -110,7 +112,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
 
       case "address":
         if (value && value.toString().trim().length < 5) {
-          errors.address = "Address must be at least 5 characters long";
+          errors.address = t("modals.updateUser.validation.addressRequired");
         } else {
           delete errors.address;
         }
@@ -189,7 +191,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
         </button>
 
         <h2 className="text-xl font-semibold text-gray-900 mb-4">
-          Update User
+          {t("modals.updateUser.title")}
         </h2>
 
         <form
@@ -199,7 +201,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
           {/* Full Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Full Name *
+              {t("modals.updateUser.fullName")} *
             </label>
             <input
               type="text"
@@ -221,7 +223,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
           {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Email *
+              {t("modals.updateUser.email")} *
             </label>
             <input
               type="email"
@@ -243,7 +245,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
           {/* Phone */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Phone Number *
+              {t("modals.updateUser.phoneNumber")} *
             </label>
             <input
               type="text"
@@ -265,7 +267,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
           {/* Identity Number (Read Only) */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Identity Number
+              {t("modals.updateUser.identityNumber")}
             </label>
             <input
               type="text"
@@ -274,14 +276,14 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
               className="mt-1 w-full border rounded-lg px-3 py-2 bg-gray-100 text-gray-500 cursor-not-allowed"
             />
             <p className="text-xs text-gray-500 mt-1">
-              Identity number cannot be changed
+              {t("modals.updateUser.identityNumberReadOnly")}
             </p>
           </div>
 
           {/* Gender */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Gender *
+              {t("modals.updateUser.gender")} *
             </label>
             <select
               name="gender"
@@ -289,17 +291,17 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
               onChange={handleInputChange}
               className="mt-1 w-full border border-gray-300 bg-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-              <option value="prefer_not_to_say">Prefer not to say</option>
+              <option value="male">{t("modals.updateUser.genderOptions.male")}</option>
+              <option value="female">{t("modals.updateUser.genderOptions.female")}</option>
+              <option value="other">{t("modals.updateUser.genderOptions.other")}</option>
+              <option value="prefer_not_to_say">{t("modals.updateUser.genderOptions.preferNotToSay")}</option>
             </select>
           </div>
 
           {/* Role - Now Dynamic */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Role *
+              {t("modals.updateUser.role")} *
             </label>
             <select
               name="role"
@@ -308,7 +310,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
               className="mt-1 w-full border border-gray-300 bg-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               required
             >
-              <option value="">Select a role</option>
+              <option value="">{t("modals.updateUser.selectRole")}</option>
               {activeRoles.map((role) => (
                 <option key={role.roleCode} value={role.roleCode}>
                   {role.roleName}
@@ -317,12 +319,12 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
             </select>
             {activeRoles.length === 0 && (
               <p className="mt-1 text-xs text-red-500">
-                No active roles available
+                {t("modals.updateUser.noActiveRoles")}
               </p>
             )}
             {activeRoles.length > 0 && (
               <p className="mt-1 text-xs text-gray-500">
-                {activeRoles.length} active role(s) available
+                {t("modals.updateUser.activeRolesAvailable", { count: activeRoles.length })}
               </p>
             )}
           </div>
@@ -330,7 +332,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
           {/* Age */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Age *
+              {t("modals.updateUser.age")} *
             </label>
             <input
               type="number"
@@ -354,7 +356,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
           {/* Status */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Status *
+              {t("modals.updateUser.status")} *
             </label>
             <select
               name="status"
@@ -362,15 +364,15 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
               onChange={handleInputChange}
               className="mt-1 w-full border border-gray-300 bg-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
+              <option value="active">{t("common.active")}</option>
+              <option value="inactive">{t("common.inactive")}</option>
             </select>
           </div>
 
           {/* Address */}
           <div className="sm:col-span-2">
             <label className="block text-sm font-medium text-gray-700">
-              Address
+              {t("modals.updateUser.address")}
             </label>
             <input
               type="text"
@@ -410,7 +412,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
               type="button"
               className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100"
             >
-              Cancel
+              {t("common.cancel")}
             </button>
             <button
               type="submit"
@@ -421,7 +423,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
                   : "bg-gray-400 cursor-not-allowed"
               }`}
             >
-              Update User
+              {t("modals.updateUser.updateUser")}
             </button>
           </div>
         </form>

@@ -9,6 +9,7 @@ import {
 import { AppLayout } from "./layout/AppLayout";
 import { ProtectedRoute } from "./auth/ProtectedRoute";
 import { PERMISSIONS } from "./constants/permissions";
+import { GlobalLanguageToggle } from "./components/GlobalLanguageToggle";
 
 // Dashboard Module
 import { DashboardPage } from "./modules/dashboard/DashboardPage";
@@ -50,10 +51,9 @@ import { QuarantinePage } from "./modules/monitoring/QuarantinePage";
 import { InstrumentLogsPage } from "./modules/monitoring/InstrumentLogsPage";
 
 // Patient Module
-import { PatientsPage } from "./modules/patient/PatientsPage";
-import { PatientDetailsPage } from "./modules/patient/PatientDetailsPage";
-import { EditPatientPage } from "./modules/patient/EditPatientPage";
-
+import { PatientsPage } from "./modules/patient/patientPage";
+import { PatientDetailsPage } from "./modules/patient/patientDetails";
+import { EditPatientPage } from "./modules/patient/editPatient";
 // Audit Module
 import { AuditLogsPage } from "./modules/audit/AuditLogsPage";
 import { ReportsPage } from "./modules/audit/ReportsPage";
@@ -68,6 +68,7 @@ function AppRoutesInner() {
 
   return (
     <>
+      <GlobalLanguageToggle />
       <Routes location={background || location}>
         {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />

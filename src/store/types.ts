@@ -55,6 +55,13 @@ export interface Instrument {
   manufacturer: string;
   nextCalibration: string;
   calibrationDue: boolean;
+
+  temperature?: string;
+  sampleVolume?: string;
+  firmwareVersion?: string;
+  port?: string;
+  encryption?: string;
+  ipAddress?: string;
 }
 
 
@@ -107,4 +114,9 @@ export interface AuditLog {
   action: string;
   timestamp: string;
   details: string;
+}
+
+export interface TestType {
+  id: string;
+  name: string;
 }

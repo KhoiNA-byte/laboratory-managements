@@ -1,11 +1,944 @@
 {
-    "welcome": "Chào mừng",
-    "login": "Đăng nhập",
-    "logout": "Đăng xuất",
-    "profile": "Hồ sơ",
-    "settings": "Cài đặt",
-    "dashboard": "Bảng điều khiển",
-    "users": "Người dùng",
-    "roles": "Vai trò",
-    "history": "Lịch sử"
+  "welcome": "Chào mừng",
+  "login": "Đăng nhập",
+  "logout": "Đăng xuất",
+  "profile": "Hồ sơ",
+  "settings": "Cài đặt",
+  "dashboard": "Bảng điều khiển",
+  "users": "Người dùng",
+  "roles": "Vai trò",
+  "history": "Lịch sử",
+  "pages": {
+    "users": {
+      "title": "Danh mục người dùng",
+      "subtitle": "Quản lý toàn bộ tài khoản, vai trò và trạng thái"
+    },
+    "roles": {
+      "title": "Quản lý vai trò",
+      "subtitle": "Thiết lập vai trò và quyền hạn"
+    },
+    "patients": {
+      "title": "Hồ sơ bệnh nhân",
+      "subtitle": "Quản lý hồ sơ và thông tin bệnh nhân"
+    },
+    "dashboard": {
+      "title": "Bảng điều khiển",
+      "subtitle": "Tổng quan hoạt động và thống kê của phòng xét nghiệm"
+    },
+    "testOrders": {
+      "title": "Đơn xét nghiệm",
+      "subtitle": "Quản lý các yêu cầu xét nghiệm"
+    },
+    "instruments": {
+      "title": "Thiết bị",
+      "subtitle": "Quản lý thiết bị và máy móc trong phòng xét nghiệm"
+    },
+    "warehouse": {
+      "title": "Kho vật tư",
+      "subtitle": "Quản lý hóa chất, vật tư và vật liệu tiêu hao"
+    },
+    "monitoring": {
+      "title": "Giám sát hệ thống",
+      "subtitle": "Theo dõi tình trạng, nhật ký sự kiện và hiệu năng"
+    }
+  },
+  "usersPage": {
+    "summaryCards": {
+      "totalUsers": "Tổng số người dùng",
+      "activeRecords": "Số hồ sơ đang hoạt động",
+      "newThisMonth": "Thêm mới trong tháng",
+      "growthFromLastMonth": "Tăng trưởng so với tháng trước: {{percentage}}%"
+    },
+    "allUsers": {
+      "title": "Tất cả người dùng",
+      "subtitle": "Lọc theo vai trò, trạng thái hoặc thông tin nhân khẩu"
+    },
+    "filters": {
+      "allGenders": "Tất cả giới tính",
+      "allAges": "Tất cả độ tuổi",
+      "allRoles": "Tất cả vai trò",
+      "male": "Nam",
+      "female": "Nữ",
+      "searchPlaceholder": "Tìm theo tên, email hoặc số điện thoại",
+      "newUser": "Thêm người dùng"
+    },
+    "table": {
+      "userName": "Tên người dùng",
+      "ageGender": "Tuổi / giới tính",
+      "contact": "Liên hệ",
+      "role": "Vai trò",
+      "status": "Trạng thái",
+      "actions": "Thao tác",
+      "years": "tuổi",
+      "active": "Đang hoạt động",
+      "inactive": "Ngừng hoạt động",
+      "viewProfile": "Xem hồ sơ",
+      "editUser": "Chỉnh sửa",
+      "deactivateUser": "Ngừng hoạt động",
+      "activateUser": "Kích hoạt",
+      "noUsersFound": "Chưa có người dùng trong hệ thống.",
+      "noUsersMatch": "Không tìm thấy người dùng phù hợp với bộ lọc.",
+      "tryAdjusting": "Hãy thử thay đổi bộ lọc hoặc từ khóa tìm kiếm.",
+      "showing": "Hiển thị {{count}} trong tổng số {{total}} người dùng"
+    },
+    "confirm": {
+      "deactivateUser": "Ngừng hoạt động {{name}}?",
+      "activateUser": "Kích hoạt lại {{name}}?"
+    }
+  },
+  "rolesPage": {
+    "title": "Quản lý vai trò",
+    "subtitle": "Thiết lập vai trò và quyền hạn",
+    "filters": {
+      "allStatus": "Tất cả trạng thái",
+      "active": "Đang hoạt động",
+      "inactive": "Ngừng hoạt động",
+      "searchPlaceholder": "Tìm theo tên, mã hoặc mô tả vai trò",
+      "addRole": "Thêm vai trò"
+    },
+    "table": {
+      "roleName": "Tên vai trò",
+      "roleCode": "Mã vai trò",
+      "description": "Mô tả",
+      "status": "Trạng thái",
+      "actions": "Thao tác",
+      "loading": "Đang tải...",
+      "noRolesFound": "Không tìm thấy vai trò nào.",
+      "editRole": "Chỉnh sửa vai trò",
+      "deleteRole": "Xóa vai trò",
+      "activateRole": "Kích hoạt",
+      "deactivateRole": "Ngừng hoạt động",
+      "showing": "Hiển thị {{count}} trong tổng số {{total}} vai trò"
+    },
+    "confirm": {
+      "deleteRole": "Bạn có chắc chắn muốn xóa vai trò \"{{name}}\"?",
+      "activateRole": "Bạn có chắc chắn muốn kích hoạt vai trò {{name}}?",
+      "deactivateRole": "Bạn có chắc chắn muốn ngừng hoạt động vai trò {{name}}?"
+    }
+  },
+  "patientsPage": {
+    "title": "Hồ sơ bệnh nhân",
+    "subtitle": "Quản lý hồ sơ và thông tin bệnh nhân",
+    "summaryCards": {
+      "totalPatients": "Tổng số bệnh nhân",
+      "activeRecords": "Hồ sơ đang hoạt động",
+      "newThisMonth": "Thêm mới trong tháng",
+      "growthFromLastMonth": "+{{percentage}}% so với tháng trước",
+      "pendingTests": "Xét nghiệm chờ xử lý",
+      "awaitingResults": "Đang chờ kết quả",
+      "completedToday": "Hoàn thành hôm nay",
+      "testResults": "Kết quả xét nghiệm"
+    },
+    "allPatients": {
+      "title": "Tất cả bệnh nhân",
+      "subtitle": "Xem và quản lý hồ sơ bệnh nhân"
+    },
+    "filters": {
+      "searchPlaceholder": "Tìm theo tên hoặc MRN",
+      "addPatient": "Thêm bệnh nhân"
+    },
+    "table": {
+      "mrn": "MRN",
+      "name": "Tên",
+      "ageGender": "Tuổi / Giới tính",
+      "dateOfBirth": "Ngày sinh",
+      "gender": "Giới tính",
+      "phone": "Điện thoại",
+      "email": "Email",
+      "contact": "Liên hệ",
+      "lastVisit": "Lần khám cuối",
+      "actions": "Thao tác",
+      "viewDetails": "Xem chi tiết",
+      "editRecord": "Chỉnh sửa",
+      "deletePatient": "Xóa bệnh nhân",
+      "noPatientsFound": "Không tìm thấy bệnh nhân nào.",
+      "confirmDelete": "Bạn có chắc chắn muốn xóa bệnh nhân {{mrn}}? Hành động này không thể hoàn tác."
+    }
+  },
+  "dashboardPage": {
+    "stats": {
+      "totalPatients": "Tổng số bệnh nhân",
+      "fromLastMonth": "+{{percentage}}% so với tháng trước",
+      "pendingTests": "Xét nghiệm chờ xử lý",
+      "fromYesterday": "+{{count}} so với hôm qua",
+      "activeInstruments": "Thiết bị đang hoạt động",
+      "underMaintenance": "{{count}} đang bảo trì",
+      "alerts": "Cảnh báo",
+      "criticalWarnings": "{{critical}} nghiêm trọng, {{warnings}} cảnh báo"
+    },
+    "recentTestOrders": {
+      "title": "Đơn xét nghiệm gần đây",
+      "subtitle": "Các đơn xét nghiệm mới nhất cần xử lý",
+      "status": {
+        "pending": "chờ xử lý",
+        "inProgress": "đang xử lý",
+        "completed": "hoàn thành"
+      },
+      "timeAgo": {
+        "minutes": "{{count}} phút trước",
+        "hours": "{{count}} giờ trước"
+      }
+    },
+    "systemAlerts": {
+      "title": "Cảnh báo hệ thống",
+      "subtitle": "Thông báo và cảnh báo quan trọng",
+      "alerts": {
+        "lowReagentStock": {
+          "title": "Tồn kho hóa chất thấp",
+          "description": "Bộ hóa chất CBC dưới 20%"
+        },
+        "calibrationDue": {
+          "title": "Đến hạn hiệu chuẩn",
+          "description": "Máy phân tích huyết học cần hiệu chuẩn"
+        },
+        "instrumentMaintenance": {
+          "title": "Bảo trì thiết bị",
+          "description": "Bảo trì theo lịch cho máy phân tích hóa học"
+        },
+        "qualityControlAlert": {
+          "title": "Cảnh báo kiểm soát chất lượng",
+          "description": "Kết quả QC ngoài phạm vi cho xét nghiệm Glucose"
+        }
+      }
+    }
+  },
+  "testOrdersPage": {
+    "title": "Đơn xét nghiệm",
+    "subtitle": "Quản lý các yêu cầu xét nghiệm",
+    "summaryCards": {
+      "totalOrders": "Tổng số đơn",
+      "pendingOrders": "Đơn chờ xử lý",
+      "inProgress": "Đang xử lý",
+      "completed": "Hoàn thành",
+      "pending": "Chờ xử lý",
+      "pendingSubtitle": "Đang chờ xử lý",
+      "inProgressSubtitle": "Đang được xử lý",
+      "completedSubtitle": "Sẵn sàng để xem xét",
+      "reviewed": "Đã xem xét",
+      "reviewedSubtitle": "Đã hoàn tất"
+    },
+    "allOrders": {
+      "title": "Tất cả đơn xét nghiệm",
+      "subtitle": "Xem và quản lý các đơn xét nghiệm"
+    },
+    "filters": {
+      "searchPlaceholder": "Tìm kiếm đơn...",
+      "newOrder": "Đơn mới",
+      "allStatus": "Tất cả trạng thái",
+      "allOrders": "Tất cả đơn",
+      "pending": "Chờ xử lý",
+      "inProgress": "Đang xử lý",
+      "completed": "Hoàn thành",
+      "reviewed": "Đã xem xét"
+    },
+    "table": {
+      "orderNumber": "Số đơn",
+      "patient": "Bệnh nhân",
+      "testType": "Loại xét nghiệm",
+      "test": "Xét nghiệm",
+      "priority": "Ưu tiên",
+      "status": "Trạng thái",
+      "ordered": "Ngày đặt",
+      "date": "Ngày",
+      "actions": "Thao tác",
+      "viewDetails": "Xem chi tiết",
+      "updateTestOrder": "Cập nhật đơn xét nghiệm",
+      "deleteTestOrder": "Xóa đơn xét nghiệm",
+      "loading": "Đang tải đơn xét nghiệm...",
+      "noOrdersFound": "Không tìm thấy đơn xét nghiệm nào",
+      "error": "Lỗi",
+      "confirmDelete": "Bạn có chắc chắn muốn xóa đơn xét nghiệm {{orderNumber}}? Hành động này không thể hoàn tác."
+    }
+  },
+  "instrumentsPage": {
+    "title": "Thiết bị",
+    "subtitle": "Quản lý thiết bị và máy móc trong phòng xét nghiệm",
+    "filters": {
+      "searchPlaceholder": "Tìm kiếm thiết bị...",
+      "addInstrument": "Thêm thiết bị",
+      "syncInstruments": "Đồng bộ thiết bị"
+    },
+    "table": {
+      "name": "Tên",
+      "model": "Model",
+      "serialNumber": "Số seri",
+      "status": "Trạng thái",
+      "actions": "Thao tác",
+      "viewDetails": "Xem chi tiết",
+      "editInstrument": "Chỉnh sửa",
+      "deleteInstrument": "Xóa thiết bị",
+      "confirmDelete": "Bạn có chắc chắn muốn xóa \"{{name}}\"?",
+      "noInstrumentsFound": "Không tìm thấy thiết bị nào."
+    }
+  },
+  "warehousePage": {
+    "title": "Kho vật tư",
+    "subtitle": "Quản lý hóa chất, vật tư và vật liệu tiêu hao",
+    "summaryCards": {
+      "total": "Tổng số",
+      "lowStock": "Tồn kho thấp",
+      "expiringSoon": "Sắp hết hạn",
+      "expiredOut": "Hết hạn/Hết hàng"
+    },
+    "inventory": {
+      "title": "Danh mục hóa chất",
+      "subtitle": "Quản lý hóa chất và vật tư phòng xét nghiệm"
+    },
+    "filters": {
+      "searchPlaceholder": "Tìm kiếm...",
+      "addReagent": "Thêm hóa chất",
+      "allItems": "Tất cả",
+      "inStock": "Còn hàng",
+      "lowStock": "Tồn kho thấp",
+      "expired": "Hết hạn",
+      "outOfStock": "Hết hàng"
+    },
+    "table": {
+      "name": "Tên",
+      "lot": "Lô",
+      "manufacturer": "Nhà sản xuất",
+      "quantity": "Số lượng",
+      "expiry": "Hết hạn",
+      "location": "Vị trí",
+      "action": "Thao tác",
+      "viewDetail": "Xem chi tiết",
+      "noReagentsFound": "Không tìm thấy hóa chất nào."
+    },
+    "confirmDelete": "Bạn có chắc chắn muốn xóa hóa chất này?"
+  },
+  "testResultsPage": {
+    "title": "Kết quả xét nghiệm",
+    "subtitle": "Lịch sử và kết quả xét nghiệm của bạn",
+    "summaryCards": {
+      "totalTests": "Tổng số xét nghiệm",
+      "totalTestsSubtitle": "Tất cả thời gian",
+      "pendingResults": "Kết quả chờ xử lý",
+      "pendingResultsSubtitle": "Đang xử lý",
+      "completed": "Hoàn thành",
+      "completedSubtitle": "Sẵn sàng để xem"
+    },
+    "filters": {
+      "allResults": "Tất cả kết quả",
+      "inProgress": "Đang xử lý",
+      "completed": "Hoàn thành",
+      "searchPlaceholder": "Tìm kiếm kết quả...",
+      "newTest": "Xét nghiệm mới"
+    },
+    "table": {
+      "testOrderId": "ID Đơn xét nghiệm",
+      "patient": "Bệnh nhân",
+      "date": "Ngày",
+      "tester": "Người xét nghiệm",
+      "status": "Trạng thái",
+      "actions": "Thao tác",
+      "view": "Xem",
+      "export": "Xuất",
+      "delete": "Xóa",
+      "deleting": "Đang xóa...",
+      "noResultsFound": "Không tìm thấy kết quả nào.",
+      "confirmDelete": "Bạn có chắc chắn muốn xóa kết quả này?",
+      "cannotViewPending": "Xét nghiệm này đang chờ xử lý — kết quả chưa có sẵn để xem.",
+      "cannotViewTitle": "Không thể xem kết quả đang chờ",
+      "viewResultTitle": "Xem kết quả"
+    }
+  },
+  "instrumentsPage": {
+    "title": "Thiết bị",
+    "subtitle": "Quản lý thiết bị và máy móc trong phòng xét nghiệm",
+    "summaryCards": {
+      "totalInstruments": "Tổng số thiết bị",
+      "active": "Đang hoạt động",
+      "maintenance": "Bảo trì",
+      "calibrationDue": "Sắp đến hạn hiệu chuẩn"
+    },
+    "allInstruments": {
+      "title": "Tất cả thiết bị",
+      "subtitle": "Xem và quản lý thiết bị phòng xét nghiệm"
+    },
+    "filters": {
+      "searchPlaceholder": "Tìm kiếm thiết bị...",
+      "addInstrument": "Thêm thiết bị",
+      "syncInstruments": "Đồng bộ thiết bị",
+      "refreshing": "Đang làm mới..."
+    },
+    "table": {
+      "name": "Tên",
+      "model": "Model",
+      "serialNumber": "Số seri",
+      "status": "Trạng thái",
+      "location": "Vị trí",
+      "manufacturer": "Nhà sản xuất",
+      "nextCalibration": "Hiệu chuẩn tiếp theo",
+      "actions": "Thao tác",
+      "viewDetails": "Xem chi tiết",
+      "editInstrument": "Chỉnh sửa thiết bị",
+      "deleteInstrument": "Xóa thiết bị",
+      "deleting": "Đang xóa...",
+      "noInstrumentsFound": "Không tìm thấy thiết bị nào",
+      "noInstrumentsAvailable": "Không có thiết bị nào",
+      "confirmDelete": "Bạn có chắc chắn muốn xóa \"{{name}}\"?",
+      "calibrationDueSoon": "Sắp đến hạn hiệu chuẩn"
+    }
+  },
+  "monitoringPage": {
+    "title": "Giám sát hệ thống",
+    "subtitle": "Theo dõi tình trạng, nhật ký sự kiện và hiệu năng",
+    "tabs": {
+      "overview": "Tổng quan",
+      "logs": "Nhật ký sự kiện"
+    },
+    "metrics": {
+      "activeUsers": "Người dùng đang hoạt động",
+      "activeUsersSubtitle": "Người dùng đã đăng ký",
+      "testsToday": "Xét nghiệm hôm nay",
+      "testsTodaySubtitle": "Hoàn thành hôm nay",
+      "activeInstruments": "Thiết bị đang hoạt động",
+      "activeInstrumentsSubtitle": "Đang vận hành",
+      "totalEvents": "Tổng số sự kiện",
+      "successEvents": "Sự kiện thành công",
+      "warningEvents": "Sự kiện cảnh báo",
+      "errorEvents": "Sự kiện lỗi"
+    },
+    "recentEvents": {
+      "title": "Sự kiện gần đây",
+      "subtitle": "Các sự kiện và hoạt động hệ thống mới nhất",
+      "viewAll": "Xem tất cả →"
+    },
+    "eventLogs": {
+      "title": "Nhật ký sự kiện",
+      "subtitle": "{{count}} sự kiện được tìm thấy",
+      "searchPlaceholder": "Tìm kiếm sự kiện...",
+      "allTypes": "Tất cả loại",
+      "success": "Thành công",
+      "info": "Thông tin",
+      "warning": "Cảnh báo",
+      "error": "Lỗi",
+      "noEventsFound": "Không tìm thấy sự kiện nào phù hợp với bộ lọc của bạn",
+      "loading": "Đang tải số liệu hệ thống thực..."
+    }
+  },
+  "profilePage": {
+    "title": "Hồ sơ cá nhân",
+    "subtitle": "Xem và cập nhật thông tin",
+    "header": {
+      "title": "Hồ sơ",
+      "subtitle": "Xem và quản lý thông tin",
+      "searchPlaceholder": "Tìm kiếm..."
+    },
+    "profileInfo": {
+      "noUserData": "Không có dữ liệu người dùng",
+      "userId": "ID Người dùng",
+      "ageGender": "Tuổi / Giới tính",
+      "lastLogin": "Lần đăng nhập cuối",
+      "role": "Vai trò",
+      "status": "Trạng thái",
+      "years": "tuổi"
+    },
+    "recentActivity": {
+      "title": "Hoạt động gần đây",
+      "subtitle": "Đơn xét nghiệm và kết quả mới nhất",
+      "completed": "Hoàn thành",
+      "inProgress": "Đang xử lý",
+      "normal": "Bình thường"
+    },
+    "stats": {
+      "totalTests": "Tổng số xét nghiệm",
+      "totalTestsSubtext": "Tất cả thời gian",
+      "pending": "Chờ xử lý",
+      "pendingSubtext": "Đang xử lý",
+      "lastVisit": "Lần khám cuối",
+      "lastVisitSubtext": "trước"
+    }
+  },
+  "reportsPage": {
+    "title": "Báo cáo",
+    "subtitle": "Lập báo cáo và xuất dữ liệu",
+    "sectionTitle": "Báo cáo",
+    "sectionSubtitle": "Tạo và xuất báo cáo phòng xét nghiệm",
+    "generateReport": {
+      "title": "Tạo báo cáo",
+      "subtitle": "Chọn loại báo cáo và khoảng thời gian",
+      "reportType": "Loại báo cáo",
+      "selectReportType": "Chọn loại báo cáo",
+      "fromDate": "Từ ngày",
+      "toDate": "Đến ngày",
+      "datePlaceholder": "dd/mm/yyyy",
+      "exportExcel": "Xuất Excel",
+      "print": "In"
+    },
+    "quickReports": {
+      "title": "Báo cáo nhanh",
+      "subtitle": "Tạo các báo cáo thường dùng",
+      "todaysTestOrders": "Đơn xét nghiệm hôm nay",
+      "pendingTestResults": "Kết quả xét nghiệm chờ xử lý",
+      "instrumentStatusReport": "Báo cáo trạng thái thiết bị",
+      "lowStockReagents": "Hóa chất tồn kho thấp",
+      "userActivityLog": "Nhật ký hoạt động người dùng"
+    },
+    "scheduledReports": {
+      "title": "Báo cáo theo lịch",
+      "subtitle": "Báo cáo tự động được gửi qua email",
+      "dailyTestSummary": "Tóm tắt xét nghiệm hàng ngày",
+      "dailyTestSummaryDesc": "Gửi mỗi ngày lúc 6:00 PM",
+      "configure": "Cấu hình"
+    }
+  },
+  "modals": {
+    "createUser": {
+      "title": "Tạo người dùng mới",
+      "subtitle": "Điền thông tin bắt buộc để tạo tài khoản người dùng mới",
+      "fullName": "Họ và tên",
+      "email": "Email",
+      "phoneNumber": "Số điện thoại",
+      "identityNumber": "Số CMND/CCCD",
+      "gender": "Giới tính",
+      "role": "Vai trò",
+      "age": "Tuổi",
+      "address": "Địa chỉ",
+      "password": "Mật khẩu",
+      "selectRole": "Chọn vai trò",
+      "noActiveRoles": "Không có vai trò đang hoạt động. Vui lòng tạo vai trò trước.",
+      "activeRolesAvailable": "Có {{count}} vai trò đang hoạt động",
+      "createUser": "Tạo người dùng",
+      "genderOptions": {
+        "male": "Nam",
+        "female": "Nữ",
+        "other": "Khác",
+        "preferNotToSay": "Không muốn nói"
+      },
+      "validation": {
+        "nameRequired": "Tên phải có ít nhất 2 ký tự",
+        "emailRequired": "Vui lòng nhập địa chỉ email hợp lệ",
+        "phoneRequired": "Vui lòng nhập số điện thoại hợp lệ",
+        "idRequired": "Số CMND/CCCD là bắt buộc",
+        "ageRequired": "Tuổi phải từ 1 đến 120",
+        "addressRequired": "Địa chỉ phải có ít nhất 5 ký tự",
+        "passwordRequired": "Mật khẩu phải có ít nhất 6 ký tự"
+      }
+    },
+    "updateUser": {
+      "title": "Cập nhật người dùng",
+      "fullName": "Họ và tên",
+      "email": "Email",
+      "phoneNumber": "Số điện thoại",
+      "identityNumber": "Số CMND/CCCD",
+      "identityNumberReadOnly": "Số CMND/CCCD không thể thay đổi",
+      "gender": "Giới tính",
+      "role": "Vai trò",
+      "age": "Tuổi",
+      "address": "Địa chỉ",
+      "status": "Trạng thái",
+      "selectRole": "Chọn vai trò",
+      "noActiveRoles": "Không có vai trò đang hoạt động",
+      "activeRolesAvailable": "Có {{count}} vai trò đang hoạt động",
+      "updateUser": "Cập nhật người dùng",
+      "genderOptions": {
+        "male": "Nam",
+        "female": "Nữ",
+        "other": "Khác",
+        "preferNotToSay": "Không muốn nói"
+      },
+      "validation": {
+        "nameRequired": "Tên phải có ít nhất 2 ký tự",
+        "emailRequired": "Vui lòng nhập địa chỉ email hợp lệ",
+        "phoneRequired": "Vui lòng nhập số điện thoại hợp lệ",
+        "ageRequired": "Tuổi phải từ 1 đến 120",
+        "addressRequired": "Địa chỉ phải có ít nhất 5 ký tự"
+      }
+    },
+    "createRole": {
+      "title": "Tạo vai trò mới",
+      "subtitle": "Định nghĩa vai trò mới với quyền và mức truy cập",
+      "roleName": "Tên vai trò",
+      "roleCode": "Mã vai trò",
+      "description": "Mô tả",
+      "status": "Trạng thái",
+      "permissions": "Quyền",
+      "permissionsSelected": "Đã chọn {{count}} quyền",
+      "selectAll": "Chọn tất cả",
+      "deselectAll": "Bỏ chọn tất cả",
+      "selectAllPermissions": "Chọn tất cả quyền",
+      "clearAllPermissions": "Xóa tất cả quyền",
+      "createRole": "Tạo vai trò",
+      "roleNamePlaceholder": "Ví dụ: Quản trị viên, Quản lý phòng xét nghiệm",
+      "roleCodePlaceholder": "Ví dụ: admin, lab_manager",
+      "descriptionPlaceholder": "Mô tả trách nhiệm và quyền của vai trò...",
+      "roleCodeHint": "Chỉ sử dụng chữ thường và dấu gạch dưới",
+      "validation": {
+        "roleNameRequired": "Tên vai trò phải có ít nhất 2 ký tự",
+        "roleCodeRequired": "Mã vai trò phải có ít nhất 2 ký tự",
+        "roleCodeInvalid": "Mã vai trò chỉ có thể chứa chữ thường và dấu gạch dưới",
+        "descriptionRequired": "Mô tả phải có ít nhất 5 ký tự"
+      }
+    },
+    "updateRole": {
+      "title": "Cập nhật vai trò",
+      "subtitle": "Chỉnh sửa thông tin và quyền của vai trò",
+      "roleName": "Tên vai trò",
+      "roleCode": "Mã vai trò",
+      "description": "Mô tả",
+      "status": "Trạng thái",
+      "permissions": "Quyền",
+      "permissionsSelected": "Đã chọn {{count}} quyền",
+      "selectAll": "Chọn tất cả",
+      "deselectAll": "Bỏ chọn tất cả",
+      "updateRole": "Cập nhật vai trò",
+      "roleCodeHint": "Chỉ sử dụng chữ thường và dấu gạch dưới",
+      "validation": {
+        "roleNameRequired": "Tên vai trò phải có ít nhất 2 ký tự",
+        "roleCodeRequired": "Mã vai trò phải có ít nhất 2 ký tự",
+        "roleCodeInvalid": "Mã vai trò chỉ có thể chứa chữ thường và dấu gạch dưới",
+        "descriptionRequired": "Mô tả phải có ít nhất 5 ký tự"
+      }
+    },
+    "addPatient": {
+      "title": "Thông tin bệnh nhân",
+      "subtitle": "Nhập thông tin cá nhân và liên hệ của bệnh nhân",
+      "fullName": "Họ và tên",
+      "dateOfBirth": "Ngày sinh",
+      "gender": "Giới tính",
+      "phoneNumber": "Số điện thoại",
+      "email": "Email",
+      "address": "Địa chỉ",
+      "createPatient": "Tạo bệnh nhân",
+      "genderOptions": {
+        "male": "Nam",
+        "female": "Nữ",
+        "other": "Khác"
+      },
+      "validation": {
+        "nameRequired": "Họ và tên là bắt buộc",
+        "dobRequired": "Ngày sinh hợp lệ là bắt buộc",
+        "dobInvalid": "Vui lòng cung cấp ngày sinh hợp lệ (không được là ngày tương lai).",
+        "phoneRequired": "Số điện thoại không hợp lệ",
+        "emailInvalid": "Địa chỉ email không hợp lệ",
+        "addressRequired": "Địa chỉ là bắt buộc"
+      },
+      "placeholders": {
+        "fullName": "Họ và tên",
+        "phoneNumber": "(10 chữ số, bắt đầu bằng 0)",
+        "email": "example@email.com",
+        "address": "123 Đường Chính, Thành phố, Tỉnh, Mã bưu điện"
+      },
+      "success": "Bệnh nhân {{name}} đã được thêm thành công!"
+    },
+    "testOrder": {
+      "title": "Thông tin đơn xét nghiệm",
+      "subtitle": "Thêm chi tiết đơn xét nghiệm",
+      "phoneNumber": "Số điện thoại",
+      "patientName": "Tên bệnh nhân",
+      "age": "Tuổi",
+      "gender": "Giới tính",
+      "status": "Trạng thái",
+      "testType": "Loại xét nghiệm",
+      "note": "Ghi chú",
+      "runDate": "Ngày chạy",
+      "search": "Tìm kiếm",
+      "selectTestType": "Chọn loại xét nghiệm",
+      "enterNote": "Nhập ghi chú (tùy chọn)",
+      "create": "Tạo",
+      "validation": {
+        "phoneRequired": "Vui lòng nhập số điện thoại",
+        "patientInactive": "Tài khoản bệnh nhân này đã ngừng hoạt động và không thể sử dụng",
+        "patientFound": "Đã tìm thấy bệnh nhân: {{name}}",
+        "patientNotFound": "Không tìm thấy bệnh nhân với số điện thoại này",
+        "searchError": "Đã xảy ra lỗi khi tìm kiếm. Vui lòng thử lại.",
+        "saveError": "Không thể tạo đơn xét nghiệm. Vui lòng thử lại.",
+        "runDateRequired": "Ngày chạy là bắt buộc",
+        "runDateInvalid": "Vui lòng nhập đầy đủ ngày theo định dạng MM/DD/YYYY"
+      }
+    },
+    "createTest": {
+      "title": "Tạo xét nghiệm mới",
+      "subtitle": "Tự động tạo kết quả từ hóa chất và thiết bị",
+      "sex": "Giới tính",
+      "selectTestOrder": "Chọn đơn xét nghiệm (chưa có run_id)",
+      "chooseInstrument": "Chọn thiết bị (hỗ trợ loại xét nghiệm của đơn này)",
+      "usingReagents": "Sử dụng hóa chất:",
+      "reagentsUsage": "Hóa chất & Lượng sử dụng (có thể chỉnh sửa)",
+      "amountToUse": "Lượng sử dụng",
+      "defaultUsage": "Lượng mặc định: {{amount}} {{unit}}",
+      "noOrdersAvailable": "Không có đơn xét nghiệm nào (tất cả đều đã có run_id/kết quả).",
+      "noInstrumentMatched": "Không có thiết bị phù hợp — không thể tạo xét nghiệm",
+      "selectInstrument": "-- Chọn thiết bị --",
+      "createTest": "Tạo xét nghiệm",
+      "creating": "Đang tạo...",
+      "loading": "Đang tải...",
+      "validation": {
+        "selectOrder": "Chọn đơn xét nghiệm trước",
+        "selectInstrument": "Chọn thiết bị để chạy xét nghiệm"
+      }
+    },
+    "addInstrument": {
+      "title": "Thêm thiết bị mới",
+      "subtitle": "Tạo thiết bị phòng xét nghiệm mới",
+      "basicInformation": "Thông tin cơ bản",
+      "calibrationInformation": "Thông tin hiệu chuẩn",
+      "testingConfiguration": "Cấu hình xét nghiệm",
+      "instrumentName": "Tên thiết bị",
+      "model": "Model",
+      "serialNumber": "Số seri",
+      "manufacturer": "Nhà sản xuất",
+      "status": "Trạng thái",
+      "location": "Vị trí",
+      "nextCalibrationDate": "Ngày hiệu chuẩn tiếp theo",
+      "supportedTestType": "Loại xét nghiệm được hỗ trợ",
+      "supportedReagents": "Hóa chất được hỗ trợ",
+      "selectLocation": "Chọn vị trí",
+      "selectTestType": "Chọn loại xét nghiệm",
+      "reagentsSelected": "Đã chọn {{count}} hóa chất",
+      "noReagentsAvailable": "Không có hóa chất nào",
+      "createInstrument": "Tạo thiết bị",
+      "creating": "Đang tạo...",
+      "loadingData": "Đang tải dữ liệu...",
+      "loadingTestTypes": "Đang tải loại xét nghiệm...",
+      "loadingReagents": "Đang tải hóa chất...",
+      "placeholders": {
+        "instrumentName": "Nhập tên thiết bị",
+        "model": "Nhập model",
+        "serialNumber": "Nhập số seri",
+        "manufacturer": "Nhập nhà sản xuất"
+      },
+      "validation": {
+        "nameRequired": "Tên thiết bị là bắt buộc",
+        "nameSpecialChars": "Tên thiết bị không được chứa ký tự đặc biệt",
+        "nameMinLength": "Tên thiết bị phải có ít nhất 2 ký tự",
+        "modelRequired": "Model là bắt buộc",
+        "modelSpecialChars": "Model không được chứa ký tự đặc biệt",
+        "serialRequired": "Số seri là bắt buộc",
+        "serialSpecialChars": "Số seri không được chứa ký tự đặc biệt",
+        "manufacturerRequired": "Nhà sản xuất là bắt buộc",
+        "manufacturerSpecialChars": "Nhà sản xuất không được chứa ký tự đặc biệt",
+        "locationRequired": "Vị trí là bắt buộc",
+        "calibrationRequired": "Ngày hiệu chuẩn tiếp theo là bắt buộc",
+        "calibrationFuture": "Ngày hiệu chuẩn tiếp theo phải là ngày tương lai",
+        "testTypeRequired": "Loại xét nghiệm được hỗ trợ là bắt buộc",
+        "reagentsRequired": "Phải chọn ít nhất một hóa chất",
+        "fixErrors": "Vui lòng sửa tất cả lỗi xác thực trước khi lưu",
+        "cancelConfirm": "Bạn có chắc chắn muốn hủy? Tất cả thay đổi sẽ bị mất.",
+        "errorCreating": "Lỗi khi tạo thiết bị"
+      }
+    },
+    "addReagent": {
+      "title": "Thêm hóa chất",
+      "subtitle": "Nhập chi tiết hóa chất",
+      "name": "Tên",
+      "lotNumber": "Số lô",
+      "manufacturer": "Nhà sản xuất",
+      "quantity": "Số lượng",
+      "unit": "Đơn vị",
+      "expiryDate": "Ngày hết hạn",
+      "location": "Vị trí",
+      "usagePerRun": "Lượng sử dụng mỗi lần chạy (µL)",
+      "minStock": "Tồn kho tối thiểu",
+      "maxStock": "Tồn kho tối đa",
+      "cost": "Giá (mỗi đơn vị)",
+      "selectLocation": "Chọn...",
+      "addReagent": "Thêm hóa chất",
+      "adding": "Đang thêm...",
+      "placeholders": {
+        "name": "Tên hóa chất",
+        "lotNumber": "LOT-2025-...",
+        "manufacturer": "Nhà sản xuất",
+        "usagePerRun": "ví dụ: 50",
+        "cost": "ví dụ: 12.50"
+      },
+      "validation": {
+        "fillRequired": "Vui lòng điền các trường bắt buộc. Đảm bảo tồn kho tối thiểu ≤ tồn kho tối đa và các trường bắt buộc không được để trống."
+      }
+    },
+    "instrumentDetails": {
+      "title": "Chi tiết thiết bị",
+      "subtitle": "Thông tin đầy đủ về {{name}}",
+      "basicInformation": "Thông tin cơ bản",
+      "calibrationInformation": "Thông tin hiệu chuẩn",
+      "testingConfiguration": "Cấu hình xét nghiệm",
+      "instrumentName": "Tên thiết bị",
+      "model": "Model",
+      "serialNumber": "Số seri",
+      "status": "Trạng thái",
+      "location": "Vị trí",
+      "manufacturer": "Nhà sản xuất",
+      "nextCalibration": "Hiệu chuẩn tiếp theo",
+      "calibrationStatus": "Trạng thái hiệu chuẩn",
+      "dueSoon": "Sắp đến hạn",
+      "onTrack": "Đúng tiến độ",
+      "daysRemaining": "Còn {{days}} ngày",
+      "supportedTestType": "Loại xét nghiệm được hỗ trợ",
+      "supportedReagents": "Hóa chất được hỗ trợ ({{count}})",
+      "loadingTestType": "Đang tải loại xét nghiệm...",
+      "loadingReagents": "Đang tải hóa chất...",
+      "noTestTypeSelected": "Chưa chọn loại xét nghiệm",
+      "noReagentsSelected": "Chưa chọn hóa chất",
+      "testType": "Loại xét nghiệm",
+      "lot": "Lô",
+      "mfg": "NSX",
+      "expires": "Hết hạn",
+      "storage": "Kho",
+      "calibrationDue": "Đến hạn hiệu chuẩn!",
+      "calibrationDueSoon": "Sắp đến hạn hiệu chuẩn",
+      "nextCalibrationLabel": "Hiệu chuẩn tiếp theo:",
+      "instrumentId": "ID Thiết bị",
+      "invalidDate": "Ngày không hợp lệ",
+      "maintenance": "Bảo trì",
+
+      "temperature": "Nhiệt Độ Hoạt Động",
+      "sampleVolume": "Thể Tích Mẫu",
+      "firmwareVersion": "Phiên Bản Firmware",
+      "port": "Cổng",
+      "encryption": "Mã Hóa",
+      "ipAddress": "Địa Chỉ IP",
+      "technicalSpecifications":"Cấu hình chuẩn cho thiết bị"
+
+    },
+    "editInstrument": {
+      "title": "Chỉnh sửa thiết bị",
+      "subtitle": "Cập nhật thông tin thiết bị",
+      "id": "ID",
+      "saving": "Đang lưu...",
+      "saveChanges": "Lưu thay đổi",
+      "errorSaving": "Lỗi khi lưu thiết bị",
+      "technicalReadOnly": "Cấu hình chỉ có thể đọc chứ không thể sửa tại đây"
+
+    }
+  },
+  "common": {
+    "loading": "Đang tải...",
+    "error": "Lỗi",
+    "success": "Thành công",
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "delete": "Xóa",
+    "edit": "Chỉnh sửa",
+    "view": "Xem",
+    "add": "Thêm",
+    "search": "Tìm kiếm",
+    "filter": "Lọc",
+    "actions": "Thao tác",
+    "status": "Trạng thái",
+    "active": "Đang hoạt động",
+    "inactive": "Ngừng hoạt động",
+    "maintenance":"Bảo trì",
+    "yes": "Có",
+    "no": "Không",
+    "confirm": "Xác nhận",
+    "close": "Đóng",
+    "previous": "Trước",
+    "next": "Sau",
+    "page": "Trang {{current}} / {{total}}",
+    "years": "tuổi",
+    "noResults": "Không tìm thấy kết quả"
+  },
+  "patientsPage": {
+    "title": "Hồ sơ bệnh nhân",
+    "subtitle": "Quản lý hồ sơ và thông tin bệnh nhân",
+    "summaryCards": {
+      "totalPatients": "Tổng số bệnh nhân",
+      "activeRecords": "Hồ sơ đang hoạt động",
+      "newThisMonth": "Thêm mới trong tháng",
+      "growthFromLastMonth": "+{{percentage}}% so với tháng trước",
+      "pendingTests": "Xét nghiệm chờ xử lý",
+      "awaitingResults": "Đang chờ kết quả",
+      "completedToday": "Hoàn thành hôm nay",
+      "testResults": "Kết quả xét nghiệm"
+    },
+    "allPatients": {
+      "title": "Tất cả bệnh nhân",
+      "subtitle": "Xem và quản lý hồ sơ bệnh nhân"
+    },
+    "table": {
+      "lastVisit": "Lần khám cuối",
+      "name": "Tên",
+      "mrn": "MRN",
+      "ageGender": "Tuổi / Giới tính",
+      "phone": "Điện thoại",
+      "email": "Email",
+      "contact": "Liên hệ",
+      "actions": "Thao tác",
+      "viewDetails": "Xem chi tiết",
+      "editRecord": "Chỉnh sửa",
+      "deletePatient": "Xóa bệnh nhân",
+      "noPatientsFound": "Không tìm thấy bệnh nhân nào."
+    },
+    "filters": {
+      "searchPlaceholder": "Tìm theo tên hoặc MRN",
+      "addPatient": "Thêm bệnh nhân"
+    }
+  },
+  "editPatientPage": {
+    "title": "Chỉnh sửa hồ sơ bệnh nhân",
+    "subtitle": "Cập nhật thông tin cá nhân và liên hệ của bệnh nhân",
+    "personalInfo": "Thông tin cá nhân",
+    "contactInfo": "Thông tin liên hệ",
+    "fullName": "Họ và tên",
+    "dateOfBirth": "Ngày sinh",
+    "gender": "Giới tính",
+    "phoneNumber": "Số điện thoại",
+    "email": "Email",
+    "address": "Địa chỉ",
+    "age": "Tuổi",
+    "optional": "Tùy chọn",
+    "saveChanges": "Lưu thay đổi",
+    "selectGender": "Chọn giới tính", 
+    "nameRequired": "Họ và tên là bắt buộc",
+    "nameInvalid": "Họ và tên không được chứa ký tự đặc biệt",
+    "dobRequired": "Ngày sinh hợp lệ là bắt buộc",
+    "dobInvalid": "Vui lòng cung cấp ngày sinh hợp lệ",
+    "phoneRequired": "Số điện thoại là bắt buộc",
+    "phoneInvalid": "Số điện thoại không hợp lệ",
+    "emailInvalid": "Địa chỉ email không hợp lệ",
+    "addressRequired": "Địa chỉ là bắt buộc",
+    "ageRequired": "Tuổi là bắt buộc",
+    "other": "Khác",
+    "ageInvalid": "Tuổi không hợp lệ",
+    "loadingData": "Đang tải dữ liệu bệnh nhân...",
+    "personalDetails": "Thông tin chi tiết "
+  },
+
+  "patientDetails": {
+    "title": "Chi tiết bệnh nhân",
+    "subtitle": "Xem hồ sơ và lịch sử xét nghiệm của bệnh nhân",
+    "notFoundTitle": "Không tìm thấy bệnh nhân",
+    "notFoundDesc": "Không tìm thấy bệnh nhân có ID \"{{id}}\".",
+    "noTestHistoryTitle": "Không có lịch sử xét nghiệm",
+    "noTestHistoryDesc": "Bệnh nhân này chưa có lịch sử xét nghiệm.",
+    "personalInfo": "Thông tin cá nhân",
+    "contactInfo": "Thông tin liên hệ",
+    "fullName": "Họ và tên",
+    "dateOfBirth": "Ngày sinh",
+    "age": "Tuổi",
+    "editPatient": "Chỉnh sửa bệnh nhân",
+    "tabs": {
+      "overview": "Tổng quan",
+      "testHistory": "Lịch sử xét nghiệm"
+    },
+    "recentActivity": "Hoạt động gần đây",
+    "latestTestOrders": "Đơn xét nghiệm mới nhất",
+    "summaryCards": {
+      "totalTests":"Tổng số xét nghiệm",
+      "pending": "Chờ xử lý",
+      "lastVisit": "Lần khám cuối"
+    },
+    "table": {
+      "headers":{
+        "testType":"Loại xét nghiệm",
+        "orderedAt": "Tạo lúc",
+        "status":"Trạng thái",
+        "tester":"Người xét nghiệm",
+        "note":"Ghi chú",
+        "testId": "Mã đơn"
+      }
+    },
+    "genderOptions": {
+        "Male": "Nam",
+        "Female": "Nữ",
+        "Other": "Khác"
+    },
+    "statusOptions": {
+        "Pending": "Chờ xử lý",
+        "In Progress": "Đang xử lý",
+        "Completed": "Hoàn thành",
+        "Reviewed": "Đã xem xét"
+    }
   }
+}

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next'
+import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '../../store'
-import { eventService } from '../../services/event'
+import { eventService } from '../../services/eventApi'
+import { INSTRUMENT_ACTION_TYPES } from '../../store/sagas/instrumentSaga'
 
 interface MetricCardProps {
     title: string
@@ -121,6 +123,8 @@ const fetchInstruments = async (): Promise<any[]> => {
 }
 
 export const MonitoringPage = () => {
+    const { t } = useTranslation("common");
+    const dispatch = useDispatch()
     const [activeTab, setActiveTab] = useState<'overview' | 'logs'>('overview')
     const [metrics, setMetrics] = useState<any[]>([])
     const [events, setEvents] = useState<any[]>([])
@@ -130,8 +134,8 @@ export const MonitoringPage = () => {
         search: ''
     })
     
-    // Lấy instruments từ Redux store (fallback nếu API fail)
-    const { instruments: instrumentsFromRedux } = useSelector((state: RootState) => state.instruments)
+    // Lấy instruments từ Redux store
+    const { instruments: instrumentsFromRedux, loading: instrumentsLoading } = useSelector((state: RootState) => state.instruments)
 
     // Format timestamp function
     const formatTimestamp = (timestamp: string) => {
@@ -158,12 +162,51 @@ export const MonitoringPage = () => {
         return matchesType && matchesSearch
     })
 
+    // Log tab changes
+    useEffect(() => {
+        eventService.logEvent({
+            type: 'info',
+            title: `Monitoring Tab Changed to ${activeTab}`,
+            category: 'navigation',
+            description: `User switched to ${activeTab} tab in monitoring dashboard`,
+            user: 'Current User'
+        })
+    }, [activeTab])
+
+    // Log filter changes
+    useEffect(() => {
+        if (eventFilters.search || eventFilters.type !== 'all') {
+            eventService.logEvent({
+                type: 'info',
+                title: 'Event Filters Applied',
+                category: 'monitoring',
+                description: `User filtered events: search="${eventFilters.search}", type="${eventFilters.type}"`,
+                user: 'Current User'
+            })
+        }
+    }, [eventFilters.search, eventFilters.type])
+
+    // Fetch instruments khi vào trang monitoring
+    useEffect(() => {
+        dispatch({ type: 'FETCH_INSTRUMENTS_START' })
+
+    }, [dispatch])
+
     // Tính toán metrics từ API THẬT
     useEffect(() => {
         const loadMetrics = async () => {
             try {
                 setLoading(true)
                 
+                // Log bắt đầu load monitoring data
+                await eventService.logEvent({
+                    type: 'info',
+                    title: 'Loading Monitoring Data',
+                    category: 'monitoring',
+                    description: 'Starting to load real-time monitoring metrics from all APIs',
+                    user: 'Current User'
+                })
+
                 // Fetch data THẬT từ các API
                 const [usersData, testsData, eventsData, instrumentsData] = await Promise.all([
                     fetchUsers(),
@@ -172,25 +215,23 @@ export const MonitoringPage = () => {
                     fetchInstruments()
                 ])
 
-                // Log monitoring page access
-                eventService.logEvent({
-                    type: 'info',
-                    title: 'Monitoring Dashboard Accessed',
+                // Log monitoring page access thành công
+                await eventService.logEvent({
+                    type: 'success',
+                    title: 'Monitoring Dashboard Loaded Successfully',
                     category: 'system',
-                    description: 'User accessed system monitoring dashboard',
+                    description: `Monitoring dashboard loaded with ${usersData.length} users, ${testsData.length} tests, ${eventsData.length} events, ${instrumentsData.length} instruments`,
                     user: 'Current User'
                 })
 
                 // Lọc tests trong ngày hôm nay - DÙNG DATA THẬT
                 const today = new Date().toISOString().split('T')[0]
                 const todayTests = testsData.filter((test: any) => {
-                    // Kiểm tra cả createdAt và date field
                     const testDate = test.createdAt || test.date || test.timestamp
                     return testDate && testDate.startsWith(today)
                 })
 
                 // Tính active instruments - DÙNG DATA THẬT
-                // Ưu tiên data từ API, fallback Redux store
                 const instrumentsToUse = instrumentsData.length > 0 ? instrumentsData : instrumentsFromRedux
                 const activeInstruments = instrumentsToUse.filter((instr: any) => {
                     const status = instr.status?.toLowerCase()
@@ -200,21 +241,21 @@ export const MonitoringPage = () => {
                 // TÍNH TOÁN SỐ LƯỢNG THẬT
                 const newMetrics = [
                     {
-                        title: 'Active Users',
-                        value: usersData.length.toString(), // Số users thật
-                        subtitle: 'Registered users',
+                        title: t('monitoringPage.metrics.activeUsers'),
+                        value: usersData.length.toString(),
+                        subtitle: t('monitoringPage.metrics.activeUsersSubtitle'),
                         icon: '👥'
                     },
                     {
-                        title: 'Tests Today',
-                        value: todayTests.length.toString(), // Số tests thật hôm nay
-                        subtitle: 'Completed today',
+                        title: t('monitoringPage.metrics.testsToday'),
+                        value: todayTests.length.toString(),
+                        subtitle: t('monitoringPage.metrics.testsTodaySubtitle'),
                         icon: '📈'
                     },
                     {
-                        title: 'Active Instruments',
-                        value: activeInstruments.toString(), // Số instruments active thật
-                        subtitle: 'Currently operational',
+                        title: t('monitoringPage.metrics.activeInstruments'),
+                        value: activeInstruments.toString(),
+                        subtitle: t('monitoringPage.metrics.activeInstrumentsSubtitle'),
                         icon: '⚙️'
                     }
                 ]
@@ -229,12 +270,28 @@ export const MonitoringPage = () => {
                 setMetrics(newMetrics)
                 setEvents(eventsData)
 
+                // Log metrics calculation thành công
+                await eventService.logEvent({
+                    type: 'success',
+                    title: 'Monitoring Metrics Calculated',
+                    category: 'monitoring',
+                    description: `Calculated metrics: ${usersData.length} users, ${todayTests.length} tests today, ${activeInstruments} active instruments`,
+                    user: 'System'
+                })
+
             } catch (error) {
                 console.error('Error loading real metrics:', error)
                 
-                // Fallback: thử dùng data từ Redux store
+                // Log lỗi chi tiết
+                await eventService.logError(
+                    'Monitoring Data Loading',
+                    error instanceof Error ? error : new Error('Unknown error'),
+                    'Current User'
+                )
+
+                // Fallback: dùng data từ Redux store
                 try {
-                    const usersCount = instrumentsFromRedux.length > 0 ? '16' : '0' // Có thể lấy từ auth context
+                    const usersCount = '16' // Có thể lấy từ auth context sau này
                     const testsCount = '5' // Có thể tính từ test orders trong store
                     const activeInstrumentsCount = instrumentsFromRedux.filter((instr: any) => 
                         instr.status?.toLowerCase() === 'active'
@@ -242,63 +299,73 @@ export const MonitoringPage = () => {
 
                     setMetrics([
                         {
-                            title: 'Active Users',
+                            title: t('monitoringPage.metrics.activeUsers'),
                             value: usersCount,
-                            subtitle: 'Registered users',
+                            subtitle: t('monitoringPage.metrics.activeUsersSubtitle'),
                             icon: '👥'
                         },
                         {
-                            title: 'Tests Today',
+                            title: t('monitoringPage.metrics.testsToday'),
                             value: testsCount,
-                            subtitle: 'Completed today',
+                            subtitle: t('monitoringPage.metrics.testsTodaySubtitle'),
                             icon: '📈'
                         },
                         {
-                            title: 'Active Instruments',
+                            title: t('monitoringPage.metrics.activeInstruments'),
                             value: activeInstrumentsCount.toString(),
-                            subtitle: 'Currently operational',
+                            subtitle: t('monitoringPage.metrics.activeInstrumentsSubtitle'),
                             icon: '⚙️'
                         }
                     ])
+
+                    // Log fallback data usage
+                    await eventService.logEvent({
+                        type: 'warning',
+                        title: 'Using Fallback Monitoring Data',
+                        category: 'monitoring',
+                        description: 'Using fallback data from Redux store due to API failures',
+                        user: 'System'
+                    })
+
                 } catch (fallbackError) {
                     // Ultimate fallback
                     setMetrics([
                         {
-                            title: 'Active Users',
+                            title: t('monitoringPage.metrics.activeUsers'),
                             value: '0',
-                            subtitle: 'Registered users',
+                            subtitle: t('monitoringPage.metrics.activeUsersSubtitle'),
                             icon: '👥'
                         },
                         {
-                            title: 'Tests Today',
+                            title: t('monitoringPage.metrics.testsToday'),
                             value: '0',
-                            subtitle: 'Completed today',
+                            subtitle: t('monitoringPage.metrics.testsTodaySubtitle'),
                             icon: '📈'
                         },
                         {
-                            title: 'Active Instruments',
+                            title: t('monitoringPage.metrics.activeInstruments'),
                             value: '0',
-                            subtitle: 'Currently operational',
+                            subtitle: t('monitoringPage.metrics.activeInstrumentsSubtitle'),
                             icon: '⚙️'
                         }
                     ])
+
+                    // Log critical fallback
+                    await eventService.logEvent({
+                        type: 'error',
+                        title: 'Critical Monitoring Data Failure',
+                        category: 'monitoring',
+                        description: 'All data sources failed, using zero values as fallback',
+                        user: 'System'
+                    })
                 }
-                
-                // Log error
-                eventService.logEvent({
-                    type: 'error',
-                    title: 'Monitoring Data Load Failed',
-                    category: 'system',
-                    description: 'Failed to load real monitoring metrics data',
-                    user: 'System'
-                })
             } finally {
                 setLoading(false)
             }
         }
 
         loadMetrics()
-    }, [instrumentsFromRedux])
+    }, [instrumentsFromRedux, t])
 
     // Format events từ API
     const formatEvents = (rawEvents: any[]) => {
@@ -312,12 +379,37 @@ export const MonitoringPage = () => {
         }))
     }
 
+    // Handler cho user actions
+    const handleViewAllEvents = () => {
+        eventService.logEvent({
+            type: 'info',
+            title: 'View All Events Clicked',
+            category: 'navigation',
+            description: 'User clicked View All button to see complete event log',
+            user: 'Current User'
+        })
+        setActiveTab('logs')
+    }
+
+    const handleRefreshData = async () => {
+        eventService.logEvent({
+            type: 'info',
+            title: 'Manual Data Refresh',
+            category: 'monitoring',
+            description: 'User manually triggered data refresh in monitoring dashboard',
+            user: 'Current User'
+        })
+        
+        // Reload page để refresh data
+        window.location.reload()
+    }
+
     if (loading) {
         return (
             <div className="min-h-screen bg-gray-50 flex items-center justify-center">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="text-gray-500 mt-4">Loading real system metrics...</p>
+                    <p className="text-gray-500 mt-4">{t("monitoringPage.eventLogs.loading")}</p>
                 </div>
             </div>
         )
@@ -327,9 +419,17 @@ export const MonitoringPage = () => {
         <div className="min-h-screen bg-gray-50">
             {/* Header */}
             <div className="bg-white border-b border-gray-200 px-6 py-6">
-                <div className="mb-6">
-                    <h1 className="text-3xl font-bold text-gray-900">System Monitoring</h1>
-                    <p className="text-gray-500 mt-1">Real-time system metrics and event logs</p>
+                <div className="flex justify-between items-start mb-6">
+                    <div>
+                        <h1 className="text-3xl font-bold text-gray-900">{t("monitoringPage.title")}</h1>
+                        <p className="text-gray-500 mt-1">{t("monitoringPage.subtitle")}</p>
+                    </div>
+                    <button 
+                        onClick={handleRefreshData}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                    >
+                        {t("monitoringPage.refresh") || "Refresh Data"}
+                    </button>
                 </div>
 
                 {/* Tabs */}
@@ -341,7 +441,7 @@ export const MonitoringPage = () => {
                                 : 'border-transparent text-gray-500 hover:text-gray-700'
                             }`}
                     >
-                        Overview
+                        {t("monitoringPage.tabs.overview")}
                     </button>
                     <button
                         onClick={() => setActiveTab('logs')}
@@ -350,7 +450,7 @@ export const MonitoringPage = () => {
                                 : 'border-transparent text-gray-500 hover:text-gray-700'
                             }`}
                     >
-                        Event Logs
+                        {t("monitoringPage.tabs.logs")}
                     </button>
                 </div>
             </div>
@@ -379,14 +479,14 @@ export const MonitoringPage = () => {
                             <div className="px-6 py-4 border-b border-gray-200">
                                 <div className="flex justify-between items-center">
                                     <div>
-                                        <h2 className="text-lg font-semibold text-gray-900">Recent Events</h2>
-                                        <p className="text-sm text-gray-500 mt-1">Latest system events and activities</p>
+                                        <h2 className="text-lg font-semibold text-gray-900">{t("monitoringPage.recentEvents.title")}</h2>
+                                        <p className="text-sm text-gray-500 mt-1">{t("monitoringPage.recentEvents.subtitle")}</p>
                                     </div>
                                     <button 
-                                        onClick={() => setActiveTab('logs')}
+                                        onClick={handleViewAllEvents}
                                         className="text-sm text-blue-600 hover:text-blue-800 font-medium"
                                     >
-                                        View All →
+                                        {t("monitoringPage.recentEvents.viewAll")}
                                     </button>
                                 </div>
                             </div>
@@ -413,7 +513,7 @@ export const MonitoringPage = () => {
                                 <div className="flex-1">
                                     <input
                                         type="text"
-                                        placeholder="Search events..."
+                                        placeholder={t("monitoringPage.eventLogs.searchPlaceholder")}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         value={eventFilters.search}
                                         onChange={(e) => setEventFilters(prev => ({
@@ -430,11 +530,11 @@ export const MonitoringPage = () => {
                                         type: e.target.value
                                     }))}
                                 >
-                                    <option value="all">All Types</option>
-                                    <option value="success">Success</option>
-                                    <option value="info">Info</option>
-                                    <option value="warning">Warning</option>
-                                    <option value="error">Error</option>
+                                    <option value="all">{t("monitoringPage.eventLogs.allTypes")}</option>
+                                    <option value="success">{t("monitoringPage.eventLogs.success")}</option>
+                                    <option value="info">{t("monitoringPage.eventLogs.info")}</option>
+                                    <option value="warning">{t("monitoringPage.eventLogs.warning")}</option>
+                                    <option value="error">{t("monitoringPage.eventLogs.error")}</option>
                                 </select>
                             </div>
                         </div>
@@ -442,9 +542,9 @@ export const MonitoringPage = () => {
                         {/* Event Logs */}
                         <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
                             <div className="px-6 py-4 border-b border-gray-200">
-                                <h2 className="text-lg font-semibold text-gray-900">Event Logs</h2>
+                                <h2 className="text-lg font-semibold text-gray-900">{t("monitoringPage.eventLogs.title")}</h2>
                                 <p className="text-sm text-gray-500 mt-1">
-                                    {filteredEvents.length} events found
+                                    {t("monitoringPage.eventLogs.subtitle", { count: filteredEvents.length })}
                                 </p>
                             </div>
                             <div className="divide-y divide-gray-100 max-h-[600px] overflow-y-auto">
@@ -462,7 +562,7 @@ export const MonitoringPage = () => {
                                     ))
                                 ) : (
                                     <div className="p-8 text-center text-gray-500">
-                                        No events found matching your filters
+                                        {t("monitoringPage.eventLogs.noEventsFound")}
                                     </div>
                                 )}
                             </div>

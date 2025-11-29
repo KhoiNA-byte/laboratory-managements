@@ -1,15 +1,23 @@
 import React from "react";
 
-interface UsersHeaderProps {
+interface SummaryCardProps {
   totalUsers: number;
   newThisMonth: number;
   growthPercentage: number;
+  totalLabel?: string;
+  totalDescription?: string;
+  newLabel?: string;
+  newDescription?: string;
 }
 
-const SummaryCards: React.FC<UsersHeaderProps> = ({
+const SummaryCards: React.FC<SummaryCardProps> = ({
   totalUsers,
   newThisMonth,
   growthPercentage,
+  totalLabel = "Total Users",
+  totalDescription = "Active records",
+  newLabel = "New This Month",
+  newDescription = `+${growthPercentage}% from last month`,
 }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -18,10 +26,10 @@ const SummaryCards: React.FC<UsersHeaderProps> = ({
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-gray-600 mb-1">
-              Total Users
+              {totalLabel}
             </p>
             <p className="text-3xl font-bold text-gray-900">{totalUsers}</p>
-            <p className="text-sm text-gray-500 mt-1">Active records</p>
+            <p className="text-sm text-gray-500 mt-1">{totalDescription}</p>
           </div>
           <div className="w-12 h-12 flex items-center justify-center">
             <svg
@@ -46,12 +54,10 @@ const SummaryCards: React.FC<UsersHeaderProps> = ({
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-gray-600 mb-1">
-              New This Month
+              {newLabel}
             </p>
             <p className="text-3xl font-bold text-gray-900">{newThisMonth}</p>
-            <p className="text-sm text-green-600 mt-1">
-              +{growthPercentage}% from last month
-            </p>
+            <p className="text-sm text-green-600 mt-1">{newDescription}</p>
           </div>
           <div className="w-12 h-12 flex items-center justify-center">
             <svg

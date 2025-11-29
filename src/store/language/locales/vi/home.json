@@ -1,0 +1,133 @@
+{
+  "nav": {
+    "brandLine1": "Laboratory",
+    "brandLine2": "Management",
+    "links": {
+      "home": "Trang chủ",
+      "resources": "Tài nguyên"
+    },
+    "login": "Đăng nhập"
+  },
+  "hero": {
+    "badge": "Hệ thống quản lý phòng thí nghiệm hàng đầu Việt Nam",
+    "title": "Quản lý phân tích <highlight>huyết học</highlight> thông minh và hiệu quả",
+    "description": "Nền tảng toàn diện giúp phòng thí nghiệm quản lý quy trình xét nghiệm, theo dõi thiết bị, kiểm soát chất lượng và kết nối cộng đồng chuyên gia.",
+    "primaryCta": "Vào Dashboard",
+    "secondaryCta": "Cộng đồng",
+    "userCount": "500+ người dùng",
+    "ratingText": "4.9/5"
+  },
+  "features": {
+    "title": "Mọi thứ bạn cần cho <highlight>quản lý lab</highlight>",
+    "items": {
+      "testManagement": {
+        "title": "Quản lý xét nghiệm",
+        "desc": "Theo dõi và quản lý toàn bộ vòng đời mẫu bệnh phẩm."
+      },
+      "smartAnalysis": {
+        "title": "Phân tích thông minh",
+        "desc": "Ứng dụng AI để phân tích và cho kết quả chính xác."
+      },
+      "community": {
+        "title": "Cộng đồng chuyên gia",
+        "desc": "Kết nối với chuyên gia trong lĩnh vực y tế."
+      },
+      "security": {
+        "title": "Bảo mật tối đa",
+        "desc": "Đảm bảo an toàn dữ liệu bệnh nhân và kết quả."
+      },
+      "realtime": {
+        "title": "Giám sát real-time",
+        "desc": "Theo dõi trạng thái thiết bị và quy trình xét nghiệm."
+      },
+      "quality": {
+        "title": "Chứng nhận chất lượng",
+        "desc": "Tuân thủ các tiêu chuẩn quốc tế."
+      }
+    }
+  },
+  "about": {
+    "mainTitle": "Quản lý phân tích huyết học là gì?",
+    "mainDescription": "Quy trình toàn diện từ tiếp nhận mẫu đến trả kết quả, đảm bảo chất lượng và độ chính xác cao nhất.",
+    "sectionTitle": "Giải pháp toàn diện cho phòng lab hiện đại",
+    "descriptionOne": "Hệ thống tích hợp đầy đủ chức năng quản lý phòng thí nghiệm huyết học, từ bệnh nhân, mẫu bệnh phẩm đến tự động hóa quy trình.",
+    "descriptionTwo": "Với công nghệ tiên tiến và giao diện thân thiện, hệ thống tăng hiệu quả và giảm sai sót trong quá trình xét nghiệm.",
+    "featureList": {
+      "testManagement": {
+        "title": "Quản lý xét nghiệm",
+        "desc": "Theo dõi toàn bộ vòng đời mẫu."
+      },
+      "dataAnalysis": {
+        "title": "Phân tích dữ liệu",
+        "desc": "Tối ưu hóa và chuẩn hóa các bước xét nghiệm."
+      },
+      "qualityControl": {
+        "title": "Kiểm soát chất lượng",
+        "desc": "Kết nối với thiết bị phân tích hiện đại."
+      },
+      "community": {
+        "title": "Cộng đồng chuyên gia",
+        "desc": "Tạo báo cáo chi tiết và phân tích xu hướng."
+      }
+    }
+  },
+  "work": {
+    "title": "Cách thức hoạt động",
+    "steps": {
+      "register": {
+        "title": "Đăng ký tài khoản",
+        "desc": "Tạo tài khoản và xác thực thông tin."
+      },
+      "configure": {
+        "title": "Cấu hình hệ thống",
+        "desc": "Thiết lập thông số và quy trình."
+      },
+      "start": {
+        "title": "Bắt đầu sử dụng",
+        "desc": "Khởi động và làm quen hệ thống."
+      },
+      "analyze": {
+        "title": "Phân tích & báo cáo",
+        "desc": "Theo dõi và tạo báo cáo chi tiết."
+      }
+    }
+  },
+  "testimonials": {
+    "title": "Được tin dùng bởi <highlight>hàng trăm chuyên gia</highlight>",
+    "items": [
+      {
+        "name": "Nguyễn Văn A",
+        "role": "Trưởng phòng xét nghiệm",
+        "quote": "Hệ thống giúp chúng tôi tăng hiệu quả làm việc lên 40%."
+      },
+      {
+        "name": "Trần Thị B",
+        "role": "Kỹ thuật viên",
+        "quote": "Giao diện thân thiện, dễ sử dụng và rất tiện lợi."
+      },
+      {
+        "name": "Lê Văn C",
+        "role": "Bác sĩ chuyên khoa",
+        "quote": "Kết quả chính xác và báo cáo chi tiết, rất hài lòng."
+      },
+      {
+        "name": "Phạm Thị D",
+        "role": "Quản lý phòng lab",
+        "quote": "Tích hợp tốt với các thiết bị hiện có của chúng tôi."
+      }
+    ]
+  },
+  "footer": {
+    "companyName": "Laboratory Management",
+    "description": "Hệ thống quản lý phòng thí nghiệm toàn diện, tối ưu quy trình xét nghiệm và nâng cao dịch vụ y tế.",
+    "userCount": "500+ người dùng",
+    "ratingText": "4.9/5",
+    "quickLinksTitle": "Liên kết nhanh",
+    "quickLinks": ["Trang chủ", "Tính năng", "Tài nguyên", "Liên hệ"],
+    "supportTitle": "Hỗ trợ",
+    "supportLinks": ["Trung tâm trợ giúp", "Tài liệu hướng dẫn", "Liên hệ hỗ trợ", "Báo lỗi"],
+    "copyright": "© 2024 Lab Management System. Đã đăng ký bản quyền.",
+    "madeWithLove": "Được tạo với ❤️ tại Việt Nam"
+  }
+}
+

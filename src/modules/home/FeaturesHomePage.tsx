@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { useTranslation, Trans } from "react-i18next";
 
 const Section = styled.section`
   padding: 5rem 0;
@@ -78,53 +79,37 @@ const BlueSpan = styled.span`
   color: #2563eb;
 `;
 
+const featureItems = [
+  { icon: "🧪", key: "testManagement" },
+  { icon: "📊", key: "smartAnalysis" },
+  { icon: "👥", key: "community" },
+  { icon: "🛡️", key: "security" },
+  { icon: "⚡", key: "realtime" },
+  { icon: "🏆", key: "quality" },
+];
+
 const FeaturesHomePage = () => {
+  const { t } = useTranslation("home");
+
   return (
     <Section>
       <Container>
         <HeaderSection>
           <MainTitle>
-            Mọi thứ bạn cần cho <BlueSpan>quản lý lab</BlueSpan>
+            <Trans i18nKey="home:features.title" components={{ highlight: <BlueSpan /> }} />
           </MainTitle>
         </HeaderSection>
 
         <GridContainer>
-          {[
-            {
-              icon: "🧪",
-              title: "Quản lý xét nghiệm",
-              desc: "Theo dõi và quản lý toàn bộ vòng đời mẫu bệnh phẩm",
-            },
-            {
-              icon: "📊",
-              title: "Phân tích thông minh",
-              desc: "Sử dụng AI để phân tích và đưa ra kết quả chính xác",
-            },
-            {
-              icon: "👥",
-              title: "Cộng đồng chuyên gia",
-              desc: "Kết nối với các chuyên gia trong lĩnh vực y tế",
-            },
-            {
-              icon: "🛡️",
-              title: "Bảo mật tối đa",
-              desc: "Đảm bảo an toàn thông tin bệnh nhân và kết quả xét nghiệm",
-            },
-            {
-              icon: "⚡",
-              title: "Giám sát real-time",
-              desc: "Theo dõi trạng thái thiết bị và quy trình xét nghiệm",
-            },
-            {
-              icon: "🏆",
-              title: "Chứng nhận chất lượng",
-              desc: "Tuân thủ các tiêu chuẩn quốc tế về chất lượng",
-            },
-          ].map((feature, index) => (
+          {featureItems.map((feature, index) => (
             <FeatureCard key={index}>
               <FeatureIcon>{feature.icon}</FeatureIcon>
-              <FeatureTitle>{feature.title}</FeatureTitle>
-              <FeatureDescription>{feature.desc}</FeatureDescription>
+              <FeatureTitle>
+                {t(`features.items.${feature.key}.title`)}
+              </FeatureTitle>
+              <FeatureDescription>
+                {t(`features.items.${feature.key}.desc`)}
+              </FeatureDescription>
             </FeatureCard>
           ))}
         </GridContainer>

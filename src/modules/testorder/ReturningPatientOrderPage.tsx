@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { TestOrderFormData } from "../../types/testOrder";
-import { getTestTypes, TestType } from "../../services/testOrderApi";
+import { getTestTypes } from "../../services/testTypeApi";
+import { TestType } from "../../types/testType";
 
 interface ReturningPatientOrderPageProps {
   formData: TestOrderFormData;
@@ -33,6 +35,7 @@ export const ReturningPatientOrderPage: React.FC<
   handleRunDateTextChange,
   getDateInputValue,
 }) => {
+  const { t } = useTranslation("common");
   const [testTypes, setTestTypes] = useState<TestType[]>([]);
   const [loadingTestTypes, setLoadingTestTypes] = useState(true);
 
@@ -45,10 +48,10 @@ export const ReturningPatientOrderPage: React.FC<
         if (result.success) {
           setTestTypes(result.data);
         } else {
-          console.error('Failed to fetch test types:', result.message);
+          console.error("Failed to fetch test types:", result.message);
         }
       } catch (error) {
-        console.error('Error fetching test types:', error);
+        console.error("Error fetching test types:", error);
       } finally {
         setLoadingTestTypes(false);
       }
@@ -64,14 +67,15 @@ export const ReturningPatientOrderPage: React.FC<
         {/* Phone Number with Search Button */}
         <div className="h-20">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Phone Number <span className="text-red-500">*</span>
+            {t("modals.testOrder.phoneNumber")}{" "}
+            <span className="text-red-500">*</span>
           </label>
           <div className="flex gap-2">
             <input
               type="tel"
               value={formData.phoneNumber}
               onChange={(e) => handlePhoneChange(e.target.value)}
-              placeholder="Enter phone number"
+              placeholder={t("modals.testOrder.phoneNumber")}
               className={`flex-1 px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                 errors.phoneNumber ? "border-red-500" : "border-gray-300"
               }`}
@@ -84,7 +88,7 @@ export const ReturningPatientOrderPage: React.FC<
               }
               className="px-4 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
             >
-              Search
+              {t("modals.testOrder.search")}
             </button>
           </div>
           {errors.phoneNumber && (
@@ -95,7 +99,8 @@ export const ReturningPatientOrderPage: React.FC<
         {/* Patient Name - Disabled */}
         <div className="h-20">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Patient Name <span className="text-red-500">*</span>
+            {t("modals.testOrder.patientName")}{" "}
+            <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -109,7 +114,7 @@ export const ReturningPatientOrderPage: React.FC<
         {/* Age - Disabled */}
         <div className="h-20">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Age <span className="text-red-500">*</span>
+            {t("modals.testOrder.age")} <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -123,7 +128,8 @@ export const ReturningPatientOrderPage: React.FC<
         {/* Gender - Disabled */}
         <div className="h-20">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Gender <span className="text-red-500">*</span>
+            {t("modals.testOrder.gender")}{" "}
+            <span className="text-red-500">*</span>
           </label>
           <div className="relative">
             <select
@@ -132,8 +138,12 @@ export const ReturningPatientOrderPage: React.FC<
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm appearance-none bg-gray-100 cursor-not-allowed"
             >
               <option value="">-----</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
+              <option value="Male">
+                {t("modals.createUser.genderOptions.male")}
+              </option>
+              <option value="Female">
+                {t("modals.createUser.genderOptions.female")}
+              </option>
             </select>
             <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
               <svg
@@ -159,7 +169,7 @@ export const ReturningPatientOrderPage: React.FC<
         {/* Status */}
         <div className="h-20">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Status
+            {t("modals.testOrder.status")}
           </label>
           <div className="relative">
             <select
@@ -192,7 +202,8 @@ export const ReturningPatientOrderPage: React.FC<
         {/* Test Type */}
         <div className="h-20">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Test Type <span className="text-red-500">*</span>
+            {t("modals.testOrder.testType")}{" "}
+            <span className="text-red-500">*</span>
           </label>
           <div className="relative">
             <select
@@ -200,13 +211,15 @@ export const ReturningPatientOrderPage: React.FC<
               onChange={(e) => handleInputChange("testType", e.target.value)}
               disabled={loadingTestTypes}
               size={1}
-              style={{ maxHeight: '200px', overflowY: 'auto' }}
+              style={{ maxHeight: "200px", overflowY: "auto" }}
               className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white ${
                 errors.testType ? "border-red-500" : "border-gray-300"
               } ${loadingTestTypes ? "opacity-50 cursor-not-allowed" : ""}`}
             >
               <option value="">
-                {loadingTestTypes ? "Loading test types..." : "Select test type"}
+                {loadingTestTypes
+                  ? t("common.loading")
+                  : t("modals.testOrder.selectTestType")}
               </option>
               {testTypes.map((type) => (
                 <option key={type.id} value={type.id}>
@@ -238,13 +251,13 @@ export const ReturningPatientOrderPage: React.FC<
         {/* Note */}
         <div className="h-20">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Note
+            {t("modals.testOrder.note")}
           </label>
           <input
             type="text"
             value={formData.note}
             onChange={(e) => handleInputChange("note", e.target.value)}
-            placeholder="Enter note (optional)"
+            placeholder={t("modals.testOrder.enterNote")}
             className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
               errors.note ? "border-red-500" : "border-gray-300"
             }`}
@@ -257,7 +270,8 @@ export const ReturningPatientOrderPage: React.FC<
         {/* Run Date */}
         <div className="h-20">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Run Date <span className="text-red-500">*</span>
+            {t("modals.testOrder.runDate")}{" "}
+            <span className="text-red-500">*</span>
           </label>
           <div className="flex gap-2">
             <input

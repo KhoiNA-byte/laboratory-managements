@@ -2,3 +2,4 @@
 export * from './testOrder';
 export * from './user';
 export * from './api';
+export * from './testType';

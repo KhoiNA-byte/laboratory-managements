@@ -1,6 +1,14 @@
-// src/components/EditInstrumentPopup.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import { useEditInstrument } from '../../common/hook/useEditInstrument';
+import { FormInput } from '../../components/Instruments/formInput';
+import { 
+  FORM_CONFIG, 
+  CLASS_NAMES, 
+  FIELD_CONFIG,
+  getFormConfig 
+} from '../../constants/instruments/instrumentForm';
 import { Instrument } from '../../store/types';
 
 interface EditInstrumentPopupProps {
@@ -9,317 +17,119 @@ interface EditInstrumentPopupProps {
   onSave: (instrument: Instrument) => void;
 }
 
-interface TestType {
-  id: string;
-  name: string;
-}
-
-interface Reagent {
-  id: string;
-  name: string;
-  lot_number: string;
-  manufacturer: string;
-  quantity: number;
-  unit: string;
-  expiry_date: string;
-  location: string;
-}
-
 const EditInstrumentPopup: React.FC<EditInstrumentPopupProps> = ({ 
   instrument, 
   onClose,
   onSave 
 }) => {
+  const { t } = useTranslation('common');
   const dispatch = useDispatch();
-  const [saving, setSaving] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [testTypes, setTestTypes] = useState<TestType[]>([]);
-  const [reagents, setReagents] = useState<Reagent[]>([]);
-  const [loading, setLoading] = useState({
-    testTypes: false,
-    reagents: false
-  });
   
-  const [formData, setFormData] = useState({
-    name: "",
-    model: "",
-    serialNumber: "",
-    manufacturer: "",
-    status: "Active" as "Active" | "Maintenance" | "Inactive",
-    location: "",
-    nextCalibration: "",
-    supportedTest: "", // Single selection
-    supportedReagents: [] as string[], // Multiple selection
-  });
+  const {
+    formData,
+    errors,
+    saving,
+    testTypes,
+    reagents,
+    loading,
+    handleInputChange,
+    handleReagentChange,
+    handleSave: handleEditSave,
+    handleCancel,
+    fetchData,
+  } = useEditInstrument(instrument);
 
-  // Predefined location options
-  const locationOptions = [
-    "L-001",
-    "L-002", 
-    "L-003",
-    "L-004",
-    "L-005",
-    "L-006",
-    "L-007",
-    "L-008"
-  ];
+  const formConfig = getFormConfig(true); // true for edit mode
 
-  // Fetch test types and reagents từ API
+  // Fetch data on mount
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(prev => ({ ...prev, testTypes: true, reagents: true }));
-
-        // Fetch test types
-        const testTypesPromise = fetch('https://69085724b49bea95fbf32f71.mockapi.io/test_type')
-          .then(response => {
-            if (!response.ok) throw new Error(`Test types API error: ${response.status}`);
-            return response.json();
-          });
-
-        // Fetch reagents
-        const reagentsPromise = fetch('https://69085724b49bea95fbf32f71.mockapi.io/reagents')
-          .then(response => {
-            if (!response.ok) throw new Error(`Reagents API error: ${response.status}`);
-            return response.json();
-          });
-
-        const [testTypesResult, reagentsResult] = await Promise.allSettled([
-          testTypesPromise,
-          reagentsPromise
-        ]);
-
-        // Xử lý test types
-        if (testTypesResult.status === 'fulfilled') {
-          setTestTypes(Array.isArray(testTypesResult.value) ? testTypesResult.value : []);
-        } else {
-          console.error('Failed to fetch test types:', testTypesResult.reason);
-          setTestTypes([]);
-        }
-
-        // Xử lý reagents
-        if (reagentsResult.status === 'fulfilled') {
-          setReagents(Array.isArray(reagentsResult.value) ? reagentsResult.value : []);
-        } else {
-          console.error('Failed to fetch reagents:', reagentsResult.reason);
-          setReagents([]);
-        }
-
-      } catch (error) {
-        console.error('Error in fetchData:', error);
-      } finally {
-        setLoading(prev => ({ ...prev, testTypes: false, reagents: false }));
-      }
-    };
-
     fetchData();
-  }, []);
+  }, [fetchData]);
 
-  // Load instrument data when popup opens
-  useEffect(() => {
-    if (instrument) {
-      setFormData({
-        name: instrument.name || "",
-        model: instrument.model || "",
-        serialNumber: instrument.serialNumber || "",
-        manufacturer: instrument.manufacturer || "",
-        status: instrument.status || "Active",
-        location: instrument.location || "",
-        nextCalibration: instrument.nextCalibration || "",
-        supportedTest: instrument.supportedTest || "",
-        supportedReagents: instrument.supportedReagents || [],
-      });
-    }
-  }, [instrument]);
-
-  // Validation functions
-  const validateField = (field: string, value: any): string => {
-    const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
-    
-    switch (field) {
-      case 'name':
-        if (!value.trim()) return 'Instrument name is required';
-        if (specialCharRegex.test(value)) return 'Instrument name cannot contain special characters';
-        if (value.trim().length < 2) return 'Instrument name must be at least 2 characters';
-        return '';
-      
-      case 'model':
-        if (!value.trim()) return 'Model is required';
-        if (specialCharRegex.test(value)) return 'Model cannot contain special characters';
-        return '';
-      
-      case 'serialNumber':
-        if (!value.trim()) return 'Serial number is required';
-        if (specialCharRegex.test(value)) return 'Serial number cannot contain special characters';
-        return '';
-      
-      case 'manufacturer':
-        if (!value.trim()) return 'Manufacturer is required';
-        if (specialCharRegex.test(value)) return 'Manufacturer cannot contain special characters';
-        return '';
-      
-      case 'location':
-        if (!value.trim()) return 'Location is required';
-        return '';
-      
-      case 'nextCalibration':
-        if (!value.trim()) return 'Next calibration date is required';
-        if (new Date(value) <= new Date()) return 'Next calibration must be in the future';
-        return '';
-      
-      case 'supportedTest':
-        if (!value.trim()) return 'Supported test is required';
-        return '';
-      
-      case 'supportedReagents':
-        if (!value.length) return 'At least one reagent must be selected';
-        return '';
-      
-      default:
-        return '';
-    }
-  };
-
-  const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[field];
-        return newErrors;
-      });
-    }
-  };
-
-  // Xử lý chọn/bỏ chọn reagent
-  const handleReagentChange = (reagentId: string) => {
-    setFormData(prev => {
-      const currentReagents = prev.supportedReagents;
-      const updatedReagents = currentReagents.includes(reagentId)
-        ? currentReagents.filter(id => id !== reagentId)
-        : [...currentReagents, reagentId];
-      
-      return {
-        ...prev,
-        supportedReagents: updatedReagents
-      };
-    });
-
-    // Clear error nếu có
-    if (errors.supportedReagents) {
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors.supportedReagents;
-        return newErrors;
-      });
-    }
-  };
-
-  // Format date for display
-  const formatDate = (dateString: string) => {
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      });
-    } catch (error) {
-      return 'Invalid Date';
-    }
-  };
-
-  const validateForm = (): boolean => {
-    const newErrors: Record<string, string> = {};
-    
-    // Validate all fields
-    Object.keys(formData).forEach(field => {
-      const error = validateField(field, formData[field as keyof typeof formData]);
-      if (error) {
-        newErrors[field] = error;
-      }
-    });
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSave = async () => {
-    if (!instrument) return;
-    
-    if (!validateForm()) {
-      alert('Please fix all validation errors before saving');
-      return;
-    }
-
-    try {
-      setSaving(true);
-      
-      const updatePayload = {
-        id: instrument.id,
-        name: formData.name.trim(),
-        model: formData.model.trim(),
-        serialNumber: formData.serialNumber.trim(),
-        manufacturer: formData.manufacturer.trim(),
-        status: formData.status,
-        location: formData.location,
-        nextCalibration: formData.nextCalibration,
-        supportedTest: formData.supportedTest,
-        supportedReagents: formData.supportedReagents,
-        calibrationDue: instrument.calibrationDue || false
-      };
-
-      // Dispatch update action
-      dispatch({ 
-        type: 'instruments/updateInstrumentRequest', 
-        payload: updatePayload
-      });
-      
-      // Call onSave callback
-      onSave(updatePayload as Instrument);
-      onClose();
-    } catch (error) {
-      console.error('Error saving instrument:', error);
-      alert('Error saving instrument');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleCancel = () => {
-    if (window.confirm('Are you sure you want to cancel? All changes will be lost.')) {
-      onClose();
-    }
-  };
-
-  // Get minimum date for calibration (tomorrow)
+  // Helper functions
   const getMinCalibrationDate = () => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     return tomorrow.toISOString().split('T')[0];
   };
 
+  const formatDate = (dateString: string) => {
+    try {
+      return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch {
+      return t('modals.instrumentDetails.invalidDate');
+    }
+  };
+
+  const handleSave = async () => {
+    if (!instrument) return;
+    
+    try {
+      // 🔹 SỬA: XỬ LÝ GIÁ TRỊ TRƯỚC KHI DÙNG .trim()
+      const updatePayload = {
+        id: instrument.id,
+        name: String(formData.name || '').trim(), // 🔹 ĐẢM BẢO LUÔN LÀ STRING
+        model: String(formData.model || '').trim(),
+        serialNumber: String(formData.serialNumber || '').trim(),
+        manufacturer: String(formData.manufacturer || '').trim(),
+        status: formData.status,
+        location: formData.location,
+        nextCalibration: formData.nextCalibration,
+        supportedTest: formData.supportedTest,
+        supportedReagents: formData.supportedReagents,
+        calibrationDue: instrument.calibrationDue || false,
+        // Giữ nguyên các thông số kỹ thuật
+        temperature: instrument.temperature,
+        sampleVolume: instrument.sampleVolume,
+        firmwareVersion: instrument.firmwareVersion,
+        port: instrument.port,
+        encryption: instrument.encryption,
+        ipAddress: instrument.ipAddress,
+      };
+
+      // Dispatch update action via Redux Saga
+      dispatch({ 
+        type: 'instruments/updateInstrumentRequest', 
+        payload: updatePayload
+      });
+      
+      onSave(updatePayload as Instrument);
+      onClose();
+    } catch (error) {
+      console.error('Error saving instrument:', error);
+      alert(t('modals.editInstrument.errorSaving'));
+    }
+  };
+
+  const onCancel = () => handleCancel(onClose);
+
+  const isFormLoading = loading.testTypes || loading.reagents;
+  const isSubmitDisabled = saving || isFormLoading;
+
   if (!instrument) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+    <div className={CLASS_NAMES.MODAL.OVERLAY}>
+      <div className={CLASS_NAMES.MODAL.CONTAINER}>
+        
         {/* Header */}
-        <div className="flex justify-between items-start p-6 border-b">
+        <div className={CLASS_NAMES.MODAL.HEADER}>
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Edit Instrument</h2>
-            <p className="text-gray-600 text-sm mt-1">Update instrument information</p>
-            <p className="text-gray-500 text-xs mt-1">ID: {instrument.id}</p>
+            <h2 className="text-xl font-semibold text-gray-900">
+              {t(formConfig.TITLE)}
+            </h2>
+            <p className="text-gray-600 text-sm mt-1">
+              {t(formConfig.SUBTITLE)}
+            </p>
+            <p className="text-gray-500 text-xs mt-1">
+              {t('modals.editInstrument.id')}: {instrument.id}
+            </p>
           </div>
-          <button
-            onClick={handleCancel}
-            className="text-gray-400 hover:text-gray-600 transition-colors p-1"
-          >
+          <button onClick={onCancel} className={CLASS_NAMES.BUTTON.CLOSE}>
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -328,183 +138,99 @@ const EditInstrumentPopup: React.FC<EditInstrumentPopupProps> = ({
 
         {/* Form Content */}
         <div className="p-6 space-y-6">
+          
           {/* Section 1: Basic Information */}
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Left Column */}
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Instrument Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) => handleInputChange('name', e.target.value)}
-                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.name ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    required
-                  />
-                  {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Model <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.model}
-                    onChange={(e) => handleInputChange('model', e.target.value)}
-                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.model ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    required
-                  />
-                  {errors.model && <p className="text-red-500 text-xs mt-1">{errors.model}</p>}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Serial Number <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.serialNumber}
-                    onChange={(e) => handleInputChange('serialNumber', e.target.value)}
-                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.serialNumber ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    required
-                  />
-                  {errors.serialNumber && <p className="text-red-500 text-xs mt-1">{errors.serialNumber}</p>}
-                </div>
-              </div>
-
-              {/* Right Column */}
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Manufacturer <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.manufacturer}
-                    onChange={(e) => handleInputChange('manufacturer', e.target.value)}
-                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.manufacturer ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    required
-                  />
-                  {errors.manufacturer && <p className="text-red-500 text-xs mt-1">{errors.manufacturer}</p>}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Status <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    value={formData.status}
-                    onChange={(e) => handleInputChange('status', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="Active">Active</option>
-                    <option value="Maintenance">Maintenance</option>
-                    <option value="Inactive">Inactive</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Location <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    value={formData.location}
-                    onChange={(e) => handleInputChange('location', e.target.value)}
-                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.location ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    required
-                  >
-                    <option value="">Select a location</option>
-                    {locationOptions.map((location) => (
-                      <option key={location} value={location}>
-                        {location}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.location && <p className="text-red-500 text-xs mt-1">{errors.location}</p>}
-                </div>
-              </div>
+          <div className={CLASS_NAMES.MODAL.SECTION}>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              {t('modals.addInstrument.basicInformation')}
+            </h3>
+            <div className={CLASS_NAMES.GRID.BASIC}>
+              {/* Basic Fields */}
+              {FIELD_CONFIG.BASIC_FIELDS.map(field => (
+                <FormInput
+                  key={field.name}
+                  {...field}
+                  value={formData[field.name]}
+                  error={errors[field.name]}
+                  onChange={handleInputChange}
+                />
+              ))}
+              
+              {/* Dropdown Fields */}
+              {FIELD_CONFIG.DROPDOWN_FIELDS.map(field => (
+                <FormInput
+                  key={field.name}
+                  {...field}
+                  value={formData[field.name]}
+                  error={errors[field.name]}
+                  onChange={handleInputChange}
+                  options={FORM_CONFIG[field.options]}
+                />
+              ))}
             </div>
           </div>
 
           {/* Section 2: Calibration Information */}
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Calibration Information</h3>
+          <div className={CLASS_NAMES.MODAL.SECTION}>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              {t('modals.addInstrument.calibrationInformation')}
+            </h3>
             <div className="max-w-md">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Next Calibration Date <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="date"
-                  value={formData.nextCalibration}
-                  onChange={(e) => handleInputChange('nextCalibration', e.target.value)}
-                  min={getMinCalibrationDate()}
-                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    errors.nextCalibration ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                  required
-                />
-                {errors.nextCalibration && <p className="text-red-500 text-xs mt-1">{errors.nextCalibration}</p>}
-              </div>
+              <FormInput
+                name="nextCalibration"
+                label="modals.addInstrument.nextCalibrationDate"
+                type="date"
+                value={formData.nextCalibration}
+                error={errors.nextCalibration}
+                required={true}
+                onChange={handleInputChange}
+                min={getMinCalibrationDate()}
+              />
             </div>
           </div>
 
           {/* Section 3: Testing Configuration */}
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Testing Configuration</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className={CLASS_NAMES.MODAL.SECTION}>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              {t('modals.addInstrument.testingConfiguration')}
+            </h3>
+            <div className={CLASS_NAMES.GRID.CONFIG}>
+              
               {/* Supported Test Type */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Supported Test Type <span className="text-red-500">*</span>
-                </label>
-                <select
-                  value={formData.supportedTest}
-                  onChange={(e) => handleInputChange('supportedTest', e.target.value)}
-                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    errors.supportedTest ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                  required
-                  disabled={loading.testTypes}
-                >
-                  <option value="">Select a test type</option>
-                  {testTypes.map((testType) => (
-                    <option key={testType.id} value={testType.id}>
-                      {testType.id} - {testType.name}
-                    </option>
-                  ))}
-                </select>
-                {loading.testTypes && <p className="text-blue-500 text-xs mt-1">Loading test types...</p>}
-                {errors.supportedTest && <p className="text-red-500 text-xs mt-1">{errors.supportedTest}</p>}
-              </div>
+              <FormInput
+                name="supportedTest"
+                label="modals.addInstrument.supportedTestType"
+                type="select"
+                value={formData.supportedTest}
+                error={errors.supportedTest}
+                required={true}
+                placeholder="modals.addInstrument.selectTestType"
+                onChange={handleInputChange}
+                options={testTypes.map(test => ({
+                  value: test.id,
+                  label: `${test.id} - ${test.name}`
+                }))}
+                disabled={loading.testTypes}
+              />
 
               {/* Supported Reagents */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Supported Reagents <span className="text-red-500">*</span>
+                  {t('modals.addInstrument.supportedReagents')} 
+                  <span className="text-red-500">*</span>
                 </label>
                 <div className={`max-h-48 overflow-y-auto border rounded-md p-3 ${
                   errors.supportedReagents ? 'border-red-500' : 'border-gray-300'
                 } ${loading.reagents ? 'opacity-50' : ''}`}>
+                  
                   {loading.reagents ? (
-                    <p className="text-gray-500 text-sm">Loading reagents...</p>
+                    <p className="text-gray-500 text-sm">
+                      {t('modals.addInstrument.loadingReagents')}
+                    </p>
                   ) : reagents.length === 0 ? (
-                    <p className="text-gray-500 text-sm">No reagents available</p>
+                    <p className="text-gray-500 text-sm">
+                      {t('modals.addInstrument.noReagentsAvailable')}
+                    </p>
                   ) : (
                     <div className="space-y-2">
                       {reagents.map((reagent) => (
@@ -526,8 +252,8 @@ const EditInstrumentPopup: React.FC<EditInstrumentPopupProps> = ({
                               </span>
                             </div>
                             <div className="text-xs text-gray-600 mt-1 space-y-1">
-                              <div>Lot: {reagent.lot_number} • Mfg: {reagent.manufacturer}</div>
-                              <div>Expires: {formatDate(reagent.expiry_date)} • Storage: {reagent.location}</div>
+                              <div>{t('modals.instrumentDetails.lot')}: {reagent.lot_number} • {t('modals.instrumentDetails.mfg')}: {reagent.manufacturer}</div>
+                              <div>{t('modals.instrumentDetails.expires')}: {formatDate(reagent.expiry_date)} • {t('modals.instrumentDetails.storage')}: {reagent.location}</div>
                             </div>
                           </div>
                         </label>
@@ -540,8 +266,70 @@ const EditInstrumentPopup: React.FC<EditInstrumentPopupProps> = ({
                 )}
                 {formData.supportedReagents.length > 0 && (
                   <p className="text-green-600 text-xs mt-1">
-                    {formData.supportedReagents.length} reagent(s) selected
+                    {t('modals.addInstrument.reagentsSelected', { count: formData.supportedReagents.length })}
                   </p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* 🔹 THÊM SECTION: Technical Specifications (Read-only) */}
+          <div className={CLASS_NAMES.MODAL.SECTION}>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              {t('modals.instrumentDetails.technicalSpecifications')}
+            </h3>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-sm text-blue-700">
+                {t('modals.editInstrument.technicalReadOnly')}
+              </p>
+              <div className={CLASS_NAMES.GRID.BASIC + ' mt-3'}>
+                {instrument.temperature && (
+                  <div>
+                    <label className="text-sm text-gray-500 block mb-1">
+                      {t('modals.instrumentDetails.temperature')}
+                    </label>
+                    <p className="text-gray-900 font-medium">{instrument.temperature}</p>
+                  </div>
+                )}
+                {instrument.sampleVolume && (
+                  <div>
+                    <label className="text-sm text-gray-500 block mb-1">
+                      {t('modals.instrumentDetails.sampleVolume')}
+                    </label>
+                    <p className="text-gray-900 font-medium">{instrument.sampleVolume}</p>
+                  </div>
+                )}
+                {instrument.firmwareVersion && (
+                  <div>
+                    <label className="text-sm text-gray-500 block mb-1">
+                      {t('modals.instrumentDetails.firmwareVersion')}
+                    </label>
+                    <p className="text-gray-900 font-medium">{instrument.firmwareVersion}</p>
+                  </div>
+                )}
+                {instrument.port && (
+                  <div>
+                    <label className="text-sm text-gray-500 block mb-1">
+                      {t('modals.instrumentDetails.port')}
+                    </label>
+                    <p className="text-gray-900 font-medium">{instrument.port}</p>
+                  </div>
+                )}
+                {instrument.encryption && (
+                  <div>
+                    <label className="text-sm text-gray-500 block mb-1">
+                      {t('modals.instrumentDetails.encryption')}
+                    </label>
+                    <p className="text-gray-900 font-medium">{instrument.encryption}</p>
+                  </div>
+                )}
+                {instrument.ipAddress && (
+                  <div>
+                    <label className="text-sm text-gray-500 block mb-1">
+                      {t('modals.instrumentDetails.ipAddress')}
+                    </label>
+                    <p className="text-gray-900 font-medium">{instrument.ipAddress}</p>
+                  </div>
                 )}
               </div>
             </div>
@@ -549,25 +337,25 @@ const EditInstrumentPopup: React.FC<EditInstrumentPopupProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end space-x-3 p-6 border-t bg-gray-50 rounded-b-lg">
+        <div className={CLASS_NAMES.MODAL.FOOTER}>
           <button
-            onClick={handleCancel}
+            onClick={onCancel}
             disabled={saving}
-            className="px-4 py-2 text-sm text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+            className={CLASS_NAMES.BUTTON.SECONDARY}
           >
-            Cancel
+            {t('common.cancel')}
           </button>
           <button
             onClick={handleSave}
-            disabled={saving || loading.testTypes || loading.reagents}
-            className="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center space-x-2"
+            disabled={isSubmitDisabled}
+            className={CLASS_NAMES.BUTTON.PRIMARY}
           >
             {saving && (
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
             )}
             <span>
-              {saving ? 'Saving...' : 
-               loading.testTypes || loading.reagents ? 'Loading Data...' : 'Save Changes'}
+              {saving ? t(formConfig.SAVING_TEXT) : 
+               isFormLoading ? t('modals.addInstrument.loadingData') : t(formConfig.SAVE_BUTTON)}
             </span>
           </button>
         </div>

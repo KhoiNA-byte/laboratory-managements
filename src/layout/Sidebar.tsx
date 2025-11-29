@@ -6,6 +6,8 @@ import { logoutRequest } from "../store/slices/authSlice";
 import { PERMISSIONS } from "../constants/permissions";
 import { useTranslation } from "react-i18next";
 
+import { LanguageSwitcher } from "../components/LanguageSwitcher";
+
 export const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -14,15 +16,11 @@ export const Sidebar = () => {
   const permissions = useSelector((state: RootState) => state.auth.permissions);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
 
-  const { t, i18n } = useTranslation(["sidebar", "common"]);
+
+  const { t } = useTranslation(["sidebar", "common", "layout"]);
 
   const handleUserDropdownToggle = () => {
     setShowUserDropdown(!showUserDropdown);
-  };
-
-  const handleLanguageChange = (lng: string) => {
-    i18n.changeLanguage(lng);
-    setShowUserDropdown(false);
   };
 
   const handleProfile = () => {
@@ -113,12 +111,15 @@ export const Sidebar = () => {
       icon: "user",
       requiredPermissions: [],
     },
+<<<<<<< HEAD
     {
       path: "/admin/settings",
       label: t("sidebar:settings"),
       icon: "cog",
       requiredPermissions: [],
     },
+=======
+>>>>>>> feature-demo-v2
   ];
 
   // Filter menu items based on user permissions
@@ -127,7 +128,11 @@ export const Sidebar = () => {
       return true;
     }
 
+<<<<<<< HEAD
     return item.requiredPermissions.some((permission) =>
+=======
+    return item.requiredPermissions.some(permission =>
+>>>>>>> feature-demo-v2
       permissions.includes(permission)
     );
   });
@@ -331,7 +336,7 @@ export const Sidebar = () => {
             </svg>
           </div>
           <span className="font-semibold text-lg text-white">
-            Laboratory Management
+            {t("layout:appName")}
           </span>
         </div>
 
@@ -341,11 +346,10 @@ export const Sidebar = () => {
             <Link
               key={item.path}
               to={item.path}
-              className={`flex items-center px-4 py-3 rounded-lg transition-colors ${
-                location.pathname === item.path
-                  ? "bg-blue-100 text-blue-800 border-l-4 border-blue-600"
-                  : "text-white hover:bg-gray-700"
-              }`}
+              className={`flex items-center px-4 py-3 rounded-lg transition-colors ${location.pathname === item.path
+                ? "bg-blue-100 text-blue-800 border-l-4 border-blue-600"
+                : "text-white hover:bg-gray-700"
+                }`}
             >
               <span className="mr-3">{getIcon(item.icon)}</span>
               <span className="font-medium">{item.label}</span>
@@ -366,16 +370,15 @@ export const Sidebar = () => {
             </div>
             <div className="flex-1 text-left">
               <div className="font-medium">
-                {user?.name || user?.email || "Unknown User"}
+                {user?.name || user?.email || t("layout:user.unknown")}
               </div>
               <div className="text-sm text-blue-100 capitalize">
-                {user?.role?.replace("_", " ") || "No Role"}
+                {user?.role?.replace("_", " ") || t("layout:user.noRole")}
               </div>
             </div>
             <svg
-              className={`h-4 w-4 transition-transform ${
-                showUserDropdown ? "rotate-180" : ""
-              }`}
+              className={`h-4 w-4 transition-transform ${showUserDropdown ? "rotate-180" : ""
+                }`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -393,6 +396,7 @@ export const Sidebar = () => {
           {showUserDropdown && (
             <div className="absolute bottom-full left-0 right-0 w-full bg-white rounded-t-lg shadow-lg border border-gray-200 overflow-hidden">
               {/* Language Switcher */}
+<<<<<<< HEAD
               <div className="border-b border-gray-200">
                 <button
                   onClick={() => handleLanguageChange("vi")}
@@ -415,6 +419,12 @@ export const Sidebar = () => {
                   🇺🇸 English
                 </button>
               </div>
+=======
+              <LanguageSwitcher
+                variant="menu"
+                onLanguageChange={() => setShowUserDropdown(false)}
+              />
+>>>>>>> feature-demo-v2
 
               <button
                 onClick={handleProfile}

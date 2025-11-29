@@ -1,5 +1,6 @@
 // components/RolesPage/RolesHeader.tsx
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 interface RolesHeaderProps {
   searchTerm: string;
@@ -18,6 +19,8 @@ const RolesHeader: React.FC<RolesHeaderProps> = ({
   onClearMessages,
   onShowCreateModal,
 }) => {
+  const { t } = useTranslation("common");
+
   return (
     <div className="p-6 border-b border-gray-200">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -46,7 +49,7 @@ const RolesHeader: React.FC<RolesHeaderProps> = ({
             </svg>
             <input
               type="text"
-              placeholder="Search roles..."
+              placeholder={t("rolesPage.filters.searchPlaceholder")}
               value={searchTerm}
               onChange={(e) => onSearchChange(e.target.value)}
               className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full sm:w-64"
@@ -58,9 +61,9 @@ const RolesHeader: React.FC<RolesHeaderProps> = ({
             onChange={(e) => onStatusFilterChange(e.target.value)}
             className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
-            <option value="All Status">All Status</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
+            <option value="all">{t("rolesPage.filters.allStatus")}</option>
+            <option value="active">{t("rolesPage.filters.active")}</option>
+            <option value="inactive">{t("rolesPage.filters.inactive")}</option>
           </select>
 
           <button
@@ -83,7 +86,7 @@ const RolesHeader: React.FC<RolesHeaderProps> = ({
                 d="M12 4v16m8-8H4"
               />
             </svg>
-            Create Role
+            {t("rolesPage.filters.addRole")}
           </button>
         </div>
       </div>

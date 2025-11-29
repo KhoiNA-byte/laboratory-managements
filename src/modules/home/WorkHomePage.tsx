@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { useTranslation } from "react-i18next";
 
 const Section = styled.section`
   padding: 5rem 0;
@@ -115,46 +116,30 @@ const Arrow = styled.div`
   }
 `;
 
+const steps = [
+  { step: "01", icon: "👥", key: "register" },
+  { step: "02", icon: "⚙️", key: "configure" },
+  { step: "03", icon: "🚀", key: "start" },
+  { step: "04", icon: "📊", key: "analyze" },
+];
+
 const WorkHomePage = () => {
+  const { t } = useTranslation("home");
+
   return (
     <Section>
       <Container>
         <HeaderSection>
-          <MainTitle>Cách thức hoạt động</MainTitle>
+          <MainTitle>{t("work.title")}</MainTitle>
         </HeaderSection>
 
         <StepsContainer>
-          {[
-            {
-              step: "01",
-              icon: "👥",
-              title: "Đăng ký tài khoản",
-              desc: "Tạo tài khoản và xác thực thông tin",
-            },
-            {
-              step: "02",
-              icon: "⚙️",
-              title: "Cấu hình hệ thống",
-              desc: "Thiết lập các thông số và quy trình",
-            },
-            {
-              step: "03",
-              icon: "🚀",
-              title: "Bắt đầu sử dụng",
-              desc: "Khởi động và làm quen với hệ thống",
-            },
-            {
-              step: "04",
-              icon: "📊",
-              title: "Phân tích & Báo cáo",
-              desc: "Theo dõi và tạo báo cáo chi tiết",
-            },
-          ].map((item, index) => (
+          {steps.map((item, index) => (
             <StepItem key={index}>
               <StepNumber>{item.step}</StepNumber>
               <StepIcon>{item.icon}</StepIcon>
-              <StepTitle>{item.title}</StepTitle>
-              <StepDescription>{item.desc}</StepDescription>
+              <StepTitle>{t(`work.steps.${item.key}.title`)}</StepTitle>
+              <StepDescription>{t(`work.steps.${item.key}.desc`)}</StepDescription>
 
               {/* Arrow */}
               {index < 3 && <Arrow />}

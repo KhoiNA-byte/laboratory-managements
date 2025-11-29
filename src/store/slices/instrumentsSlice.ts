@@ -1,4 +1,3 @@
-// src/store/slices/instrumentsSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface Instrument {
@@ -32,6 +31,7 @@ const instrumentsSlice = createSlice({
   name: "instruments",
   initialState,
   reducers: {
+    // Fetch
     fetchInstrumentsRequest(state) {
       state.loading = true;
       state.error = undefined;
@@ -45,6 +45,7 @@ const instrumentsSlice = createSlice({
       state.error = action.payload;
     },
 
+    // Add
     addInstrumentRequest(state, action: PayloadAction<Partial<Instrument>>) {
       state.loading = true;
       state.error = undefined;
@@ -58,6 +59,24 @@ const instrumentsSlice = createSlice({
       state.error = action.payload;
     },
 
+    // Update - 🔹 THÊM CÁC ACTIONS NÀY
+    updateInstrumentRequest(state, action: PayloadAction<Instrument>) {
+      state.loading = true;
+      state.error = undefined;
+    },
+    updateInstrumentSuccess(state, action: PayloadAction<Instrument>) {
+      state.loading = false;
+      const index = state.instruments.findIndex(i => i.id === action.payload.id);
+      if (index !== -1) {
+        state.instruments[index] = action.payload;
+      }
+    },
+    updateInstrumentFailure(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.error = action.payload;
+    },
+
+    // Delete
     deleteInstrumentRequest(state, action: PayloadAction<string>) {
       state.loading = true;
       state.error = undefined;
@@ -70,6 +89,11 @@ const instrumentsSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+
+    // Clear Error - 🔹 THÊM ACTION NÀY (TUỲ CHỌN)
+    clearError(state) {
+      state.error = undefined;
+    },
   },
 });
 
@@ -80,9 +104,13 @@ export const {
   addInstrumentRequest,
   addInstrumentSuccess,
   addInstrumentFailure,
+  updateInstrumentRequest,    // 🔹 EXPORT UPDATE ACTIONS
+  updateInstrumentSuccess,
+  updateInstrumentFailure,
   deleteInstrumentRequest,
   deleteInstrumentSuccess,
   deleteInstrumentFailure,
+  clearError,                // 🔹 EXPORT CLEAR ERROR
 } = instrumentsSlice.actions;
 
 export default instrumentsSlice.reducer;

@@ -1,0 +1,114 @@
+{
+  "searchPlaceholder": "Tìm kiếm...",
+  "defaultTitle": "Không gian quản trị phòng xét nghiệm",
+  "defaultSubtitle": "",
+  "notificationsLabel": "Thông báo",
+  "routes": {
+    "dashboard": {
+      "title": "Bảng điều khiển",
+      "subtitle": "Tổng quan hoạt động và thống kê của phòng xét nghiệm"
+    },
+    "users": {
+      "title": "Quản lý người dùng",
+      "subtitle": "Quản lý người dùng và phân quyền truy cập hệ thống"
+    },
+    "userInfo": {
+      "title": "Thông tin người dùng",
+      "subtitle": "Xem chi tiết tài khoản và dữ liệu xác thực"
+    },
+    "roles": {
+      "title": "Quản lý vai trò",
+      "subtitle": "Thiết lập vai trò và quyền hạn"
+    },
+    "patients": {
+      "title": "Hồ sơ bệnh nhân",
+      "subtitle": "Quản lý hồ sơ và thông tin bệnh nhân"
+    },
+    "patientDetails": {
+      "title": "Chi tiết bệnh nhân",
+      "subtitle": "Xem thông tin nhân khẩu và lịch khám"
+    },
+    "editPatient": {
+      "title": "Chỉnh sửa bệnh nhân",
+      "subtitle": "Cập nhật hồ sơ và thông tin điều trị"
+    },
+    "testOrders": {
+      "title": "Đơn xét nghiệm",
+      "subtitle": "Quản lý các yêu cầu xét nghiệm"
+    },
+    "testOrderDetails": {
+      "title": "Chi tiết đơn xét nghiệm",
+      "subtitle": "Theo dõi tiến độ, mẫu và phân công"
+    },
+    "newTestOrder": {
+      "title": "Tạo đơn xét nghiệm",
+      "subtitle": "Khởi tạo yêu cầu xét nghiệm mới"
+    },
+    "editTestOrder": {
+      "title": "Chỉnh sửa đơn xét nghiệm",
+      "subtitle": "Điều chỉnh yêu cầu xét nghiệm hiện có"
+    },
+    "myTestResults": {
+      "title": "Kết quả xét nghiệm",
+      "subtitle": "Lịch sử và kết quả xét nghiệm của bạn"
+    },
+    "instruments": {
+      "title": "Thiết bị",
+      "subtitle": "Quản lý thiết bị và máy móc trong phòng xét nghiệm"
+    },
+    "addInstrument": {
+      "title": "Thêm thiết bị",
+      "subtitle": "Đăng ký thiết bị mới vào danh mục"
+    },
+    "editInstrument": {
+      "title": "Chỉnh sửa thiết bị",
+      "subtitle": "Cập nhật cấu hình và thông tin thiết bị"
+    },
+    "instrumentDetails": {
+      "title": "Chi tiết thiết bị",
+      "subtitle": "Xem thông số và tình trạng thiết bị"
+    },
+    "warehouse": {
+      "title": "Kho vật tư",
+      "subtitle": "Quản lý hóa chất, vật tư và vật liệu tiêu hao"
+    },
+    "flaggingRules": {
+      "title": "Quy tắc cảnh báo",
+      "subtitle": "Cấu hình ngưỡng kho và cảnh báo"
+    },
+    "monitoring": {
+      "title": "Giám sát hệ thống",
+      "subtitle": "Theo dõi tình trạng, nhật ký sự kiện và hiệu năng"
+    },
+    "hl7Messages": {
+      "title": "Thông điệp HL7",
+      "subtitle": "Theo dõi thông điệp tích hợp và trạng thái"
+    },
+    "quarantine": {
+      "title": "Khu cách ly",
+      "subtitle": "Xử lý mẫu bị cách ly và ngoại lệ"
+    },
+    "instrumentLogs": {
+      "title": "Nhật ký thiết bị",
+      "subtitle": "Kiểm tra log hoạt động và dữ liệu thiết bị"
+    },
+    "reports": {
+      "title": "Báo cáo",
+      "subtitle": "Lập báo cáo và xuất dữ liệu"
+    },
+    "auditLogs": {
+      "title": "Nhật ký kiểm toán",
+      "subtitle": "Theo dõi hoạt động người dùng và sự kiện quan trọng"
+    },
+    "profile": {
+      "title": "Hồ sơ cá nhân",
+      "subtitle": "Xem và cập nhật thông tin"
+    },
+    "settings": {
+      "title": "Cài đặt",
+      "subtitle": "Quản lý cấu hình và thông số hệ thống"
+    }
+  }
+}
+
+

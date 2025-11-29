@@ -1,0 +1,142 @@
+{
+    "nav": {
+        "brandLine1": "Laboratory",
+        "brandLine2": "Management",
+        "links": {
+            "home": "Home",
+            "resources": "Resources"
+        },
+        "login": "Log in"
+    },
+    "hero": {
+        "badge": "Vietnam's leading laboratory management platform",
+        "title": "Intelligent <highlight>hematology</highlight> management made easy",
+        "description": "A comprehensive platform that helps laboratories manage test workflows, monitor devices, ensure quality, and stay connected with the healthcare community.",
+        "primaryCta": "Go to Dashboard",
+        "secondaryCta": "Community",
+        "userCount": "500+ users",
+        "ratingText": "4.9/5"
+    },
+    "features": {
+        "title": "Everything you need for <highlight>lab management</highlight>",
+        "items": {
+            "testManagement": {
+                "title": "Test management",
+                "desc": "Track and manage the entire lifecycle of specimens."
+            },
+            "smartAnalysis": {
+                "title": "Smart analytics",
+                "desc": "Use AI to analyze and deliver accurate results."
+            },
+            "community": {
+                "title": "Expert community",
+                "desc": "Connect with domain experts across healthcare."
+            },
+            "security": {
+                "title": "Maximum security",
+                "desc": "Keep patient data and results protected."
+            },
+            "realtime": {
+                "title": "Real-time monitoring",
+                "desc": "Monitor device status and laboratory workflows."
+            },
+            "quality": {
+                "title": "Quality certifications",
+                "desc": "Comply with international quality standards."
+            }
+        }
+    },
+    "about": {
+        "mainTitle": "What is hematology management?",
+        "mainDescription": "A comprehensive process from sample intake to results delivery, ensuring the highest level of accuracy and quality.",
+        "sectionTitle": "An end-to-end solution for modern labs",
+        "descriptionOne": "The system integrates every feature required to manage a hematology laboratory, from patient and specimen tracking to workflow automation.",
+        "descriptionTwo": "With advanced technology and a friendly UI, the platform increases efficiency while reducing errors throughout the testing process.",
+        "featureList": {
+            "testManagement": {
+                "title": "Test management",
+                "desc": "Follow every step of the specimen lifecycle."
+            },
+            "dataAnalysis": {
+                "title": "Data analysis",
+                "desc": "Optimize and standardize testing workflows."
+            },
+            "qualityControl": {
+                "title": "Quality control",
+                "desc": "Integrate seamlessly with modern analyzers."
+            },
+            "community": {
+                "title": "Expert community",
+                "desc": "Generate detailed reports and trend analyses."
+            }
+        }
+    },
+    "work": {
+        "title": "How it works",
+        "steps": {
+            "register": {
+                "title": "Create your account",
+                "desc": "Sign up and verify your information."
+            },
+            "configure": {
+                "title": "Configure the system",
+                "desc": "Set up parameters and workflows."
+            },
+            "start": {
+                "title": "Start using",
+                "desc": "Get onboarded and explore the platform."
+            },
+            "analyze": {
+                "title": "Analyze & Report",
+                "desc": "Monitor insights and create detailed reports."
+            }
+        }
+    },
+    "testimonials": {
+        "title": "Trusted by <highlight>hundreds of experts</highlight>",
+        "items": [
+            {
+                "name": "Nguyen Van A",
+                "role": "Laboratory director",
+                "quote": "The platform improved our efficiency by almost 40%."
+            },
+            {
+                "name": "Tran Thi B",
+                "role": "Lab technician",
+                "quote": "The interface is friendly, intuitive, and very convenient."
+            },
+            {
+                "name": "Le Van C",
+                "role": "Hematology specialist",
+                "quote": "Accurate results and detailed reports keep our team confident."
+            },
+            {
+                "name": "Pham Thi D",
+                "role": "Lab manager",
+                "quote": "Integration with our existing devices works flawlessly."
+            }
+        ]
+    },
+    "footer": {
+        "companyName": "Laboratory Management",
+        "description": "A comprehensive lab management platform that optimizes testing workflows and elevates healthcare services.",
+        "userCount": "500+ users",
+        "ratingText": "4.9/5",
+        "quickLinksTitle": "Quick links",
+        "quickLinks": [
+            "Home",
+            "Features",
+            "Resources",
+            "Contact"
+        ],
+        "supportTitle": "Support",
+        "supportLinks": [
+            "Help center",
+            "Guides",
+            "Support",
+            "Report an issue"
+        ],
+        "copyright": "© 2024 Lab Management System. All rights reserved.",
+        "madeWithLove": "Made with ❤️ in Vietnam"
+    }
+}

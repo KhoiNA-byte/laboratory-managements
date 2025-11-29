@@ -2,6 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router";
 import styled from "styled-components";
 import Down_Arrow from "../../assets/icons/Down_Arrow.png";
+import { LanguageSwitcher } from "../../components/LanguageSwitcher";
+import { useTranslation } from "react-i18next";
 
 const Container = styled.div``;
 
@@ -122,6 +124,7 @@ const LoginButton = styled.button`
 
 const NavHomePage = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation("home");
 
   const handleLogin = () => {
     navigate("/login");
@@ -139,23 +142,24 @@ const NavHomePage = () => {
                 <LogoText>L</LogoText>
               </LogoIcon>
               <Title>
-                <SubTitleFirst>Laboratory</SubTitleFirst>
-                <SubTitleSeccond>Management</SubTitleSeccond>
+                <SubTitleFirst>{t("nav.brandLine1")}</SubTitleFirst>
+                <SubTitleSeccond>{t("nav.brandLine2")}</SubTitleSeccond>
               </Title>
             </LogoSection>
 
             {/* Navigation */}
             <Navigation>
-              <NavLink href="#">Trang chủ</NavLink>
+              <NavLink href="#">{t("nav.links.home")}</NavLink>
               <NavLink href="#">
-                <SubNavLink>Tài nguyên</SubNavLink>{" "}
+                <SubNavLink>{t("nav.links.resources")}</SubNavLink>{" "}
                 <NavIcon src={Down_Arrow} alt="Down Arrow" />
               </NavLink>
+              <LanguageSwitcher variant="pill" />
             </Navigation>
 
             {/* Right side icons and login */}
             <RightSection>
-              <LoginButton onClick={handleLogin}>Đăng nhập</LoginButton>
+              <LoginButton onClick={handleLogin}>{t("nav.login")}</LoginButton>
             </RightSection>
           </HeaderContent>
         </HeaderContainer>

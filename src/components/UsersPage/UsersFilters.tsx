@@ -10,6 +10,13 @@ interface UsersFiltersProps {
   setRoleFilter: (value: string) => void;
   setSearchTerm: (value: string) => void;
   onNewUser: () => void;
+  searchPlaceholder?: string;
+  newUserLabel?: string;
+  allGenderLabel?: string;
+  maleLabel?: string;
+  femaleLabel?: string;
+  allAgesLabel?: string;
+  allRolesLabel?: string;
 }
 
 const UsersFilters: React.FC<UsersFiltersProps> = ({
@@ -22,6 +29,13 @@ const UsersFilters: React.FC<UsersFiltersProps> = ({
   setRoleFilter,
   setSearchTerm,
   onNewUser,
+  searchPlaceholder = "Search users...",
+  newUserLabel = "New User",
+  allGenderLabel = "All Genders",
+  maleLabel = "Male",
+  femaleLabel = "Female",
+  allAgesLabel = "All Ages",
+  allRolesLabel = "All Roles",
 }) => {
   return (
     <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
@@ -33,9 +47,9 @@ const UsersFilters: React.FC<UsersFiltersProps> = ({
             onChange={(e) => setGenderFilter(e.target.value)}
             className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
-            <option value="All Genders">All Genders</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
+            <option value="All Genders">{allGenderLabel}</option>
+            <option value="Male">{maleLabel}</option>
+            <option value="Female">{femaleLabel}</option>
           </select>
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
             <svg
@@ -61,7 +75,7 @@ const UsersFilters: React.FC<UsersFiltersProps> = ({
             onChange={(e) => setAgeFilter(e.target.value)}
             className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
-            <option value="All Ages">All Ages</option>
+            <option value="All Ages">{allAgesLabel}</option>
             <option value="18-25">18-25</option>
             <option value="26-35">26-35</option>
             <option value="36-45">36-45</option>
@@ -91,7 +105,7 @@ const UsersFilters: React.FC<UsersFiltersProps> = ({
             onChange={(e) => setRoleFilter(e.target.value)}
             className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
-            <option value="All Roles">All Roles</option>
+            <option value="All Roles">{allRolesLabel}</option>
             <option value="Administrator">Administrator</option>
             <option value="Lab Manager">Lab Manager</option>
             <option value="Lab User">Lab User</option>
@@ -121,7 +135,7 @@ const UsersFilters: React.FC<UsersFiltersProps> = ({
         <div className="relative">
           <input
             type="text"
-            placeholder="Search orders..."
+            placeholder={searchPlaceholder}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -161,7 +175,7 @@ const UsersFilters: React.FC<UsersFiltersProps> = ({
               d="M12 4v16m8-8H4"
             />
           </svg>
-          New User
+          {newUserLabel}
         </button>
       </div>
     </div>
