@@ -1,43 +1,37 @@
-// sagas/instrumentsSaga.ts
 import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { instrumentService } from '../../services/instrumentsApi';
 import { Instrument } from '../../types';
-
-// Action Types Constants 
-const ACTION_TYPES = {
-  FETCH_INSTRUMENTS_START: 'instruments/fetchInstrumentsStart',
-  FETCH_INSTRUMENTS_SUCCESS: 'instruments/fetchInstrumentsSuccess', 
-  FETCH_INSTRUMENTS_FAILURE: 'instruments/fetchInstrumentsFailure',
-  ADD_INSTRUMENT_REQUEST: 'instruments/addInstrumentRequest',
-  ADD_INSTRUMENT_SUCCESS: 'instruments/addInstrumentSuccess',
-  ADD_INSTRUMENT_FAILURE: 'instruments/addInstrumentFailure',
-  UPDATE_INSTRUMENT_REQUEST: 'instruments/updateInstrumentRequest',
-  UPDATE_INSTRUMENT_SUCCESS: 'instruments/updateInstrumentSuccess',
-  UPDATE_INSTRUMENT_FAILURE: 'instruments/updateInstrumentFailure',
-  DELETE_INSTRUMENT_REQUEST: 'instruments/deleteInstrumentRequest',
-  DELETE_INSTRUMENT_SUCCESS: 'instruments/deleteInstrumentSuccess',
-  DELETE_INSTRUMENT_FAILURE: 'instruments/deleteInstrumentFailure',
-} as const;
+import {
+  fetchInstrumentsSuccess,
+  fetchInstrumentsFailure,
+  addInstrumentSuccess,
+  addInstrumentFailure,
+  updateInstrumentSuccess,
+  updateInstrumentFailure,
+  deleteInstrumentSuccess,
+  deleteInstrumentFailure,
+  fetchInstrumentsRequest,
+  addInstrumentRequest,
+  updateInstrumentRequest,
+  deleteInstrumentRequest,
+} from '../../store/slices/instrumentsSlice';
 
 // Get Instruments Saga - với retry logic
 function* getInstrumentsSaga() {
   try {
     const instruments: Instrument[] = yield call(instrumentService.getInstruments);
-    yield put({ 
-      type: ACTION_TYPES.FETCH_INSTRUMENTS_SUCCESS, 
-      payload: instruments 
-    });
+    
+    // ✅ Dùng action creators từ slice thay vì hard code
+    yield put(fetchInstrumentsSuccess(instruments));
+    
   } catch (error: any) {
-    yield put({ 
-      type: ACTION_TYPES.FETCH_INSTRUMENTS_FAILURE, 
-      payload: error.message 
-    });
+    yield put(fetchInstrumentsFailure(error.message));
   }
 }
 
 // Create Instrument Saga - với validation
-function* createInstrumentSaga(action: PayloadAction<Omit<Instrument, 'id'>>) {
+function* createInstrumentSaga(action: PayloadAction<Partial<Instrument>>) {
   try {
     // Validate data trước khi gọi API
     if (!action.payload.name?.trim()) {
@@ -49,15 +43,11 @@ function* createInstrumentSaga(action: PayloadAction<Omit<Instrument, 'id'>>) {
       action.payload
     );
     
-    yield put({ 
-      type: ACTION_TYPES.ADD_INSTRUMENT_SUCCESS, 
-      payload: newInstrument 
-    });
+    // ✅ Dùng action creators từ slice
+    yield put(addInstrumentSuccess(newInstrument));
+    
   } catch (error: any) {
-    yield put({ 
-      type: ACTION_TYPES.ADD_INSTRUMENT_FAILURE, 
-      payload: error.message 
-    });
+    yield put(addInstrumentFailure(error.message));
   }
 }
 
@@ -67,11 +57,8 @@ function* updateInstrumentSaga(action: PayloadAction<Instrument>) {
   const originalInstrument = action.payload;
   
   try {
-    // Optimistic update
-    yield put({
-      type: ACTION_TYPES.UPDATE_INSTRUMENT_SUCCESS,
-      payload: action.payload
-    });
+    // Optimistic update - dùng action creator
+    yield put(updateInstrumentSuccess(action.payload));
 
     // Gọi API
     const updatedInstrument: Instrument = yield call(
@@ -80,22 +67,13 @@ function* updateInstrumentSaga(action: PayloadAction<Instrument>) {
     );
 
     // Cập nhật với data thực từ server
-    yield put({
-      type: ACTION_TYPES.UPDATE_INSTRUMENT_SUCCESS,
-      payload: updatedInstrument
-    });
+    yield put(updateInstrumentSuccess(updatedInstrument));
 
   } catch (error: any) {
     // Rollback nếu API fail
-    yield put({
-      type: ACTION_TYPES.UPDATE_INSTRUMENT_SUCCESS, // Dùng success để rollback
-      payload: originalInstrument
-    });
+    yield put(updateInstrumentSuccess(originalInstrument));
     
-    yield put({ 
-      type: ACTION_TYPES.UPDATE_INSTRUMENT_FAILURE, 
-      payload: error.message 
-    });
+    yield put(updateInstrumentFailure(error.message));
   }
 }
 
@@ -103,42 +81,43 @@ function* updateInstrumentSaga(action: PayloadAction<Instrument>) {
 function* deleteInstrumentSaga(action: PayloadAction<string>) {
   const instrumentId = action.payload;
   
-  // Optimistic delete - xóa ngay khỏi UI
-  yield put({ 
-    type: ACTION_TYPES.DELETE_INSTRUMENT_SUCCESS, 
-    payload: instrumentId 
-  });
-
   try {
+    // Optimistic delete - xóa ngay khỏi UI
+    yield put(deleteInstrumentSuccess(instrumentId));
+
     // Gọi API sau khi đã cập nhật UI
     yield call(instrumentService.deleteInstrument, instrumentId);
     
     // Không cần làm gì thêm vì đã optimistic update
     
   } catch (error: any) {
-    // Nếu API fail, không rollback để tránh UX xấu
-    // Có thể log error để monitoring
-    console.warn(`Delete instrument ${instrumentId} failed:`, error.message);
+    // Nếu API fail, fetch lại data để rollback
+    yield put(fetchInstrumentsRequest());
     
-    // Option: Có thể dispatch action để hiển thị thông báo
-    yield put({ 
-      type: ACTION_TYPES.DELETE_INSTRUMENT_FAILURE, 
-      payload: `Xóa không thành công: ${error.message}` 
-    });
+    // Hiển thị thông báo lỗi
+    yield put(deleteInstrumentFailure(`Xóa không thành công: ${error.message}`));
+    
+    console.warn(`Delete instrument ${instrumentId} failed:`, error.message);
   }
 }
 
 // Root Saga với error boundary
 export function* instrumentSaga() {
   try {
-    yield takeEvery(ACTION_TYPES.FETCH_INSTRUMENTS_START, getInstrumentsSaga);
-    yield takeLatest(ACTION_TYPES.ADD_INSTRUMENT_REQUEST, createInstrumentSaga);
-    yield takeLatest(ACTION_TYPES.UPDATE_INSTRUMENT_REQUEST, updateInstrumentSaga);
-    yield takeLatest(ACTION_TYPES.DELETE_INSTRUMENT_REQUEST, deleteInstrumentSaga);
+    // ✅ Dùng action creator types từ slice
+    yield takeEvery(fetchInstrumentsRequest.type, getInstrumentsSaga);
+    yield takeLatest(addInstrumentRequest.type, createInstrumentSaga);
+    yield takeLatest(updateInstrumentRequest.type, updateInstrumentSaga);
+    yield takeLatest(deleteInstrumentRequest.type, deleteInstrumentSaga);
   } catch (error) {
     console.error('Root saga error:', error);
   }
 }
 
-// Export action types để sử dụng ở components
-export { ACTION_TYPES as INSTRUMENT_ACTION_TYPES };
+// Export action types để sử dụng ở components (nếu cần)
+export const INSTRUMENT_ACTION_TYPES = {
+  FETCH_INSTRUMENTS_REQUEST: fetchInstrumentsRequest.type,
+  ADD_INSTRUMENT_REQUEST: addInstrumentRequest.type,
+  UPDATE_INSTRUMENT_REQUEST: updateInstrumentRequest.type,
+  DELETE_INSTRUMENT_REQUEST: deleteInstrumentRequest.type,
+} as const;

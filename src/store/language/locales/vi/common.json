@@ -780,7 +780,16 @@
       "nextCalibrationLabel": "Hiệu chuẩn tiếp theo:",
       "instrumentId": "ID Thiết bị",
       "invalidDate": "Ngày không hợp lệ",
-      "maintenance": "Bảo trì"
+      "maintenance": "Bảo trì",
+
+      "temperature": "Nhiệt Độ Hoạt Động",
+      "sampleVolume": "Thể Tích Mẫu",
+      "firmwareVersion": "Phiên Bản Firmware",
+      "port": "Cổng",
+      "encryption": "Mã Hóa",
+      "ipAddress": "Địa Chỉ IP",
+      "technicalSpecifications":"Cấu hình chuẩn cho thiết bị"
+
     },
     "editInstrument": {
       "title": "Chỉnh sửa thiết bị",
@@ -788,7 +797,9 @@
       "id": "ID",
       "saving": "Đang lưu...",
       "saveChanges": "Lưu thay đổi",
-      "errorSaving": "Lỗi khi lưu thiết bị"
+      "errorSaving": "Lỗi khi lưu thiết bị",
+      "technicalReadOnly": "Cấu hình chỉ có thể đọc chứ không thể sửa tại đây"
+
     }
   },
   "common": {
@@ -807,6 +818,7 @@
     "status": "Trạng thái",
     "active": "Đang hoạt động",
     "inactive": "Ngừng hoạt động",
+    "maintenance":"Bảo trì",
     "yes": "Có",
     "no": "Không",
     "confirm": "Xác nhận",

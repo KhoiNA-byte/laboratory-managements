@@ -1,5 +1,18 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState, AppDispatch } from '../store'
+import { useCallback } from 'react'
+import { 
+    ACTION_TYPES, 
+    UI_TEXT, 
+    INSTRUMENT_STATUS, 
+    STATUS_COLORS,
+    // Import action creators từ slice
+    fetchInstrumentsRequest,
+    addInstrumentRequest, 
+    deleteInstrumentRequest,
+  } from '../constants/instruments/instruments';
+  import { Instrument } from '../store/types'; // 🔹 THÊM IMPORT NÀY
+
 
 // Typed hooks
 export const useAppDispatch = () => useDispatch<AppDispatch>()
@@ -122,30 +135,57 @@ export const useTestOrders = () => {
 
 // Instrument hooks
 export const useInstruments = () => {
-    const dispatch = useAppDispatch()
-    const instruments = useAppSelector((state) => state.instruments)
-
-    const getInstruments = () => {
-        dispatch({ type: 'instruments/getInstrumentsRequest' })
-    }
-
-    const createInstrument = (instrumentData: any) => {
-        dispatch({ type: 'instruments/createInstrumentRequest', payload: instrumentData })
-    }
-
-    const updateInstrument = (instrumentData: any) => {
-        dispatch({ type: 'instruments/updateInstrumentRequest', payload: instrumentData })
-    }
-
-    const deleteInstrument = (id: string) => {
-        dispatch({ type: 'instruments/deleteInstrumentRequest', payload: id })
-    }
-
+    const dispatch = useDispatch();
+    const { instruments, loading, error } = useSelector((state: RootState) => state.instruments);
+  
+    // Actions - SỬ DỤNG ACTION CREATORS TỪ SLICE
+    const fetchInstruments = useCallback(() => {
+      dispatch(fetchInstrumentsRequest()); // ✅ Dùng action creator
+    }, [dispatch]);
+  
+    const addInstrument = useCallback((instrumentData: Partial<Instrument>) => {
+      dispatch(addInstrumentRequest(instrumentData)); // ✅ Dùng action creator
+    }, [dispatch]);
+  
+    const deleteInstrument = useCallback((instrumentId: string) => {
+      dispatch(deleteInstrumentRequest(instrumentId)); // ✅ Dùng action creator
+    }, [dispatch]);
+  
+    // Computed values và helper functions giữ nguyên
+    const calibrationDueCount = instruments.filter(i => i.calibrationDue).length;
+    const activeCount = instruments.filter(i => i.status === INSTRUMENT_STATUS.ACTIVE).length;
+    const maintenanceCount = instruments.filter(i => i.status === INSTRUMENT_STATUS.MAINTENANCE).length;
+  
+    const getStatusColor = useCallback((status: string) => {
+      return STATUS_COLORS[status as keyof typeof STATUS_COLORS] || STATUS_COLORS[INSTRUMENT_STATUS.INACTIVE];
+    }, []);
+  
+    const getDeleteConfirmMessage = useCallback((instrumentName: string) => {
+      return UI_TEXT.MESSAGES.DELETE_CONFIRM(instrumentName);
+    }, []);
+  
     return {
-        ...instruments,
-        getInstruments,
-        createInstrument,
-        updateInstrument,
-        deleteInstrument,
-    }
-}
+      // State
+      instruments,
+      loading,
+      error,
+      
+      // Actions
+      fetchInstruments,
+      addInstrument,
+      deleteInstrument,
+      
+      // Computed values
+      calibrationDueCount,
+      activeCount,
+      maintenanceCount,
+      
+      // Helpers
+      getStatusColor,
+      getDeleteConfirmMessage,
+      
+      // Constants
+      UI_TEXT,
+      INSTRUMENT_STATUS,
+    };
+  };

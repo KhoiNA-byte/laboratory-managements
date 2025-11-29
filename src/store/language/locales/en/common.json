@@ -780,7 +780,15 @@
       "nextCalibrationLabel": "Next calibration:",
       "instrumentId": "Instrument ID",
       "invalidDate": "Invalid Date",
-      "maintenance": "Maintenance"
+      "maintenance": "Maintenance",
+
+      "temperature": "Operating Temperature",
+      "sampleVolume": "Sample Volume",
+      "firmwareVersion": "Firmware Version",
+      "port": "Port",
+      "encryption": "Encryption",
+      "ipAddress": "IP Address",
+      "technicalSpecifications":"Technical Specifications"
     },
     "editInstrument": {
       "title": "Edit Instrument",
@@ -807,6 +815,7 @@
     "status": "Status",
     "active": "Active",
     "inactive": "Inactive",
+    "maintenance":"Maintenance",
     "yes": "Yes",
     "no": "No",
     "confirm": "Confirm",
