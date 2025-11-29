@@ -61,7 +61,6 @@ import { ReportsPage } from "./modules/audit/ReportsPage";
 // Community Module
 import { CommunityPage } from "./modules/community/CommunityPage";
 import UserProfilePage from "./modules/profile/UserProfilePage";
-import ReportsPage1 from "./modules/report/Page";
 
 function AppRoutesInner() {
   const location = useLocation();
@@ -213,7 +212,7 @@ function AppRoutesInner() {
               </ProtectedRoute>
             }
           />
-          
+
           <Route
             path="flagging-rules"
             element={
@@ -271,7 +270,7 @@ function AppRoutesInner() {
               </ProtectedRoute>
             }
           />
-          
+
           <Route
             path="my-test-results"
             element={
@@ -377,7 +376,7 @@ function AppRoutesInner() {
               </ProtectedRoute>
             }
           />
-          <Route
+          {/* <Route
             path="reports"
             element={
               <ProtectedRoute
@@ -387,7 +386,7 @@ function AppRoutesInner() {
                 <ReportsPage1 />
               </ProtectedRoute>
             }
-          />
+          /> */}
 
           {/* Settings Route - Any authenticated user in admin layout */}
           <Route
