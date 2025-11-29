@@ -46,10 +46,10 @@ const ROUTE_META: Record<string, { title: string; subtitle: string }> = {
     title: "System Monitoring",
     subtitle: "Monitor system health, event logs, and performance metrics",
   },
-  "/admin/reports": {
-    title: "Reports",
-    subtitle: "Generate and export laboratory reports",
-  },
+  // "/admin/reports": {
+  //   title: "Reports",
+  //   subtitle: "Generate and export laboratory reports",
+  // },
   "/admin/profile": {
     title: "Profile",
     subtitle: "View and manage information",
