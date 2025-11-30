@@ -13,6 +13,7 @@ import {
 interface LoginResponse {
   user: any;
   token: string;
+  redirectPath: string;
 }
 
 function* loginSaga(
@@ -21,6 +22,7 @@ function* loginSaga(
   try {
     // Call login API
     const loginResponse: LoginResponse = yield call(loginAPI, action.payload);
+    console.log("Login Response in Saga:", loginResponse);
     const roles = yield call(getRolesAPI);
     const userRole = roles.find(
       (role: any) => role.roleCode === loginResponse.user.role
@@ -33,6 +35,7 @@ function* loginSaga(
         user: loginResponse.user,
         token: loginResponse.token,
         permissions: userPermissions,
+        redirectPath: loginResponse.redirectPath,
       })
     );
   } catch (error: any) {

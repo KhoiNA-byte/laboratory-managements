@@ -243,6 +243,9 @@ export const UsersPage = () => {
   }, []);
 
   useEffect(() => {
+    dispatch({ type: "roles/getRolesRequest" });
+  }, [dispatch]);
+  useEffect(() => {
     dispatch({ type: "users/getUsersRequest" });
   }, [dispatch]);
 
@@ -264,7 +267,7 @@ export const UsersPage = () => {
           status: "active",
         });
         dispatch(clearCreateSuccess());
-      }, 2000);
+      });
       return () => clearTimeout(timer);
     }
   }, [createSuccess, showCreateModal, dispatch]);
@@ -276,7 +279,7 @@ export const UsersPage = () => {
         setShowUpdateModal(false);
         setSelectedUser(null);
         dispatch(clearUpdateSuccess());
-      }, 2000);
+      });
       return () => clearTimeout(timer);
     }
   }, [updateSuccess, showUpdateModal, dispatch]);

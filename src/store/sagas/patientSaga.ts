@@ -13,7 +13,7 @@ import {
 function* getPatientsSaga() {
   try {
     const patients: Patient[] = yield call(getPatientsAPI);
-    
+
     yield put({
       type: "patients/getPatientsSuccess",
       payload: patients,
@@ -47,16 +47,17 @@ function* createPatientSaga(action: PayloadAction<any>): Generator {
     yield put({
       type: "patients/createPatientFailure",
       payload: error.message || "Failed to create patient",
-
     });
   }
 }
 
-
 // 🟢 Update Patient Saga
 function* updatePatientSaga(action: PayloadAction<any>): Generator {
   try {
-    const updatedPatient: Patient = yield call(updatePatientAPI, action.payload);
+    const updatedPatient: Patient = yield call(
+      updatePatientAPI,
+      action.payload
+    );
 
     yield put({
       type: "patients/updatePatientSuccess",
@@ -71,7 +72,6 @@ function* updatePatientSaga(action: PayloadAction<any>): Generator {
   }
 }
 
-
 // 🟠 Delete Patient Saga
 function* deletePatientSaga(action: PayloadAction<string>): Generator {
   try {
@@ -84,7 +84,6 @@ function* deletePatientSaga(action: PayloadAction<string>): Generator {
     yield put({
       type: "patients/deletePatientFailure",
       payload: error.message || "Failed to delete patient",
-
     });
   }
 }

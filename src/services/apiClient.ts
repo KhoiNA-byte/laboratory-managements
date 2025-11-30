@@ -5,7 +5,7 @@ import { API_BASE_URL } from "./apiConfig";
 class ApiClient {
   private getHeaders(): HeadersInit {
     const state = store.getState();
-    const token = state.auth.token; // If you have tokens
+    const token = state.auth.token; 
 
     return {
       "Content-Type": "application/json",

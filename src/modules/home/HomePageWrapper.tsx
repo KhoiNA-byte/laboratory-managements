@@ -12,13 +12,13 @@ export const HomePageWrapper = () => {
 
   // Nếu đã đăng nhập
   if (isAuthenticated) {
-    // Nếu là admin, chuyển đến dashboard
-    if (user?.role !== "normal_user") {
-      return <Navigate to="/admin" replace />;
-    }
-    // Nếu là user, hiển thị trang Home đã đăng nhập
-    return <HomePageLoggedIn />;
+  // If user has admin, lab_manager, lab_user, or service_user role, go to admin
+  if (user?.role === "admin" || user?.role === "lab_manager" || user?.role === "lab_user" || user?.role === "service_user") {
+    return <Navigate to="/admin" replace />;
   }
+  // If normal user, go to home
+  return <Navigate to="/home" replace />;
+}
 
   // Nếu chưa đăng nhập, hiển thị trang Home chưa đăng nhập
   return <HomePage />;

@@ -79,6 +79,7 @@ export const Navbar = ({
       ? t(`navbar:routes.${routeKey}.subtitle`)
       : t("navbar:defaultSubtitle"));
 
+
   const handleLogout = () => dispatch(logoutRequest());
 
   return (
