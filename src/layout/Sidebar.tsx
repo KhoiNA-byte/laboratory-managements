@@ -92,12 +92,12 @@ export const Sidebar = () => {
       icon: "box",
       requiredPermissions: [PERMISSIONS.WAREHOUSE_READ],
     },
-    {
-      path: "/admin/monitoring",
-      label: t("sidebar:monitoring"),
-      icon: "chart",
-      requiredPermissions: [PERMISSIONS.MONITORING_READ],
-    },
+    // {
+    //   path: "/admin/monitoring",
+    //   label: t("sidebar:monitoring"),
+    //   icon: "chart",
+    //   requiredPermissions: [PERMISSIONS.MONITORING_READ],
+    // },
     {
       path: "/admin/reports",
       label: t("sidebar:reports"),

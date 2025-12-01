@@ -1,5 +1,5 @@
-{
-  "compilerOptions": {
-    "types": ["vite/client", "vitest"]
-  }
-}
+// {
+//   "compilerOptions": {
+//     "types": ["vite/client", "vitest"]
+//   }
+// }
